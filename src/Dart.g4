@@ -1,13 +1,11 @@
 grammar Dart;
 
-start  :
-     expression  EOF
-  ;
+start: expression EOF;
 
-expression
-   :
-   |   INT
-   |   expression ('+' | '-') expression
-   ;
+expression:
+    | NUMBER
+    | expression '+' expression
+    ;
 
-INT    :  '0'..'9'+;
+NUMBER:
+    '0'..'9';
