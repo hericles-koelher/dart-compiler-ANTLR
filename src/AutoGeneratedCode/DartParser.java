@@ -17,25 +17,46 @@ public class DartParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, NUMBER=2;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
+		T__9=10, T__10=11, CONST=12, FINAL=13, THIS=14, VAR=15, COVARIANT=16, 
+		IDENTIFIER=17, LBRACE=18, RBRACE=19;
 	public static final int
-		RULE_start = 0, RULE_expression = 1;
+		RULE_start = 0, RULE_declaredIdentifier = 1, RULE_finalConstVarOrType = 2, 
+		RULE_varOrType = 3, RULE_initializedIdentifier = 4, RULE_initializedIdentifierList = 5, 
+		RULE_functionSignature = 6, RULE_formalParameterPart = 7, RULE_functionBody = 8, 
+		RULE_block = 9, RULE_formalParameterList = 10, RULE_normalFormalParameters = 11, 
+		RULE_optionalOrNamedFormalParameters = 12, RULE_optionalPositionalFormalParameters = 13, 
+		RULE_namedFormalParameters = 14, RULE_normalFormalParameter = 15, RULE_functionFormalParameter = 16, 
+		RULE_simpleFormalParameter = 17, RULE_fieldFormalParameter = 18, RULE_defaultFormalParameter = 19, 
+		RULE_defaultNamedParameter = 20, RULE_expression = 21, RULE_identifierNotFUNCTION = 22, 
+		RULE_identifier = 23, RULE_topLevelDefinition = 24, RULE_type = 25;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"start", "expression"
+			"start", "declaredIdentifier", "finalConstVarOrType", "varOrType", "initializedIdentifier", 
+			"initializedIdentifierList", "functionSignature", "formalParameterPart", 
+			"functionBody", "block", "formalParameterList", "normalFormalParameters", 
+			"optionalOrNamedFormalParameters", "optionalPositionalFormalParameters", 
+			"namedFormalParameters", "normalFormalParameter", "functionFormalParameter", 
+			"simpleFormalParameter", "fieldFormalParameter", "defaultFormalParameter", 
+			"defaultNamedParameter", "expression", "identifierNotFUNCTION", "identifier", 
+			"topLevelDefinition", "type"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'+'"
+			null, "'='", "','", "'=>'", "';'", "'('", "')'", "'['", "']'", "'?'", 
+			"'.'", "':'", "'const'", "'final'", "'this'", "'var'", "'covariant'", 
+			null, "'{'", "'}'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, "NUMBER"
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			"CONST", "FINAL", "THIS", "VAR", "COVARIANT", "IDENTIFIER", "LBRACE", 
+			"RBRACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -90,8 +111,8 @@ public class DartParser extends Parser {
 	}
 
 	public static class StartContext extends ParserRuleContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public TopLevelDefinitionContext topLevelDefinition() {
+			return getRuleContext(TopLevelDefinitionContext.class,0);
 		}
 		public TerminalNode EOF() { return getToken(DartParser.EOF, 0); }
 		public StartContext(ParserRuleContext parent, int invokingState) {
@@ -119,9 +140,9 @@ public class DartParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(4);
-			expression(0);
-			setState(5);
+			setState(52);
+			topLevelDefinition();
+			setState(53);
 			match(EOF);
 			}
 		}
@@ -136,14 +157,1340 @@ public class DartParser extends Parser {
 		return _localctx;
 	}
 
+	public static class DeclaredIdentifierContext extends ParserRuleContext {
+		public FinalConstVarOrTypeContext finalConstVarOrType() {
+			return getRuleContext(FinalConstVarOrTypeContext.class,0);
+		}
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public TerminalNode COVARIANT() { return getToken(DartParser.COVARIANT, 0); }
+		public DeclaredIdentifierContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_declaredIdentifier; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterDeclaredIdentifier(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitDeclaredIdentifier(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitDeclaredIdentifier(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final DeclaredIdentifierContext declaredIdentifier() throws RecognitionException {
+		DeclaredIdentifierContext _localctx = new DeclaredIdentifierContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_declaredIdentifier);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(56);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==COVARIANT) {
+				{
+				setState(55);
+				match(COVARIANT);
+				}
+			}
+
+			setState(58);
+			finalConstVarOrType();
+			setState(59);
+			identifier();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FinalConstVarOrTypeContext extends ParserRuleContext {
+		public TerminalNode FINAL() { return getToken(DartParser.FINAL, 0); }
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public TerminalNode CONST() { return getToken(DartParser.CONST, 0); }
+		public VarOrTypeContext varOrType() {
+			return getRuleContext(VarOrTypeContext.class,0);
+		}
+		public FinalConstVarOrTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_finalConstVarOrType; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFinalConstVarOrType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFinalConstVarOrType(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFinalConstVarOrType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FinalConstVarOrTypeContext finalConstVarOrType() throws RecognitionException {
+		FinalConstVarOrTypeContext _localctx = new FinalConstVarOrTypeContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_finalConstVarOrType);
+		try {
+			setState(70);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case FINAL:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(61);
+				match(FINAL);
+				setState(63);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
+				case 1:
+					{
+					setState(62);
+					type();
+					}
+					break;
+				}
+				}
+				break;
+			case CONST:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(65);
+				match(CONST);
+				setState(67);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
+				case 1:
+					{
+					setState(66);
+					type();
+					}
+					break;
+				}
+				}
+				break;
+			case THIS:
+			case VAR:
+			case IDENTIFIER:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(69);
+				varOrType();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class VarOrTypeContext extends ParserRuleContext {
+		public TerminalNode VAR() { return getToken(DartParser.VAR, 0); }
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public VarOrTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_varOrType; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterVarOrType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitVarOrType(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitVarOrType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final VarOrTypeContext varOrType() throws RecognitionException {
+		VarOrTypeContext _localctx = new VarOrTypeContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_varOrType);
+		try {
+			setState(74);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case VAR:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(72);
+				match(VAR);
+				}
+				break;
+			case THIS:
+			case IDENTIFIER:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(73);
+				type();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class InitializedIdentifierContext extends ParserRuleContext {
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public InitializedIdentifierContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_initializedIdentifier; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterInitializedIdentifier(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitInitializedIdentifier(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitInitializedIdentifier(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final InitializedIdentifierContext initializedIdentifier() throws RecognitionException {
+		InitializedIdentifierContext _localctx = new InitializedIdentifierContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_initializedIdentifier);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(76);
+			identifier();
+			setState(79);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__0) {
+				{
+				setState(77);
+				match(T__0);
+				setState(78);
+				expression();
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class InitializedIdentifierListContext extends ParserRuleContext {
+		public List<InitializedIdentifierContext> initializedIdentifier() {
+			return getRuleContexts(InitializedIdentifierContext.class);
+		}
+		public InitializedIdentifierContext initializedIdentifier(int i) {
+			return getRuleContext(InitializedIdentifierContext.class,i);
+		}
+		public InitializedIdentifierListContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_initializedIdentifierList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterInitializedIdentifierList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitInitializedIdentifierList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitInitializedIdentifierList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final InitializedIdentifierListContext initializedIdentifierList() throws RecognitionException {
+		InitializedIdentifierListContext _localctx = new InitializedIdentifierListContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_initializedIdentifierList);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(81);
+			initializedIdentifier();
+			setState(86);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==T__1) {
+				{
+				{
+				setState(82);
+				match(T__1);
+				setState(83);
+				initializedIdentifier();
+				}
+				}
+				setState(88);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FunctionSignatureContext extends ParserRuleContext {
+		public IdentifierNotFUNCTIONContext identifierNotFUNCTION() {
+			return getRuleContext(IdentifierNotFUNCTIONContext.class,0);
+		}
+		public FormalParameterPartContext formalParameterPart() {
+			return getRuleContext(FormalParameterPartContext.class,0);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public FunctionSignatureContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_functionSignature; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFunctionSignature(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFunctionSignature(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFunctionSignature(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FunctionSignatureContext functionSignature() throws RecognitionException {
+		FunctionSignatureContext _localctx = new FunctionSignatureContext(_ctx, getState());
+		enterRule(_localctx, 12, RULE_functionSignature);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(90);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			case 1:
+				{
+				setState(89);
+				type();
+				}
+				break;
+			}
+			setState(92);
+			identifierNotFUNCTION();
+			setState(93);
+			formalParameterPart();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FormalParameterPartContext extends ParserRuleContext {
+		public FormalParameterListContext formalParameterList() {
+			return getRuleContext(FormalParameterListContext.class,0);
+		}
+		public FormalParameterPartContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_formalParameterPart; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFormalParameterPart(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFormalParameterPart(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFormalParameterPart(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FormalParameterPartContext formalParameterPart() throws RecognitionException {
+		FormalParameterPartContext _localctx = new FormalParameterPartContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_formalParameterPart);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(95);
+			formalParameterList();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FunctionBodyContext extends ParserRuleContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public BlockContext block() {
+			return getRuleContext(BlockContext.class,0);
+		}
+		public FunctionBodyContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_functionBody; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFunctionBody(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFunctionBody(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFunctionBody(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FunctionBodyContext functionBody() throws RecognitionException {
+		FunctionBodyContext _localctx = new FunctionBodyContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_functionBody);
+		try {
+			setState(102);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__2:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(97);
+				match(T__2);
+				setState(98);
+				expression();
+				setState(99);
+				match(T__3);
+				}
+				break;
+			case EOF:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(101);
+				block();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class BlockContext extends ParserRuleContext {
+		public BlockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_block; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitBlock(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitBlock(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final BlockContext block() throws RecognitionException {
+		BlockContext _localctx = new BlockContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_block);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FormalParameterListContext extends ParserRuleContext {
+		public NormalFormalParametersContext normalFormalParameters() {
+			return getRuleContext(NormalFormalParametersContext.class,0);
+		}
+		public FormalParameterListContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_formalParameterList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFormalParameterList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFormalParameterList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFormalParameterList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FormalParameterListContext formalParameterList() throws RecognitionException {
+		FormalParameterListContext _localctx = new FormalParameterListContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_formalParameterList);
+		int _la;
+		try {
+			setState(115);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(106);
+				match(T__4);
+				setState(107);
+				match(T__5);
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(108);
+				match(T__4);
+				setState(109);
+				normalFormalParameters();
+				setState(111);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==T__1) {
+					{
+					setState(110);
+					match(T__1);
+					}
+				}
+
+				setState(113);
+				match(T__5);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class NormalFormalParametersContext extends ParserRuleContext {
+		public List<NormalFormalParameterContext> normalFormalParameter() {
+			return getRuleContexts(NormalFormalParameterContext.class);
+		}
+		public NormalFormalParameterContext normalFormalParameter(int i) {
+			return getRuleContext(NormalFormalParameterContext.class,i);
+		}
+		public NormalFormalParametersContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_normalFormalParameters; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterNormalFormalParameters(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitNormalFormalParameters(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitNormalFormalParameters(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final NormalFormalParametersContext normalFormalParameters() throws RecognitionException {
+		NormalFormalParametersContext _localctx = new NormalFormalParametersContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_normalFormalParameters);
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(117);
+			normalFormalParameter();
+			setState(122);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(118);
+					match(T__1);
+					setState(119);
+					normalFormalParameter();
+					}
+					} 
+				}
+				setState(124);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class OptionalOrNamedFormalParametersContext extends ParserRuleContext {
+		public OptionalPositionalFormalParametersContext optionalPositionalFormalParameters() {
+			return getRuleContext(OptionalPositionalFormalParametersContext.class,0);
+		}
+		public NamedFormalParametersContext namedFormalParameters() {
+			return getRuleContext(NamedFormalParametersContext.class,0);
+		}
+		public OptionalOrNamedFormalParametersContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_optionalOrNamedFormalParameters; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterOptionalOrNamedFormalParameters(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitOptionalOrNamedFormalParameters(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitOptionalOrNamedFormalParameters(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final OptionalOrNamedFormalParametersContext optionalOrNamedFormalParameters() throws RecognitionException {
+		OptionalOrNamedFormalParametersContext _localctx = new OptionalOrNamedFormalParametersContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_optionalOrNamedFormalParameters);
+		try {
+			setState(127);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__6:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(125);
+				optionalPositionalFormalParameters();
+				}
+				break;
+			case LBRACE:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(126);
+				namedFormalParameters();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class OptionalPositionalFormalParametersContext extends ParserRuleContext {
+		public List<DefaultFormalParameterContext> defaultFormalParameter() {
+			return getRuleContexts(DefaultFormalParameterContext.class);
+		}
+		public DefaultFormalParameterContext defaultFormalParameter(int i) {
+			return getRuleContext(DefaultFormalParameterContext.class,i);
+		}
+		public OptionalPositionalFormalParametersContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_optionalPositionalFormalParameters; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterOptionalPositionalFormalParameters(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitOptionalPositionalFormalParameters(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitOptionalPositionalFormalParameters(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final OptionalPositionalFormalParametersContext optionalPositionalFormalParameters() throws RecognitionException {
+		OptionalPositionalFormalParametersContext _localctx = new OptionalPositionalFormalParametersContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_optionalPositionalFormalParameters);
+		int _la;
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(129);
+			match(T__6);
+			setState(130);
+			defaultFormalParameter();
+			setState(135);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,13,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(131);
+					match(T__1);
+					setState(132);
+					defaultFormalParameter();
+					}
+					} 
+				}
+				setState(137);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,13,_ctx);
+			}
+			setState(139);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__1) {
+				{
+				setState(138);
+				match(T__1);
+				}
+			}
+
+			setState(141);
+			match(T__7);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class NamedFormalParametersContext extends ParserRuleContext {
+		public TerminalNode LBRACE() { return getToken(DartParser.LBRACE, 0); }
+		public List<DefaultNamedParameterContext> defaultNamedParameter() {
+			return getRuleContexts(DefaultNamedParameterContext.class);
+		}
+		public DefaultNamedParameterContext defaultNamedParameter(int i) {
+			return getRuleContext(DefaultNamedParameterContext.class,i);
+		}
+		public TerminalNode RBRACE() { return getToken(DartParser.RBRACE, 0); }
+		public NamedFormalParametersContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_namedFormalParameters; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterNamedFormalParameters(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitNamedFormalParameters(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitNamedFormalParameters(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final NamedFormalParametersContext namedFormalParameters() throws RecognitionException {
+		NamedFormalParametersContext _localctx = new NamedFormalParametersContext(_ctx, getState());
+		enterRule(_localctx, 28, RULE_namedFormalParameters);
+		int _la;
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(143);
+			match(LBRACE);
+			setState(144);
+			defaultNamedParameter();
+			setState(149);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(145);
+					match(T__1);
+					setState(146);
+					defaultNamedParameter();
+					}
+					} 
+				}
+				setState(151);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
+			}
+			setState(153);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__1) {
+				{
+				setState(152);
+				match(T__1);
+				}
+			}
+
+			setState(155);
+			match(RBRACE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class NormalFormalParameterContext extends ParserRuleContext {
+		public FunctionFormalParameterContext functionFormalParameter() {
+			return getRuleContext(FunctionFormalParameterContext.class,0);
+		}
+		public FieldFormalParameterContext fieldFormalParameter() {
+			return getRuleContext(FieldFormalParameterContext.class,0);
+		}
+		public SimpleFormalParameterContext simpleFormalParameter() {
+			return getRuleContext(SimpleFormalParameterContext.class,0);
+		}
+		public NormalFormalParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_normalFormalParameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterNormalFormalParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitNormalFormalParameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitNormalFormalParameter(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final NormalFormalParameterContext normalFormalParameter() throws RecognitionException {
+		NormalFormalParameterContext _localctx = new NormalFormalParameterContext(_ctx, getState());
+		enterRule(_localctx, 30, RULE_normalFormalParameter);
+		try {
+			setState(160);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(157);
+				functionFormalParameter();
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(158);
+				fieldFormalParameter();
+				}
+				break;
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(159);
+				simpleFormalParameter();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FunctionFormalParameterContext extends ParserRuleContext {
+		public IdentifierNotFUNCTIONContext identifierNotFUNCTION() {
+			return getRuleContext(IdentifierNotFUNCTIONContext.class,0);
+		}
+		public FormalParameterPartContext formalParameterPart() {
+			return getRuleContext(FormalParameterPartContext.class,0);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public FunctionFormalParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_functionFormalParameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFunctionFormalParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFunctionFormalParameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFunctionFormalParameter(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FunctionFormalParameterContext functionFormalParameter() throws RecognitionException {
+		FunctionFormalParameterContext _localctx = new FunctionFormalParameterContext(_ctx, getState());
+		enterRule(_localctx, 32, RULE_functionFormalParameter);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(163);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
+			case 1:
+				{
+				setState(162);
+				type();
+				}
+				break;
+			}
+			setState(165);
+			identifierNotFUNCTION();
+			setState(166);
+			formalParameterPart();
+			setState(168);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__8) {
+				{
+				setState(167);
+				match(T__8);
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class SimpleFormalParameterContext extends ParserRuleContext {
+		public DeclaredIdentifierContext declaredIdentifier() {
+			return getRuleContext(DeclaredIdentifierContext.class,0);
+		}
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public SimpleFormalParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_simpleFormalParameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterSimpleFormalParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitSimpleFormalParameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitSimpleFormalParameter(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final SimpleFormalParameterContext simpleFormalParameter() throws RecognitionException {
+		SimpleFormalParameterContext _localctx = new SimpleFormalParameterContext(_ctx, getState());
+		enterRule(_localctx, 34, RULE_simpleFormalParameter);
+		try {
+			setState(172);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(170);
+				declaredIdentifier();
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(171);
+				identifier();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class FieldFormalParameterContext extends ParserRuleContext {
+		public TerminalNode THIS() { return getToken(DartParser.THIS, 0); }
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public FinalConstVarOrTypeContext finalConstVarOrType() {
+			return getRuleContext(FinalConstVarOrTypeContext.class,0);
+		}
+		public FormalParameterPartContext formalParameterPart() {
+			return getRuleContext(FormalParameterPartContext.class,0);
+		}
+		public FieldFormalParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_fieldFormalParameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterFieldFormalParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitFieldFormalParameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitFieldFormalParameter(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FieldFormalParameterContext fieldFormalParameter() throws RecognitionException {
+		FieldFormalParameterContext _localctx = new FieldFormalParameterContext(_ctx, getState());
+		enterRule(_localctx, 36, RULE_fieldFormalParameter);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(175);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,21,_ctx) ) {
+			case 1:
+				{
+				setState(174);
+				finalConstVarOrType();
+				}
+				break;
+			}
+			setState(177);
+			match(THIS);
+			setState(178);
+			match(T__9);
+			setState(179);
+			identifier();
+			setState(184);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__4) {
+				{
+				setState(180);
+				formalParameterPart();
+				setState(182);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==T__8) {
+					{
+					setState(181);
+					match(T__8);
+					}
+				}
+
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class DefaultFormalParameterContext extends ParserRuleContext {
+		public NormalFormalParameterContext normalFormalParameter() {
+			return getRuleContext(NormalFormalParameterContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public DefaultFormalParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_defaultFormalParameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterDefaultFormalParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitDefaultFormalParameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitDefaultFormalParameter(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final DefaultFormalParameterContext defaultFormalParameter() throws RecognitionException {
+		DefaultFormalParameterContext _localctx = new DefaultFormalParameterContext(_ctx, getState());
+		enterRule(_localctx, 38, RULE_defaultFormalParameter);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(186);
+			normalFormalParameter();
+			setState(189);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__0) {
+				{
+				setState(187);
+				match(T__0);
+				setState(188);
+				expression();
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class DefaultNamedParameterContext extends ParserRuleContext {
+		public NormalFormalParameterContext normalFormalParameter() {
+			return getRuleContext(NormalFormalParameterContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public DefaultNamedParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_defaultNamedParameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterDefaultNamedParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitDefaultNamedParameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitDefaultNamedParameter(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final DefaultNamedParameterContext defaultNamedParameter() throws RecognitionException {
+		DefaultNamedParameterContext _localctx = new DefaultNamedParameterContext(_ctx, getState());
+		enterRule(_localctx, 40, RULE_defaultNamedParameter);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(191);
+			normalFormalParameter();
+			setState(194);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__0 || _la==T__10) {
+				{
+				setState(192);
+				_la = _input.LA(1);
+				if ( !(_la==T__0 || _la==T__10) ) {
+				_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(193);
+				expression();
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static class ExpressionContext extends ParserRuleContext {
-		public TerminalNode NUMBER() { return getToken(DartParser.NUMBER, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -164,59 +1511,11 @@ public class DartParser extends Parser {
 	}
 
 	public final ExpressionContext expression() throws RecognitionException {
-		return expression(0);
-	}
-
-	private ExpressionContext expression(int _p) throws RecognitionException {
-		ParserRuleContext _parentctx = _ctx;
-		int _parentState = getState();
-		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);
-		ExpressionContext _prevctx = _localctx;
-		int _startState = 2;
-		enterRecursionRule(_localctx, 2, RULE_expression, _p);
+		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_expression);
 		try {
-			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(9);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
-			case 1:
-				{
-				}
-				break;
-			case 2:
-				{
-				setState(8);
-				match(NUMBER);
-				}
-				break;
-			}
-			_ctx.stop = _input.LT(-1);
-			setState(16);
-			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					if ( _parseListeners!=null ) triggerExitRuleEvent();
-					_prevctx = _localctx;
-					{
-					{
-					_localctx = new ExpressionContext(_parentctx, _parentState);
-					pushNewRecursionContext(_localctx, _startState, RULE_expression);
-					setState(11);
-					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(12);
-					match(T__0);
-					setState(13);
-					expression(2);
-					}
-					} 
-				}
-				setState(18);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
-			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -225,34 +1524,250 @@ public class DartParser extends Parser {
 			_errHandler.recover(this, re);
 		}
 		finally {
-			unrollRecursionContexts(_parentctx);
+			exitRule();
 		}
 		return _localctx;
 	}
 
-	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
-		switch (ruleIndex) {
-		case 1:
-			return expression_sempred((ExpressionContext)_localctx, predIndex);
+	public static class IdentifierNotFUNCTIONContext extends ParserRuleContext {
+		public TerminalNode IDENTIFIER() { return getToken(DartParser.IDENTIFIER, 0); }
+		public IdentifierNotFUNCTIONContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
-		return true;
+		@Override public int getRuleIndex() { return RULE_identifierNotFUNCTION; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterIdentifierNotFUNCTION(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitIdentifierNotFUNCTION(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitIdentifierNotFUNCTION(this);
+			else return visitor.visitChildren(this);
+		}
 	}
-	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
-		switch (predIndex) {
-		case 0:
-			return precpred(_ctx, 1);
+
+	public final IdentifierNotFUNCTIONContext identifierNotFUNCTION() throws RecognitionException {
+		IdentifierNotFUNCTIONContext _localctx = new IdentifierNotFUNCTIONContext(_ctx, getState());
+		enterRule(_localctx, 44, RULE_identifierNotFUNCTION);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(198);
+			match(IDENTIFIER);
+			}
 		}
-		return true;
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class IdentifierContext extends ParserRuleContext {
+		public IdentifierNotFUNCTIONContext identifierNotFUNCTION() {
+			return getRuleContext(IdentifierNotFUNCTIONContext.class,0);
+		}
+		public IdentifierContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_identifier; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterIdentifier(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitIdentifier(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitIdentifier(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final IdentifierContext identifier() throws RecognitionException {
+		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
+		enterRule(_localctx, 46, RULE_identifier);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(200);
+			identifierNotFUNCTION();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class TopLevelDefinitionContext extends ParserRuleContext {
+		public FunctionSignatureContext functionSignature() {
+			return getRuleContext(FunctionSignatureContext.class,0);
+		}
+		public FunctionBodyContext functionBody() {
+			return getRuleContext(FunctionBodyContext.class,0);
+		}
+		public TopLevelDefinitionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_topLevelDefinition; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterTopLevelDefinition(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitTopLevelDefinition(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitTopLevelDefinition(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final TopLevelDefinitionContext topLevelDefinition() throws RecognitionException {
+		TopLevelDefinitionContext _localctx = new TopLevelDefinitionContext(_ctx, getState());
+		enterRule(_localctx, 48, RULE_topLevelDefinition);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(202);
+			functionSignature();
+			setState(203);
+			functionBody();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class TypeContext extends ParserRuleContext {
+		public TypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_type; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).enterType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DartListener ) ((DartListener)listener).exitType(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DartVisitor ) return ((DartVisitor<? extends T>)visitor).visitType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final TypeContext type() throws RecognitionException {
+		TypeContext _localctx = new TypeContext(_ctx, getState());
+		enterRule(_localctx, 50, RULE_type);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\4\26\4\2\t\2\4\3"+
-		"\t\3\3\2\3\2\3\2\3\3\3\3\5\3\f\n\3\3\3\3\3\3\3\7\3\21\n\3\f\3\16\3\24"+
-		"\13\3\3\3\2\3\4\4\2\4\2\2\2\25\2\6\3\2\2\2\4\13\3\2\2\2\6\7\5\4\3\2\7"+
-		"\b\7\2\2\3\b\3\3\2\2\2\t\f\b\3\1\2\n\f\7\4\2\2\13\t\3\2\2\2\13\n\3\2\2"+
-		"\2\f\22\3\2\2\2\r\16\f\3\2\2\16\17\7\3\2\2\17\21\5\4\3\4\20\r\3\2\2\2"+
-		"\21\24\3\2\2\2\22\20\3\2\2\2\22\23\3\2\2\2\23\5\3\2\2\2\24\22\3\2\2\2"+
-		"\4\13\22";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\25\u00d2\4\2\t\2"+
+		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
+		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
+		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
+		"\4\32\t\32\4\33\t\33\3\2\3\2\3\2\3\3\5\3;\n\3\3\3\3\3\3\3\3\4\3\4\5\4"+
+		"B\n\4\3\4\3\4\5\4F\n\4\3\4\5\4I\n\4\3\5\3\5\5\5M\n\5\3\6\3\6\3\6\5\6R"+
+		"\n\6\3\7\3\7\3\7\7\7W\n\7\f\7\16\7Z\13\7\3\b\5\b]\n\b\3\b\3\b\3\b\3\t"+
+		"\3\t\3\n\3\n\3\n\3\n\3\n\5\ni\n\n\3\13\3\13\3\f\3\f\3\f\3\f\3\f\5\fr\n"+
+		"\f\3\f\3\f\5\fv\n\f\3\r\3\r\3\r\7\r{\n\r\f\r\16\r~\13\r\3\16\3\16\5\16"+
+		"\u0082\n\16\3\17\3\17\3\17\3\17\7\17\u0088\n\17\f\17\16\17\u008b\13\17"+
+		"\3\17\5\17\u008e\n\17\3\17\3\17\3\20\3\20\3\20\3\20\7\20\u0096\n\20\f"+
+		"\20\16\20\u0099\13\20\3\20\5\20\u009c\n\20\3\20\3\20\3\21\3\21\3\21\5"+
+		"\21\u00a3\n\21\3\22\5\22\u00a6\n\22\3\22\3\22\3\22\5\22\u00ab\n\22\3\23"+
+		"\3\23\5\23\u00af\n\23\3\24\5\24\u00b2\n\24\3\24\3\24\3\24\3\24\3\24\5"+
+		"\24\u00b9\n\24\5\24\u00bb\n\24\3\25\3\25\3\25\5\25\u00c0\n\25\3\26\3\26"+
+		"\3\26\5\26\u00c5\n\26\3\27\3\27\3\30\3\30\3\31\3\31\3\32\3\32\3\32\3\33"+
+		"\3\33\3\33\2\2\34\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62"+
+		"\64\2\3\4\2\3\3\r\r\2\u00d3\2\66\3\2\2\2\4:\3\2\2\2\6H\3\2\2\2\bL\3\2"+
+		"\2\2\nN\3\2\2\2\fS\3\2\2\2\16\\\3\2\2\2\20a\3\2\2\2\22h\3\2\2\2\24j\3"+
+		"\2\2\2\26u\3\2\2\2\30w\3\2\2\2\32\u0081\3\2\2\2\34\u0083\3\2\2\2\36\u0091"+
+		"\3\2\2\2 \u00a2\3\2\2\2\"\u00a5\3\2\2\2$\u00ae\3\2\2\2&\u00b1\3\2\2\2"+
+		"(\u00bc\3\2\2\2*\u00c1\3\2\2\2,\u00c6\3\2\2\2.\u00c8\3\2\2\2\60\u00ca"+
+		"\3\2\2\2\62\u00cc\3\2\2\2\64\u00cf\3\2\2\2\66\67\5\62\32\2\678\7\2\2\3"+
+		"8\3\3\2\2\29;\7\22\2\2:9\3\2\2\2:;\3\2\2\2;<\3\2\2\2<=\5\6\4\2=>\5\60"+
+		"\31\2>\5\3\2\2\2?A\7\17\2\2@B\5\64\33\2A@\3\2\2\2AB\3\2\2\2BI\3\2\2\2"+
+		"CE\7\16\2\2DF\5\64\33\2ED\3\2\2\2EF\3\2\2\2FI\3\2\2\2GI\5\b\5\2H?\3\2"+
+		"\2\2HC\3\2\2\2HG\3\2\2\2I\7\3\2\2\2JM\7\21\2\2KM\5\64\33\2LJ\3\2\2\2L"+
+		"K\3\2\2\2M\t\3\2\2\2NQ\5\60\31\2OP\7\3\2\2PR\5,\27\2QO\3\2\2\2QR\3\2\2"+
+		"\2R\13\3\2\2\2SX\5\n\6\2TU\7\4\2\2UW\5\n\6\2VT\3\2\2\2WZ\3\2\2\2XV\3\2"+
+		"\2\2XY\3\2\2\2Y\r\3\2\2\2ZX\3\2\2\2[]\5\64\33\2\\[\3\2\2\2\\]\3\2\2\2"+
+		"]^\3\2\2\2^_\5.\30\2_`\5\20\t\2`\17\3\2\2\2ab\5\26\f\2b\21\3\2\2\2cd\7"+
+		"\5\2\2de\5,\27\2ef\7\6\2\2fi\3\2\2\2gi\5\24\13\2hc\3\2\2\2hg\3\2\2\2i"+
+		"\23\3\2\2\2jk\3\2\2\2k\25\3\2\2\2lm\7\7\2\2mv\7\b\2\2no\7\7\2\2oq\5\30"+
+		"\r\2pr\7\4\2\2qp\3\2\2\2qr\3\2\2\2rs\3\2\2\2st\7\b\2\2tv\3\2\2\2ul\3\2"+
+		"\2\2un\3\2\2\2v\27\3\2\2\2w|\5 \21\2xy\7\4\2\2y{\5 \21\2zx\3\2\2\2{~\3"+
+		"\2\2\2|z\3\2\2\2|}\3\2\2\2}\31\3\2\2\2~|\3\2\2\2\177\u0082\5\34\17\2\u0080"+
+		"\u0082\5\36\20\2\u0081\177\3\2\2\2\u0081\u0080\3\2\2\2\u0082\33\3\2\2"+
+		"\2\u0083\u0084\7\t\2\2\u0084\u0089\5(\25\2\u0085\u0086\7\4\2\2\u0086\u0088"+
+		"\5(\25\2\u0087\u0085\3\2\2\2\u0088\u008b\3\2\2\2\u0089\u0087\3\2\2\2\u0089"+
+		"\u008a\3\2\2\2\u008a\u008d\3\2\2\2\u008b\u0089\3\2\2\2\u008c\u008e\7\4"+
+		"\2\2\u008d\u008c\3\2\2\2\u008d\u008e\3\2\2\2\u008e\u008f\3\2\2\2\u008f"+
+		"\u0090\7\n\2\2\u0090\35\3\2\2\2\u0091\u0092\7\24\2\2\u0092\u0097\5*\26"+
+		"\2\u0093\u0094\7\4\2\2\u0094\u0096\5*\26\2\u0095\u0093\3\2\2\2\u0096\u0099"+
+		"\3\2\2\2\u0097\u0095\3\2\2\2\u0097\u0098\3\2\2\2\u0098\u009b\3\2\2\2\u0099"+
+		"\u0097\3\2\2\2\u009a\u009c\7\4\2\2\u009b\u009a\3\2\2\2\u009b\u009c\3\2"+
+		"\2\2\u009c\u009d\3\2\2\2\u009d\u009e\7\25\2\2\u009e\37\3\2\2\2\u009f\u00a3"+
+		"\5\"\22\2\u00a0\u00a3\5&\24\2\u00a1\u00a3\5$\23\2\u00a2\u009f\3\2\2\2"+
+		"\u00a2\u00a0\3\2\2\2\u00a2\u00a1\3\2\2\2\u00a3!\3\2\2\2\u00a4\u00a6\5"+
+		"\64\33\2\u00a5\u00a4\3\2\2\2\u00a5\u00a6\3\2\2\2\u00a6\u00a7\3\2\2\2\u00a7"+
+		"\u00a8\5.\30\2\u00a8\u00aa\5\20\t\2\u00a9\u00ab\7\13\2\2\u00aa\u00a9\3"+
+		"\2\2\2\u00aa\u00ab\3\2\2\2\u00ab#\3\2\2\2\u00ac\u00af\5\4\3\2\u00ad\u00af"+
+		"\5\60\31\2\u00ae\u00ac\3\2\2\2\u00ae\u00ad\3\2\2\2\u00af%\3\2\2\2\u00b0"+
+		"\u00b2\5\6\4\2\u00b1\u00b0\3\2\2\2\u00b1\u00b2\3\2\2\2\u00b2\u00b3\3\2"+
+		"\2\2\u00b3\u00b4\7\20\2\2\u00b4\u00b5\7\f\2\2\u00b5\u00ba\5\60\31\2\u00b6"+
+		"\u00b8\5\20\t\2\u00b7\u00b9\7\13\2\2\u00b8\u00b7\3\2\2\2\u00b8\u00b9\3"+
+		"\2\2\2\u00b9\u00bb\3\2\2\2\u00ba\u00b6\3\2\2\2\u00ba\u00bb\3\2\2\2\u00bb"+
+		"\'\3\2\2\2\u00bc\u00bf\5 \21\2\u00bd\u00be\7\3\2\2\u00be\u00c0\5,\27\2"+
+		"\u00bf\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0)\3\2\2\2\u00c1\u00c4\5"+
+		" \21\2\u00c2\u00c3\t\2\2\2\u00c3\u00c5\5,\27\2\u00c4\u00c2\3\2\2\2\u00c4"+
+		"\u00c5\3\2\2\2\u00c5+\3\2\2\2\u00c6\u00c7\3\2\2\2\u00c7-\3\2\2\2\u00c8"+
+		"\u00c9\7\23\2\2\u00c9/\3\2\2\2\u00ca\u00cb\5.\30\2\u00cb\61\3\2\2\2\u00cc"+
+		"\u00cd\5\16\b\2\u00cd\u00ce\5\22\n\2\u00ce\63\3\2\2\2\u00cf\u00d0\3\2"+
+		"\2\2\u00d0\65\3\2\2\2\34:AEHLQX\\hqu|\u0081\u0089\u008d\u0097\u009b\u00a2"+
+		"\u00a5\u00aa\u00ae\u00b1\u00b8\u00ba\u00bf\u00c4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

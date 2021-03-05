@@ -17,9 +17,153 @@ public interface DartVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStart(DartParser.StartContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link DartParser#declaredIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclaredIdentifier(DartParser.DeclaredIdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#finalConstVarOrType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFinalConstVarOrType(DartParser.FinalConstVarOrTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#varOrType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarOrType(DartParser.VarOrTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#initializedIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitializedIdentifier(DartParser.InitializedIdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#initializedIdentifierList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitializedIdentifierList(DartParser.InitializedIdentifierListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#functionSignature}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionSignature(DartParser.FunctionSignatureContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#formalParameterPart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFormalParameterPart(DartParser.FormalParameterPartContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#functionBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionBody(DartParser.FunctionBodyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#block}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlock(DartParser.BlockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#formalParameterList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFormalParameterList(DartParser.FormalParameterListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#normalFormalParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNormalFormalParameters(DartParser.NormalFormalParametersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#optionalOrNamedFormalParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOptionalOrNamedFormalParameters(DartParser.OptionalOrNamedFormalParametersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#optionalPositionalFormalParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOptionalPositionalFormalParameters(DartParser.OptionalPositionalFormalParametersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#namedFormalParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNamedFormalParameters(DartParser.NamedFormalParametersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#normalFormalParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNormalFormalParameter(DartParser.NormalFormalParameterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#functionFormalParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionFormalParameter(DartParser.FunctionFormalParameterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#simpleFormalParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleFormalParameter(DartParser.SimpleFormalParameterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#fieldFormalParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldFormalParameter(DartParser.FieldFormalParameterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#defaultFormalParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDefaultFormalParameter(DartParser.DefaultFormalParameterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#defaultNamedParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDefaultNamedParameter(DartParser.DefaultNamedParameterContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link DartParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpression(DartParser.ExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#identifierNotFUNCTION}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentifierNotFUNCTION(DartParser.IdentifierNotFUNCTIONContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#identifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentifier(DartParser.IdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#topLevelDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTopLevelDefinition(DartParser.TopLevelDefinitionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DartParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitType(DartParser.TypeContext ctx);
 }
