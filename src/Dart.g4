@@ -11,9 +11,9 @@ declaredIdentifier:
 	;
 
 finalConstVarOrType:
-		/*LATE?*/ FINAL type?
+		LATE? FINAL type?
 	|	CONST type?
-	|	/*LATE?*/ varOrType
+	|	LATE? varOrType
 	;
 
 // Usado em Declaration (Classes)
@@ -42,11 +42,11 @@ initializedIdentifierList:
 // Chapter 9 - Functions
 
 functionSignature:
-	/*metadata*/ type? identifierNotFUNCTION formalParameterPart
+	metadata type? identifierNotFUNCTION formalParameterPart
 	;
 
 formalParameterPart:
-	/*typeParameters?*/ formalParameterList
+	typeParameters? formalParameterList
 	;
 
 // OBS: não coloquei functionBodyPrefix (regra no SDK) pois não era usada em nenhum lugar
@@ -91,22 +91,22 @@ namedFormalParameters:
 
 // "Simplifiquei" a regra do manual.
 normalFormalParameter:
-		/*metadata*/ functionFormalParameter
-	|	/*metadata*/ fieldFormalParameter
-	|	/*metadata*/ simpleFormalParameter
+		metadata functionFormalParameter
+	|	metadata fieldFormalParameter
+	|	metadata simpleFormalParameter
 	;
 
 functionFormalParameter:
-		/*COVARIANT?*/ type? identifierNotFUNCTION formalParameterPart '?'?
+		COVARIANT? type? identifierNotFUNCTION formalParameterPart '?'?
 	;
 
 simpleFormalParameter:
 		declaredIdentifier
-	|	/*COVARIANT?*/ identifier
+	|	COVARIANT? identifier
 	;
 
-fieldFormalParameter
-	:	finalConstVarOrType? THIS '.' identifier (formalParameterPart '?'?)?
+fieldFormalParameter:
+		finalConstVarOrType? THIS '.' identifier (formalParameterPart '?'?)?
 	;
 
 defaultFormalParameter:
@@ -114,7 +114,7 @@ defaultFormalParameter:
 	;
 
 defaultNamedParameter:
-		/*REQUIRED?*/ normalFormalParameter ((':' | '=') expression)?
+		REQUIRED? normalFormalParameter ((':' | '=') expression)?
 	;
 
 // Usado com classe e mixin
@@ -122,16 +122,48 @@ defaultNamedParameter:
 	   :	typeIdentifier typeParameters?
 	   ;*/
 
+// Chapter 13 - Enums
+
+enumType:
+		ENUM typeIdentifier LBRACE enumEntry (',' enumEntry)* (',')? RBRACE
+	;
+
+// Chapter 14 - Generics
+
+typeParameter:
+		metadata typeIdentifier (EXTENDS typeNotVoid)?
+	;
+
+typeParameters:
+		'<' typeParameter (',' typeParameter)* '>'
+	;
+
+enumEntry:
+		metadata identifier
+	;
+
+// Chapter 15 - Metadata
+
+metadata:
+		('@' metadatum)*
+	;
+
+metadatum:
+		constructorDesignation arguments
+	|	identifier
+	|	qualifiedName
+	;
+
 // Chapter 16 - Expressions
 
-//TODO: Completar essa seção dps.
+//TODO: Descomentar trechos dessa seção.
 //TODO: Otavio se liga nisso aqui.
 expression:
 		functionExpression
 	|	throwExpression
 	|	assignableExpression assignmentOperator expression
 	|	conditionalExpression // Essa parte tbm identifica o lado direito de uma atribuição, chamada de funções...
-	//|	cascade
+	|	cascade
 	;
 
 expressionWithoutCascade
@@ -146,10 +178,10 @@ expressionList
 	;
 
 primary:
-		// thisExpression
+		thisExpression
 	|	SUPER unconditionalAssignableSelector
-	// |	constObjectExpression
-	// |	newExpression
+	|	constObjectExpression
+	|	newExpression
 	// |	constructorInvocation
 	|	functionPrimary
 	|	'(' expression ')'
@@ -204,43 +236,43 @@ stringLiteral:
 // Chapter 16.9 - Lists
 // TODO: Descomentar
 /*listLiteral
-    : CONST? typeArguments? '[' elements? ']'
-    ;*/
+	: CONST? typeArguments? '[' elements? ']'
+	;*/
 
 // Chapter 16.10 - Maps
 // Maps & Sets são tratados da mesma maneira no SDK :|
 // TODO: Descomentar
 /*setOrMapLiteral
-    : CONST? typeArguments? LBRACE elements? RBRACE
-    ;
+	: CONST? typeArguments? LBRACE elements? RBRACE
+	;
 
 element
-    : expressionElement
-    | mapElement
-    | spreadElement
-    | ifElement
-    | forElement
-    ;
+	: expressionElement
+	| mapElement
+	| spreadElement
+	| ifElement
+	| forElement
+	;
 
 expressionElement
-    : expression
-    ;
+	: expression
+	;
 
 mapElement
-    : expression ':' expression
-    ;
+	: expression ':' expression
+	;
 
 spreadElement
-    : ('...' | '...?') expression
-    ;
+	: ('...' | '...?') expression
+	;
 
 ifElement
-    : IF '(' expression ')' element (ELSE element)?
-    ;
+	: IF '(' expression ')' element (ELSE element)?
+	;
 
 forElement
-    : AWAIT? FOR '(' forLoopParts ')' element
-    ;*/
+	: AWAIT? FOR '(' forLoopParts ')' element
+	;*/
 
 // Chapter 16.12 - Throw
 
@@ -274,9 +306,9 @@ functionExpressionWithoutCascade:
 
 functionExpressionWithoutCascadeBody:
 		'=>' { startNonAsyncFunction(); }
-		 expressionWithoutCascade { endFunction(); }
+		expressionWithoutCascade { endFunction(); }
 	|	ASYNC '=>' { startAsyncFunction(); }
-		 expressionWithoutCascade { endFunction(); }
+		expressionWithoutCascade { endFunction(); }
 	;
 
 
@@ -293,31 +325,72 @@ functionPrimaryBody:
 
 // functionPrimaryBodyPrefix não era usada por nenhuma regra
 // functionPrimaryBodyPrefix
-//     : (ASYNC | ASYNC '*' | SYNC '*')? LBRACE
-//     ;
+//	 : (ASYNC | ASYNC '*' | SYNC '*')? LBRACE
+//	 ;
+
+// Chapter 16.14 - This
+
+thisExpression:
+		THIS
+	;
+
+// Chapter 16.15.1 - New
+
+newExpression:
+		NEW constructorDesignation arguments
+	;
+
+// Chapter 16.15.2 - Const
+
+constObjectExpression:
+		CONST constructorDesignation arguments
+	;
 
 // Chapter 16.17.1 - Actual Arguments Lists
 
 arguments
-    :    '(' (argumentList ','?)? ')'
-    ;
+	:	'(' (argumentList ','?)? ')'
+	;
 
 argumentList
-    :    namedArgument (',' namedArgument)*
-    |    expressionList (',' namedArgument)*
-    ;
+	:	namedArgument (',' namedArgument)*
+	|	expressionList (',' namedArgument)*
+	;
 
-// TODO: Descomentar
 namedArgument
-    :    label expression
-    ;
+	:	label expression
+	;
 
+// Chapter 16.21.2 - Cascaded Invocations
+
+cascade
+	:	 cascade '..' cascadeSection
+	|	 conditionalExpression ('?..' | '..') cascadeSection
+	;
+
+cascadeSection
+	:	cascadeSelector cascadeSectionTail
+	;
+
+cascadeSelector
+	:	'[' expression ']'
+	|	identifier
+	;
+
+cascadeSectionTail
+	:	cascadeAssignment
+	|	selector* (assignableSelector cascadeAssignment)?
+	;
+
+cascadeAssignment
+	:	assignmentOperator expressionWithoutCascade
+	;
 
 // Chapter 16.23 - Assignment
 
 assignmentOperator:
 		'='
-	// |	compoundAssignmentOperator
+	|	compoundAssignmentOperator
 	;
 
 compoundAssignmentOperator:
@@ -334,7 +407,7 @@ compoundAssignmentOperator:
 	|	'^='
 	|	'|='
 	|	'??='
-    ;
+	;
 
 // Chapter 16.24 - Conditional
 
@@ -376,7 +449,7 @@ equalityOperator:
 // TODO: Descomentar
 relationalExpression:
 		bitwiseOrExpression
-		 //(typeTest | typeCast | relationalOperator bitwiseOrExpression)?
+		(typeTest | typeCast | relationalOperator bitwiseOrExpression)?
 	|	SUPER relationalOperator bitwiseOrExpression
 	;
 
@@ -455,7 +528,7 @@ multiplicativeOperator:
 // TODO: Descomentar
 unaryExpression:
 		prefixOperator unaryExpression
-	//|	awaitExpression
+	|	awaitExpression
 	|	postfixExpression
 	|	(minusOperator | tildeOperator) SUPER
 	|	incrementOperator assignableExpression
@@ -479,32 +552,38 @@ tildeOperator:
 		'~'
 	;
 
+// Chapter 16.34 - Await Expressions
+
+awaitExpression:
+		AWAIT unaryExpression
+	;
+
 // Chapter 16.35 - Postfix Expressions
 
 // Chamada de função passa especificamente por aqui
 postfixExpression
-    :    assignableExpression postfixOperator
-    |    primary selector*
-    ;
+	:	assignableExpression postfixOperator
+	|	primary selector*
+	;
 
 postfixOperator
-    :    incrementOperator
-    ;
+	:	incrementOperator
+	;
 
 selector
-    :    '!'
-    |    assignableSelector
-    |    argumentPart
-    ;
+	:	'!'
+	|	assignableSelector
+	|	argumentPart
+	;
 
 argumentPart
-    :    typeArguments? arguments
-    ;
+	:	typeArguments? arguments
+	;
 
 incrementOperator
-    :    '++'
-    |    '--'
-    ;
+	:	'++'
+	|	'--'
+	;
 
 
 // Chapter 16.36 - Assignable Expressions
@@ -532,9 +611,9 @@ assignableSelector:
 
 // TODO: O que é uri?
 // Not used in the specification (needed here for <uri>).
-stringLiteralWithoutInterpolation
-    :    singleLineStringWithoutInterpolation+
-    ;
+stringLiteralWithoutInterpolation:
+		singleLineStringWithoutInterpolation+
+	;
 
 // Chapter 16.37 - Identifier Reference
 
@@ -581,16 +660,36 @@ qualifiedName:
 	;
 
 typeIdentifier
-    :    IDENTIFIER
-    |    DYNAMIC // Built-in identifier that can be used as a type.
-    |    ASYNC // Not a built-in identifier.
-    |    HIDE // Not a built-in identifier.
-    |    OF // Not a built-in identifier.
-    |    ON // Not a built-in identifier.
-    |    SHOW // Not a built-in identifier.
-    |    SYNC // Not a built-in identifier.
-    |    /*{ asyncEtcPredicate(getCurrentToken().getType()) }?*/ (AWAIT|YIELD)
-    ;
+	:	IDENTIFIER
+	|	DYNAMIC // Built-in identifier that can be used as a type.
+	|	ASYNC // Not a built-in identifier.
+	|	HIDE // Not a built-in identifier.
+	|	OF // Not a built-in identifier.
+	|	ON // Not a built-in identifier.
+	|	SHOW // Not a built-in identifier.
+	|	SYNC // Not a built-in identifier.
+	|	/*{ asyncEtcPredicate(getCurrentToken().getType()) }?*/ (AWAIT|YIELD)
+	;
+
+// Chapter 16.38 - Type Test
+
+typeTest:
+		isOperator typeNotVoid
+	;
+
+isOperator:
+		IS '!'?
+	;
+
+// Chapter 16.39 - Type Cast
+
+typeCast:
+		asOperator typeNotVoid
+	;
+
+asOperator:
+		AS
+	;
 
 // Chapter 17 - Statements
 
@@ -600,10 +699,8 @@ statements:
 		statement*
 	;
 
-// Até o momento adicionar label dá pau na gramatica
-// TODO: Descobrir o motivo do erro.
 statement:
-		/*label*/ nonLabelledStatement
+		label* nonLabelledStatement
 	;
 
 nonLabelledStatement:
@@ -635,7 +732,7 @@ expressionStatement:
 // Chapter 17.3 - Local Variable Declaration
 
 localVariableDeclaration
-	:	/* metadata */ initializedVariableDeclaration ';'
+	:	metadata initializedVariableDeclaration ';'
 	;
 
 // Chapter 17.5 - If
@@ -661,20 +758,20 @@ label:
 topLevelDefinition:
 		 /*classDeclaration
 	|	mixinDeclaration
-	|	extensionDeclaration
+	|	extensionDeclaration*/
 	|	enumType
 	|	typeAlias
-	|	EXTERNAL functionSignature SEMICOLON
-	|	EXTERNAL getterSignature SEMICOLON
-	|	EXTERNAL setterSignature SEMICOLON
-	|	EXTERNAL finalVarOrType identifierList SEMICOLON
+	/*|	EXTERNAL functionSignature ';'
+	|	EXTERNAL getterSignature ';'
+	|	EXTERNAL setterSignature ';'
+	|	EXTERNAL finalVarOrType identifierList ';'
 	|	getterSignature functionBody
 	|	setterSignature functionBody*/
 	functionSignature functionBody
-	/*|	(FINAL | CONST) type? staticFinalDeclarationList SEMICOLON
-	|	LATE FINAL type? initializedIdentifierList SEMICOLON
-	|	LATE? varOrType identifier (ASSIGN expression)?
-		 (COMMA initializedIdentifier)* SEMICOLON*/
+	//|	(FINAL | CONST) type? staticFinalDeclarationList ';'
+	|	LATE FINAL type? initializedIdentifierList ';' // TODO: Variavel global deu ruim.
+	|	LATE? varOrType identifier ('=' expression)?
+		 (',' initializedIdentifier)* ';'
 	;
 
 // Chapter 19.1 - Static Types
@@ -716,8 +813,8 @@ typeNotVoidNotFunctionList:
 		typeNotVoidNotFunction (',' typeNotVoidNotFunction)*
 	;
 
-// TODO: Descomentar
-/*typeAlias:
+//TODO: Testar essa regra.
+typeAlias:
 		TYPEDEF typeIdentifier typeParameters? '=' functionType ';'
 	|	TYPEDEF functionTypeAlias
 	;
@@ -729,11 +826,10 @@ functionTypeAlias:
 functionPrefix:
 		type identifier
 	|	identifier
-	;*/
+	;
 
-// TODO: typeParameters do cap 14 - Generics
 functionTypeTail:
-		FUNCTION /*typeParameters?*/ parameterTypeList
+		FUNCTION typeParameters? parameterTypeList
 	;
 
 functionTypeTails:
@@ -783,12 +879,11 @@ typedIdentifier:
 		type identifier
 	;
 
-// TODO: Descomentar
-/*constructorDesignation:
+constructorDesignation:
 		typeIdentifier
 	|	qualifiedName
 	|	typeName typeArguments ('.' identifier)?
-	;*/
+	;
 
 // TODO: O que é uri?
 // Not used in the specification (needed here for <uri>).
