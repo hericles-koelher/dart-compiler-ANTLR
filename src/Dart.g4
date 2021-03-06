@@ -1,6 +1,6 @@
 grammar Dart;
 
-start: topLevelDefinition EOF;
+start: topLevelDefinition* EOF;
 
 // ------------------------------- Grammar Rules -------------------------------
 
@@ -25,6 +25,10 @@ finalConstVarOrType:
 varOrType:
 		VAR
 	|	type
+	;
+
+initializedVariableDeclaration:
+	declaredIdentifier ('=' expression)? (',' initializedIdentifier)*
 	;
 
 initializedIdentifier:
@@ -62,8 +66,8 @@ block:
 formalParameterList:
 		'(' ')'
 	|	'(' normalFormalParameters ','? ')'
-	/*|	'(' normalFormalParameters ',' optionalOrNamedFormalParameters ')'
-	|	'(' optionalOrNamedFormalParameters ')'*/
+	|	'(' normalFormalParameters ',' optionalOrNamedFormalParameters ')'
+	|	'(' optionalOrNamedFormalParameters ')'
 	;
 
 normalFormalParameters:
@@ -121,21 +125,21 @@ defaultNamedParameter:
 // Chapter 16 - Expressions
 
 //TODO: Completar essa seção dps.
+//TODO: Otavio se liga nisso aqui.
 expression:
-		/*functionExpression
+		functionExpression
 	|	throwExpression
-	|*/	assignableExpression assignmentOperator expression
-	| (numericLiteral | stringLiteral | identifier) // TODO: desfazer esta gambiarra de teste, visto q o certo seria fazer conditionalExpression
-	/*|	conditionalExpression // Essa parte tbm identifica o lado direito de uma atribuição
-	|	cascade*/
+	|	assignableExpression assignmentOperator expression
+	|	conditionalExpression // Essa parte tbm identifica o lado direito de uma atribuição, chamada de funções...
+	//|	cascade
 	;
 
-/*expressionWithoutCascade
+expressionWithoutCascade
 	:	functionExpressionWithoutCascade
 	|	throwExpressionWithoutCascade
 	|	assignableExpression assignmentOperator expressionWithoutCascade
 	|	conditionalExpression
-	;*/
+	;
 
 expressionList
 	:	expression (',' expression)*
@@ -147,7 +151,7 @@ primary:
 	// |	constObjectExpression
 	// |	newExpression
 	// |	constructorInvocation
-	// |	functionPrimary
+	|	functionPrimary
 	|	'(' expression ')'
 	|	literal
 	|	identifier
@@ -204,6 +208,7 @@ stringLiteral:
     ;*/
 
 // Chapter 16.10 - Maps
+// Maps & Sets são tratados da mesma maneira no SDK :|
 // TODO: Descomentar
 /*setOrMapLiteral
     : CONST? typeArguments? LBRACE elements? RBRACE
@@ -237,6 +242,77 @@ forElement
     : AWAIT? FOR '(' forLoopParts ')' element
     ;*/
 
+// Chapter 16.12 - Throw
+
+throwExpression:
+		THROW expression
+	;
+
+throwExpressionWithoutCascade:
+		THROW expressionWithoutCascade
+	;
+
+// Chapter 16.13 - Function Expressions
+
+functionExpression:
+		formalParameterPart functionExpressionBody
+	;
+
+functionExpressionBody:
+		'=>' { startNonAsyncFunction(); } expression { endFunction(); }
+	|	ASYNC '=>' { startAsyncFunction(); } expression { endFunction(); }
+	;
+
+// functionExpressionBodyPrefix não era usada por nenhuma regra
+// functionExpressionBodyPrefix:
+// 	ASYNC? '=>'
+//	 ;
+
+functionExpressionWithoutCascade:
+		formalParameterPart functionExpressionWithoutCascadeBody
+	;
+
+functionExpressionWithoutCascadeBody:
+		'=>' { startNonAsyncFunction(); }
+		 expressionWithoutCascade { endFunction(); }
+	|	ASYNC '=>' { startAsyncFunction(); }
+		 expressionWithoutCascade { endFunction(); }
+	;
+
+
+// 	TODO: Qual seria um exemplo de functionPrimary?
+functionPrimary:
+		formalParameterPart functionPrimaryBody
+	;
+
+functionPrimaryBody:
+		{ startNonAsyncFunction(); } block { endFunction(); }
+	|	(ASYNC | ASYNC '*' | SYNC '*')
+		 { startAsyncFunction(); } block { endFunction(); }
+	;
+
+// functionPrimaryBodyPrefix não era usada por nenhuma regra
+// functionPrimaryBodyPrefix
+//     : (ASYNC | ASYNC '*' | SYNC '*')? LBRACE
+//     ;
+
+// Chapter 16.17.1 - Actual Arguments Lists
+
+arguments
+    :    '(' (argumentList ','?)? ')'
+    ;
+
+argumentList
+    :    namedArgument (',' namedArgument)*
+    |    expressionList (',' namedArgument)*
+    ;
+
+// TODO: Descomentar
+namedArgument
+    :    label expression
+    ;
+
+
 // Chapter 16.23 - Assignment
 
 assignmentOperator:
@@ -260,8 +336,152 @@ compoundAssignmentOperator:
 	|	'??='
     ;
 
+// Chapter 16.24 - Conditional
+
+conditionalExpression:
+		ifNullExpression
+		('?' expressionWithoutCascade ':' expressionWithoutCascade)?
+	;
+
+// Chapter 16.25 - If-null Expressions
+
+ifNullExpression:
+		logicalOrExpression ('??' logicalOrExpression)*
+	;
+
+// Chapter 16.26 - Logical Boolean Expressions
+
+logicalOrExpression:
+		logicalAndExpression ('||' logicalAndExpression)*
+	;
+
+logicalAndExpression:
+		equalityExpression ('&&' equalityExpression)*
+	;
+
+// Chapter 16.27 - Equality
+
+equalityExpression:
+		relationalExpression (equalityOperator relationalExpression)?
+	|	SUPER equalityOperator relationalExpression
+	;
+
+equalityOperator:
+		'=='
+	|	'!='
+	;
+
+// Chapter 16.28 - Relational Expressions
+
+// TODO: Descomentar
+relationalExpression:
+		bitwiseOrExpression
+		 //(typeTest | typeCast | relationalOperator bitwiseOrExpression)?
+	|	SUPER relationalOperator bitwiseOrExpression
+	;
+
+// TODO: Pq foi definido assim?
+relationalOperator:
+		'>' '='
+	|	'>'
+	|	'<='
+	|	'<'
+	;
+
+// Chapter 16.29 - Bitwise Expressions
+
+bitwiseOrExpression:
+		bitwiseXorExpression ('|' bitwiseXorExpression)*
+	|	SUPER ('|' bitwiseXorExpression)+
+	;
+
+bitwiseXorExpression:
+		bitwiseAndExpression ('^' bitwiseAndExpression)*
+	|	SUPER ('^' bitwiseAndExpression)+
+	;
+
+bitwiseAndExpression:
+		shiftExpression ('&' shiftExpression)*
+	|	SUPER ('&' shiftExpression)+
+	;
+
+bitwiseOperator:
+		'&'
+	|	'^'
+	|	'|'
+	;
+
+// Chapter 16.30 - Shift
+
+shiftExpression:
+		additiveExpression (shiftOperator additiveExpression)*
+	|	SUPER (shiftOperator additiveExpression)+
+	;
+
+shiftOperator:
+		'<<'
+	|	'>' '>' '>'
+	|	'>' '>'
+	;
+
+// Chapter 16.31 - Additive Expressions
+
+additiveExpression:
+		multiplicativeExpression (additiveOperator multiplicativeExpression)*
+	|	SUPER (additiveOperator multiplicativeExpression)+
+	;
+
+additiveOperator:
+		'+'
+	|	'-'
+	;
+
+// Chapter 16.32 - Multiplicative Expressions
+
+multiplicativeExpression:
+		unaryExpression (multiplicativeOperator unaryExpression)*
+	|	SUPER (multiplicativeOperator unaryExpression)+
+	;
+
+multiplicativeOperator:
+		'*'
+	|	'/'
+	|	'%'
+	|	'~/'
+	;
+
+// Chapter 16.33 - Unary Expressions
+
+// TODO: Descomentar
+unaryExpression:
+		prefixOperator unaryExpression
+	//|	awaitExpression
+	|	postfixExpression
+	|	(minusOperator | tildeOperator) SUPER
+	|	incrementOperator assignableExpression
+	;
+
+prefixOperator:
+		minusOperator
+	|	negationOperator
+	|	tildeOperator
+	;
+
+minusOperator:
+		'-'
+	;
+
+negationOperator:
+		'!'
+	;
+
+tildeOperator:
+		'~'
+	;
+
 // Chapter 16.35 - Postfix Expressions
 
+// Chamada de função passa especificamente por aqui
 postfixExpression
     :    assignableExpression postfixOperator
     |    primary selector*
@@ -274,12 +494,12 @@ postfixOperator
 selector
     :    '!'
     |    assignableSelector
-    // |    argumentPart
+    |    argumentPart
     ;
 
-/*argumentPart
+argumentPart
     :    typeArguments? arguments
-    ;*/
+    ;
 
 incrementOperator
     :    '++'
@@ -380,8 +600,10 @@ statements:
 		statement*
 	;
 
+// Até o momento adicionar label dá pau na gramatica
+// TODO: Descobrir o motivo do erro.
 statement:
-		/* label */ nonLabelledStatement
+		/*label*/ nonLabelledStatement
 	;
 
 nonLabelledStatement:
@@ -390,30 +612,48 @@ nonLabelledStatement:
 	/*|	forStatement
 	|	whileStatement
 	|	doStatement
-	|	switchStatement
+	|	switchStatement*/
 	|	ifStatement
-	|	rethrowStatement
+	/*|	rethrowStatement
 	|	tryStatement
 	|	breakStatement
-	|	continueStatement
+	|	continueStatement*/
 	|	returnStatement
-	|	localFunctionDeclaration
+	/*|	localFunctionDeclaration
 	|	assertStatement
 	|	yieldStatement
 	|	yieldEachStatement*/
 	|	expressionStatement
 	;
 
+// Chapter 17.2 - Expression Statements
+
 expressionStatement:
 		expression? ';'
 	;
+
+// Chapter 17.3 - Local Variable Declaration
 
 localVariableDeclaration
 	:	/* metadata */ initializedVariableDeclaration ';'
 	;
 
-initializedVariableDeclaration:
-	declaredIdentifier ('=' expression)? (',' initializedIdentifier)*
+// Chapter 17.5 - If
+
+ifStatement:
+		IF '(' expression ')' statement (ELSE statement)?
+	;
+
+// Chapter 17.12 - Return
+
+returnStatement:
+		RETURN expression? ';'
+	;
+
+// Chapter 17.13 - Labels
+
+label:
+		identifier ':'
 	;
 
 // Chapter 18 - Libraries
