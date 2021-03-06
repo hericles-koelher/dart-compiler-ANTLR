@@ -157,7 +157,6 @@ metadatum:
 // Chapter 16 - Expressions
 
 //TODO: Descomentar trechos dessa seção.
-//TODO: Otavio se liga nisso aqui.
 expression:
 		functionExpression
 	|	throwExpression
@@ -693,8 +692,6 @@ asOperator:
 
 // Chapter 17 - Statements
 
-//TODO: Completar essa seção dps.
-
 statements:
 		statement*
 	;
@@ -703,23 +700,24 @@ statement:
 		label* nonLabelledStatement
 	;
 
+//TODO: FALTA OTAVIO AJEITAR
 nonLabelledStatement:
 		block
 	|	localVariableDeclaration
-	/*|	forStatement
+	|	forStatement
 	|	whileStatement
 	|	doStatement
-	|	switchStatement*/
+	|	switchStatement
 	|	ifStatement
-	/*|	rethrowStatement
+	|	rethrowStatement
 	|	tryStatement
 	|	breakStatement
-	|	continueStatement*/
+	|	continueStatement
 	|	returnStatement
-	/*|	localFunctionDeclaration
+	|	localFunctionDeclaration
 	|	assertStatement
 	|	yieldStatement
-	|	yieldEachStatement*/
+	|	yieldEachStatement
 	|	expressionStatement
 	;
 
@@ -731,15 +729,93 @@ expressionStatement:
 
 // Chapter 17.3 - Local Variable Declaration
 
+//TODO: RETIRAR METADATA?
 localVariableDeclaration
 	:	metadata initializedVariableDeclaration ';'
 	;
+
+// Chapter 17.4 - Local Function Declaration
+
+//TODO: RETIRAR METADATA?
+localFunctionDeclaration
+    :    metadata functionSignature functionBody
+    ;
 
 // Chapter 17.5 - If
 
 ifStatement:
 		IF '(' expression ')' statement (ELSE statement)?
 	;
+
+// Chapter 17.6 - For
+
+forStatement
+    :    AWAIT? FOR '(' forLoopParts ')' statement
+    ;
+
+forLoopParts
+    :    metadata declaredIdentifier IN expression
+    |    metadata identifier IN expression
+    |    forInitializerStatement expression? ';' expressionList?
+    ;
+
+// The localVariableDeclaration cannot be CONST, but that can
+// be enforced in a later phase, and the grammar allows it.
+forInitializerStatement
+    :    localVariableDeclaration
+    |    expression? ';'
+    ;
+
+// Chapter 17.7 - While
+
+whileStatement
+    :    WHILE '(' expression ')' statement
+    ;
+
+// Chapter 17.8 - Do
+
+doStatement
+    :    DO statement WHILE '(' expression ')' ';'
+    ;
+
+// Chapter 17.9 - Switch
+
+switchStatement
+    :    SWITCH '(' expression ')' LBRACE switchCase* defaultCase? RBRACE
+    ;
+
+switchCase
+    :    label* CASE expression ':' statements
+    ;
+
+defaultCase
+    :    label* DEFAULT ':' statements
+    ;
+
+// Chapter 17.10 - Rethrow
+
+rethrowStatement
+    :    RETHROW ';'
+    ;
+
+// Chapter 17.11 - Try
+
+tryStatement
+    :    TRY block (onPart+ finallyPart? | finallyPart)
+    ;
+
+onPart
+    :    catchPart block
+    |    ON typeNotVoid catchPart? block
+    ;
+
+catchPart
+    :    CATCH '(' identifier (',' identifier)? ')'
+    ;
+
+finallyPart
+    :    FINALLY block
+    ;
 
 // Chapter 17.12 - Return
 
@@ -752,6 +828,38 @@ returnStatement:
 label:
 		identifier ':'
 	;
+
+// 17.14 - Break
+
+breakStatement
+  : 'break' identifier? ';'
+  ;
+
+// 17.13 - Continue
+
+continueStatement
+  : 'continue' identifier? ';'
+  ;
+
+// 17.16 - Yield and Yield-Each
+
+yieldStatement
+  : 'yield' expression ';'
+  ;
+
+yieldEachStatement
+  : 'yield*' expression ';'
+  ;
+
+// 17.17 Assert
+
+assertStatement
+  : assertion ';'
+  ;
+
+assertion
+  : 'assert' '(' expression (',' expression )? ','? ')'
+  ;
 
 // Chapter 18 - Libraries
 
