@@ -17,10 +17,10 @@ finalConstVarOrType:
 	;
 
 // Usado em Declaration (Classes)
-/*finalVarOrType:
+finalVarOrType:
 		FINAL type?
 	|	varOrType
-	;*/
+	;
 
 varOrType:
 		VAR
@@ -48,8 +48,6 @@ functionSignature:
 formalParameterPart:
 	typeParameters? formalParameterList
 	;
-
-// OBS: não coloquei functionBodyPrefix (regra no SDK) pois não era usada em nenhum lugar
 
 functionBody:
 		'=>' expression
@@ -118,9 +116,179 @@ defaultNamedParameter:
 	;
 
 // Usado com classe e mixin
-/* typeWithParameters
+typeWithParameters
 	   :	typeIdentifier typeParameters?
-	   ;*/
+	   ;
+
+// Chapter 10 - Classes
+// Modifiquei a regra (em relação ao SDK) para que ficasse como a do manual.
+classDeclaration:
+		metadata ABSTRACT? CLASS typeWithParameters superclass? mixins? interfaces?
+		LBRACE (metadata classMemberDefinition)* RBRACE
+	|	metadata ABSTRACT? CLASS mixinApplicationClass
+	;
+
+classMemberDefinition:
+		methodSignature functionBody
+	|	declaration ';'
+	;
+
+methodSignature:
+		constructorSignature initializers
+	|	factoryConstructorSignature
+	|	STATIC? functionSignature
+	|	STATIC? getterSignature
+	|	STATIC? setterSignature
+	|	operatorSignature
+	|	constructorSignature
+	;
+
+declaration:
+		EXTERNAL factoryConstructorSignature
+	|	EXTERNAL constantConstructorSignature
+	|	EXTERNAL constructorSignature
+	|	(EXTERNAL STATIC?)? getterSignature
+	|	(EXTERNAL STATIC?)? setterSignature
+	|	(EXTERNAL STATIC?)? functionSignature
+	|	EXTERNAL (STATIC? finalVarOrType | COVARIANT varOrType) identifierList
+	|	ABSTRACT (finalVarOrType | COVARIANT varOrType) identifierList
+	|	EXTERNAL? operatorSignature
+	|	STATIC (FINAL | CONST) type? staticFinalDeclarationList
+	|	STATIC LATE FINAL type? initializedIdentifierList
+	|	(STATIC | COVARIANT) LATE? varOrType initializedIdentifierList
+	|	LATE? (FINAL type? | varOrType) initializedIdentifierList
+	|	redirectingFactoryConstructorSignature
+	|	constantConstructorSignature (redirection | initializers)?
+	|	constructorSignature (redirection | initializers)?
+	;
+
+staticFinalDeclarationList
+    :    staticFinalDeclaration (',' staticFinalDeclaration)*
+    ;
+
+staticFinalDeclaration
+    :    identifier '=' expression
+    ;
+
+// Chapter 10.1.1 - Operators
+
+operatorSignature:
+		type? OPERATOR operator formalParameterList
+	;
+
+operator:
+		'~'
+	|	binaryOperator
+	|	'[' ']'
+	|	'[' ']' '='
+	;
+
+binaryOperator:
+		multiplicativeOperator
+	|	additiveOperator
+	|	shiftOperator
+	|	relationalOperator
+	|	'=='
+	|	bitwiseOperator
+	;
+
+// Chapter 10.2 - Getters
+
+getterSignature
+	:	type? GET identifier
+	;
+
+// Chapter 10.3 - Setters
+
+setterSignature:
+		type? SET identifier formalParameterList
+	;
+
+// Chapter 10.6.1 - Generative Constructors
+
+constructorSignature:
+		constructorName formalParameterList
+	;
+
+constructorName:
+		typeIdentifier ('.' identifier)?
+	;
+
+// TODO: Syntactic sugar?
+redirection:
+		':' THIS ('.' identifier)? arguments
+	;
+
+initializers:
+		':' initializerListEntry (',' initializerListEntry)*
+	;
+
+initializerListEntry:
+		SUPER arguments
+	|	SUPER '.' identifier arguments
+	|	fieldInitializer
+	|	assertion
+	;
+
+fieldInitializer:
+		(THIS '.')? identifier '=' initializerExpression
+	;
+
+initializerExpression:
+		conditionalExpression
+	|	cascade
+	;
+
+// Chapter 10.6.2 - Factories
+
+factoryConstructorSignature:
+		CONST? FACTORY constructorName formalParameterList
+	;
+
+redirectingFactoryConstructorSignature:
+		CONST? FACTORY constructorName formalParameterList '='
+		constructorDesignation
+	;
+
+// Chapter 10.6.3 - Constant Constructors
+
+constantConstructorSignature:
+		CONST constructorName formalParameterList
+	;
+
+// Chapter 10.8 - Superclasses
+
+superclass:
+		EXTENDS typeNotVoidNotFunction
+	;
+
+mixins:
+		WITH typeNotVoidNotFunctionList
+	;
+
+// Chapter 10.9 - Superinterfaces
+
+interfaces:
+		IMPLEMENTS typeNotVoidNotFunctionList
+	;
+
+// Chapter 12.1 - Mixin Classes
+
+mixinApplicationClass:
+		typeWithParameters '=' mixinApplication ';'
+	;
+
+mixinApplication:
+		typeNotVoidNotFunction mixins interfaces?
+	;
+
+// Chapter 12.2 - Mixin Declaration
+
+mixinDeclaration
+    :    MIXIN typeIdentifier typeParameters?
+         (ON typeNotVoidNotFunctionList)? interfaces?
+         LBRACE (metadata classMemberDefinition)* RBRACE
+    ;
 
 // Chapter 13 - Enums
 
@@ -181,7 +349,7 @@ primary:
 	|	SUPER unconditionalAssignableSelector
 	|	constObjectExpression
 	|	newExpression
-	// |	constructorInvocation
+	|	constructorInvocation
 	|	functionPrimary
 	|	'(' expression ')'
 	|	literal
@@ -195,9 +363,9 @@ literal
 	|	booleanLiteral
 	|	numericLiteral
 	|	stringLiteral
-	/*|	symbolLiteral
+	|	symbolLiteral
 	|	setOrMapLiteral
-	|	listLiteral*/
+	|	listLiteral
 	;
 
 // Chapter 16.4 - Null
@@ -227,51 +395,55 @@ stringLiteral:
 	;
 
 // Chapter 16.8 - Symbols
-// TODO: Descomentar
-/*symbolLiteral
+
+symbolLiteral
 	:	'#' (operator | (identifier ('.' identifier)*))
-	;*/
+	;
 
 // Chapter 16.9 - Lists
-// TODO: Descomentar
-/*listLiteral
-	: CONST? typeArguments? '[' elements? ']'
-	;*/
+
+listLiteral:
+		CONST? typeArguments? '[' elements? ']'
+	;
 
 // Chapter 16.10 - Maps
 // Maps & Sets são tratados da mesma maneira no SDK :|
-// TODO: Descomentar
-/*setOrMapLiteral
-	: CONST? typeArguments? LBRACE elements? RBRACE
+
+setOrMapLiteral:
+		CONST? typeArguments? LBRACE elements? RBRACE
 	;
 
-element
-	: expressionElement
-	| mapElement
-	| spreadElement
-	| ifElement
-	| forElement
+elements:
+ 		element (',' element)* ','?
 	;
 
-expressionElement
-	: expression
+element:
+		expressionElement
+	| 	mapElement
+	| 	spreadElement
+	| 	ifElement
+	|	forElement
 	;
 
-mapElement
-	: expression ':' expression
+expressionElement:
+		expression
 	;
 
-spreadElement
-	: ('...' | '...?') expression
+mapElement:
+ 		expression ':' expression
 	;
 
-ifElement
-	: IF '(' expression ')' element (ELSE element)?
+spreadElement:
+		('...' | '...?') expression
+	;
+
+ifElement:
+		IF '(' expression ')' element (ELSE element)?
 	;
 
 forElement
 	: AWAIT? FOR '(' forLoopParts ')' element
-	;*/
+	;
 
 // Chapter 16.12 - Throw
 
@@ -290,24 +462,19 @@ functionExpression:
 	;
 
 functionExpressionBody:
-		'=>' { startNonAsyncFunction(); } expression { endFunction(); }
-	|	ASYNC '=>' { startAsyncFunction(); } expression { endFunction(); }
+		'=>' /*{ startNonAsyncFunction(); }*/ expression /*{ endFunction(); }*/
+	|	ASYNC '=>' /*{ startAsyncFunction(); }*/ expression /*{ endFunction(); }*/
 	;
-
-// functionExpressionBodyPrefix não era usada por nenhuma regra
-// functionExpressionBodyPrefix:
-// 	ASYNC? '=>'
-//	 ;
 
 functionExpressionWithoutCascade:
 		formalParameterPart functionExpressionWithoutCascadeBody
 	;
 
 functionExpressionWithoutCascadeBody:
-		'=>' { startNonAsyncFunction(); }
-		expressionWithoutCascade { endFunction(); }
-	|	ASYNC '=>' { startAsyncFunction(); }
-		expressionWithoutCascade { endFunction(); }
+		'=>' /*{ startNonAsyncFunction(); }*/
+		expressionWithoutCascade /*{ endFunction(); }*/
+	|	ASYNC '=>' /*{ startAsyncFunction(); }*/
+		expressionWithoutCascade /*{ endFunction(); }*/
 	;
 
 
@@ -317,15 +484,10 @@ functionPrimary:
 	;
 
 functionPrimaryBody:
-		{ startNonAsyncFunction(); } block { endFunction(); }
+		/*{ startNonAsyncFunction(); }*/ block /*{ endFunction(); }*/
 	|	(ASYNC | ASYNC '*' | SYNC '*')
-		 { startAsyncFunction(); } block { endFunction(); }
+		 /*{ startAsyncFunction(); }*/ block /*{ endFunction(); }*/
 	;
-
-// functionPrimaryBodyPrefix não era usada por nenhuma regra
-// functionPrimaryBodyPrefix
-//	 : (ASYNC | ASYNC '*' | SYNC '*')? LBRACE
-//	 ;
 
 // Chapter 16.14 - This
 
@@ -347,42 +509,42 @@ constObjectExpression:
 
 // Chapter 16.17.1 - Actual Arguments Lists
 
-arguments
-	:	'(' (argumentList ','?)? ')'
+arguments:
+		'(' (argumentList ','?)? ')'
 	;
 
-argumentList
-	:	namedArgument (',' namedArgument)*
+argumentList:
+		namedArgument (',' namedArgument)*
 	|	expressionList (',' namedArgument)*
 	;
 
-namedArgument
-	:	label expression
+namedArgument:
+		label expression
 	;
 
 // Chapter 16.21.2 - Cascaded Invocations
 
-cascade
-	:	 cascade '..' cascadeSection
+cascade:
+	 	cascade '..' cascadeSection
 	|	 conditionalExpression ('?..' | '..') cascadeSection
 	;
 
-cascadeSection
-	:	cascadeSelector cascadeSectionTail
+cascadeSection:
+		cascadeSelector cascadeSectionTail
 	;
 
-cascadeSelector
-	:	'[' expression ']'
+cascadeSelector:
+		'[' expression ']'
 	|	identifier
 	;
 
-cascadeSectionTail
-	:	cascadeAssignment
+cascadeSectionTail:
+		cascadeAssignment
 	|	selector* (assignableSelector cascadeAssignment)?
 	;
 
-cascadeAssignment
-	:	assignmentOperator expressionWithoutCascade
+cascadeAssignment:
+		assignmentOperator expressionWithoutCascade
 	;
 
 // Chapter 16.23 - Assignment
@@ -445,7 +607,6 @@ equalityOperator:
 
 // Chapter 16.28 - Relational Expressions
 
-// TODO: Descomentar
 relationalExpression:
 		bitwiseOrExpression
 		(typeTest | typeCast | relationalOperator bitwiseOrExpression)?
@@ -524,7 +685,6 @@ multiplicativeOperator:
 
 // Chapter 16.33 - Unary Expressions
 
-// TODO: Descomentar
 unaryExpression:
 		prefixOperator unaryExpression
 	|	awaitExpression
@@ -569,6 +729,10 @@ postfixOperator
 	:	incrementOperator
 	;
 
+constructorInvocation:
+		typeName typeArguments '.' identifier arguments
+	;
+
 selector
 	:	'!'
 	|	assignableSelector
@@ -583,7 +747,6 @@ incrementOperator
 	:	'++'
 	|	'--'
 	;
-
 
 // Chapter 16.36 - Assignable Expressions
 
@@ -730,8 +893,8 @@ expressionStatement:
 // Chapter 17.3 - Local Variable Declaration
 
 //TODO: RETIRAR METADATA?
-localVariableDeclaration
-	:	metadata initializedVariableDeclaration ';'
+localVariableDeclaration:
+	metadata initializedVariableDeclaration ';'
 	;
 
 // Chapter 17.4 - Local Function Declaration
@@ -864,22 +1027,28 @@ assertion
 // Chapter 18 - Libraries
 
 topLevelDefinition:
-		 /*classDeclaration
+		classDeclaration
 	|	mixinDeclaration
-	|	extensionDeclaration*/
+	/*|	extensionDeclaration*/
 	|	enumType
 	|	typeAlias
-	/*|	EXTERNAL functionSignature ';'
+	|	EXTERNAL functionSignature ';'
 	|	EXTERNAL getterSignature ';'
 	|	EXTERNAL setterSignature ';'
 	|	EXTERNAL finalVarOrType identifierList ';'
 	|	getterSignature functionBody
-	|	setterSignature functionBody*/
-	functionSignature functionBody
-	//|	(FINAL | CONST) type? staticFinalDeclarationList ';'
-	|	LATE FINAL type? initializedIdentifierList ';' // TODO: Variavel global deu ruim.
+	|	setterSignature functionBody
+	|	functionSignature functionBody
+	|	(FINAL | CONST) type? staticFinalDeclarationList ';'
+	|	LATE FINAL type? initializedIdentifierList ';'
 	|	LATE? varOrType identifier ('=' expression)?
 		 (',' initializedIdentifier)* ';'
+	;
+
+// Chapter 18.1 - Imports
+
+identifierList:
+		identifier (',' identifier)*
 	;
 
 // Chapter 19.1 - Static Types
@@ -919,21 +1088,6 @@ typeList:
 
 typeNotVoidNotFunctionList:
 		typeNotVoidNotFunction (',' typeNotVoidNotFunction)*
-	;
-
-//TODO: Testar essa regra.
-typeAlias:
-		TYPEDEF typeIdentifier typeParameters? '=' functionType ';'
-	|	TYPEDEF functionTypeAlias
-	;
-
-functionTypeAlias:
-		functionPrefix formalParameterPart ';'
-	;
-
-functionPrefix:
-		type identifier
-	|	identifier
 	;
 
 functionTypeTail:
@@ -987,10 +1141,28 @@ typedIdentifier:
 		type identifier
 	;
 
+//TODO: Onde exatamente essa regra é aplicada?
 constructorDesignation:
 		typeIdentifier
 	|	qualifiedName
 	|	typeName typeArguments ('.' identifier)?
+	;
+
+//Chapter 19.3 - Type Aliases
+
+//TODO: Testar essa regra.
+typeAlias:
+		TYPEDEF typeIdentifier typeParameters? '=' functionType ';'
+	|	TYPEDEF functionTypeAlias
+	;
+
+functionTypeAlias:
+		functionPrefix formalParameterPart ';'
+	;
+
+functionPrefix:
+		type identifier
+	|	identifier
 	;
 
 // TODO: O que é uri?
@@ -1000,6 +1172,7 @@ singleLineStringWithoutInterpolation
 	|	SINGLE_LINE_STRING_DQ_BEGIN_END
 	|	SINGLE_LINE_STRING_SQ_BEGIN_END
 	;
+
 singleLineString
 	:	RAW_SINGLE_LINE_STRING
 	|	SINGLE_LINE_STRING_SQ_BEGIN_END
@@ -1011,6 +1184,7 @@ singleLineString
 		(SINGLE_LINE_STRING_DQ_MID_MID expression)*
 		SINGLE_LINE_STRING_DQ_MID_END
 	;
+
 multiLineString
 	:	RAW_MULTI_LINE_STRING
 	|	MULTI_LINE_STRING_SQ_BEGIN_END

@@ -6,15 +6,19 @@ import org.antlr.v4.runtime.RecognitionException;
 
 public class Main {
     public static void main(String[] args) {
-        DartLexer lexer = new DartLexer(CharStreams.fromString("1+2+5"));
+        //TODO: Leitura de arquivo da entrada.
+
+        DartLexer lexer = new DartLexer(CharStreams.fromString("x() => 24;"));
         DartParser parser = new DartParser(new CommonTokenStream(lexer));
 
         try {
             parser.start();
         } catch (RecognitionException e) {
             e.printStackTrace();
+            System.out.println("PARSE FAILED!");
+            return;
         }
 
-        System.out.println("My parser has executed Order 66");
+        System.out.println("PARSE SUCESSFUL!");
     }
 }
