@@ -324,7 +324,6 @@ metadatum:
 
 // Chapter 16 - Expressions
 
-//TODO: Descomentar trechos dessa seção.
 expression:
 		functionExpression
 	|	throwExpression
@@ -772,12 +771,6 @@ assignableSelector:
 	|	'?' '[' expression ']'
 	;
 
-// TODO: O que é uri?
-// Not used in the specification (needed here for <uri>).
-//stringLiteralWithoutInterpolation:
-//		singleLineStringWithoutInterpolation+
-//	;
-
 // Chapter 16.37 - Identifier Reference
 
 identifierNotFUNCTION:
@@ -892,14 +885,12 @@ expressionStatement:
 
 // Chapter 17.3 - Local Variable Declaration
 
-//TODO: RETIRAR METADATA?
 localVariableDeclaration:
 	metadata initializedVariableDeclaration ';'
 	;
 
 // Chapter 17.4 - Local Function Declaration
 
-//TODO: RETIRAR METADATA?
 localFunctionDeclaration
     :    metadata functionSignature functionBody
     ;
@@ -1052,7 +1043,6 @@ identifierList:
 	;
 
 // Chapter 19.1 - Static Types
-//TODO: Completar essa seção dps.
 
 type:
 		functionType '?'?
@@ -1164,15 +1154,6 @@ functionPrefix:
 		type identifier
 	|	identifier
 	;
-
-// TODO: O que é uri?
-// Not used in the specification (needed here for <uri>).
-//singleLineStringWithoutInterpolation
-//	:	RAW_SINGLE_LINE_STRING
-//	|	SINGLE_LINE_STRING_DQ_BEGIN_END
-//	|	SINGLE_LINE_STRING_SQ_BEGIN_END
-//	;
-
 
 singleLineString
 	:	RAW_SINGLE_LINE_STRING
