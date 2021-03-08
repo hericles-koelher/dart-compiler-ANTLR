@@ -390,8 +390,9 @@ booleanLiteral:
 
 // Chapter 16.7 - Strings
 
-stringLiteral:
-		(singleLineString)+
+stringLiteral
+    : singleLineString+
+//	| multiLineString+
 	;
 
 // Chapter 16.8 - Symbols
