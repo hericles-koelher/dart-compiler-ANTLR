@@ -16,7 +16,6 @@ finalConstVarOrType:
 	|	LATE? varOrType
 	;
 
-// Usado em Declaration (Classes)
 finalVarOrType:
 		FINAL type?
 	|	varOrType
@@ -56,7 +55,7 @@ functionBody:
 	;
 
 block:
-		LBRACE statements  RBRACE
+		LBRACE statements	RBRACE
 	;
 
 // Chapter 9.2 - Formal Parameters
@@ -115,12 +114,12 @@ defaultNamedParameter:
 		REQUIRED? normalFormalParameter ((':' | '=') expression)?
 	;
 
-// Usado com classe e mixin
-typeWithParameters
-	   :	typeIdentifier typeParameters?
-	   ;
+typeWithParameters:
+		typeIdentifier typeParameters?
+	;
 
 // Chapter 10 - Classes
+
 // Modifiquei a regra (em relação ao SDK) para que ficasse como a do manual.
 classDeclaration:
 		metadata ABSTRACT? CLASS typeWithParameters superclass? mixins? interfaces?
@@ -162,13 +161,13 @@ declaration:
 	|	constructorSignature (redirection | initializers)?
 	;
 
-staticFinalDeclarationList
-    :    staticFinalDeclaration (',' staticFinalDeclaration)*
-    ;
+staticFinalDeclarationList:
+		staticFinalDeclaration (',' staticFinalDeclaration)*
+	;
 
-staticFinalDeclaration
-    :    identifier '=' expression
-    ;
+staticFinalDeclaration:
+		identifier '=' expression
+	;
 
 // Chapter 10.1.1 - Operators
 
@@ -194,8 +193,8 @@ binaryOperator:
 
 // Chapter 10.2 - Getters
 
-getterSignature
-	:	type? GET identifier
+getterSignature:
+		type? GET identifier
 	;
 
 // Chapter 10.3 - Setters
@@ -214,7 +213,6 @@ constructorName:
 		typeIdentifier ('.' identifier)?
 	;
 
-// TODO: Syntactic sugar?
 redirection:
 		':' THIS ('.' identifier)? arguments
 	;
@@ -284,11 +282,11 @@ mixinApplication:
 
 // Chapter 12.2 - Mixin Declaration
 
-mixinDeclaration
-    :    MIXIN typeIdentifier typeParameters?
-         (ON typeNotVoidNotFunctionList)? interfaces?
-         LBRACE (metadata classMemberDefinition)* RBRACE
-    ;
+mixinDeclaration:
+		MIXIN typeIdentifier typeParameters?
+		 (ON typeNotVoidNotFunctionList)? interfaces?
+		 LBRACE (metadata classMemberDefinition)* RBRACE
+	;
 
 // Chapter 13 - Enums
 
@@ -332,15 +330,15 @@ expression:
 	|	cascade
 	;
 
-expressionWithoutCascade
-	:	functionExpressionWithoutCascade
+expressionWithoutCascade:
+		functionExpressionWithoutCascade
 	|	throwExpressionWithoutCascade
 	|	assignableExpression assignmentOperator expressionWithoutCascade
 	|	conditionalExpression
 	;
 
-expressionList
-	:	expression (',' expression)*
+expressionList:
+		expression (',' expression)*
 	;
 
 primary:
@@ -357,8 +355,8 @@ primary:
 
 // Chapter 16.3 - Constants
 
-literal
-	:	nullLiteral
+literal:
+		nullLiteral
 	|	booleanLiteral
 	|	numericLiteral
 	|	stringLiteral
@@ -389,15 +387,15 @@ booleanLiteral:
 
 // Chapter 16.7 - Strings
 
-stringLiteral
-    : singleLineString+
+stringLiteral:
+ 		singleLineString+
 //	| multiLineString+
 	;
 
 // Chapter 16.8 - Symbols
 
-symbolLiteral
-	:	'#' (operator | (identifier ('.' identifier)*))
+symbolLiteral:
+		'#' (operator | (identifier ('.' identifier)*))
 	;
 
 // Chapter 16.9 - Lists
@@ -441,8 +439,8 @@ ifElement:
 		IF '(' expression ')' element (ELSE element)?
 	;
 
-forElement
-	: AWAIT? FOR '(' forLoopParts ')' element
+forElement:
+ 	AWAIT? FOR '(' forLoopParts ')' element
 	;
 
 // Chapter 16.12 - Throw
@@ -462,8 +460,8 @@ functionExpression:
 	;
 
 functionExpressionBody:
-		'=>' /*{ startNonAsyncFunction(); }*/ expression /*{ endFunction(); }*/
-	|	ASYNC '=>' /*{ startAsyncFunction(); }*/ expression /*{ endFunction(); }*/
+		'=>'	expression
+	|	ASYNC '=>'	expression
 	;
 
 functionExpressionWithoutCascade:
@@ -471,22 +469,21 @@ functionExpressionWithoutCascade:
 	;
 
 functionExpressionWithoutCascadeBody:
-		'=>' /*{ startNonAsyncFunction(); }*/
-		expressionWithoutCascade /*{ endFunction(); }*/
-	|	ASYNC '=>' /*{ startAsyncFunction(); }*/
-		expressionWithoutCascade /*{ endFunction(); }*/
+		'=>'
+		expressionWithoutCascade
+	|	ASYNC '=>'
+		expressionWithoutCascade
 	;
 
 
-// 	TODO: Qual seria um exemplo de functionPrimary?
+// TODO: Qual seria um exemplo de functionPrimary?
 functionPrimary:
 		formalParameterPart functionPrimaryBody
 	;
 
 functionPrimaryBody:
-		/*{ startNonAsyncFunction(); }*/ block /*{ endFunction(); }*/
-	|	(ASYNC | ASYNC '*' | SYNC '*')
-		 /*{ startAsyncFunction(); }*/ block /*{ endFunction(); }*/
+		 block
+	|	(ASYNC | ASYNC '*' | SYNC '*') block
 	;
 
 // Chapter 16.14 - This
@@ -613,9 +610,8 @@ relationalExpression:
 	|	SUPER relationalOperator bitwiseOrExpression
 	;
 
-// TODO: Pq foi definido assim?
 relationalOperator:
-		'>' '='
+		'>='
 	|	'>'
 	|	'<='
 	|	'<'
@@ -720,31 +716,31 @@ awaitExpression:
 // Chapter 16.35 - Postfix Expressions
 
 // Chamada de função passa especificamente por aqui
-postfixExpression
-	:	assignableExpression postfixOperator
+postfixExpression:
+		assignableExpression postfixOperator
 	|	primary selector*
 	;
 
-postfixOperator
-	:	incrementOperator
+postfixOperator:
+		incrementOperator
 	;
 
 constructorInvocation:
 		typeName typeArguments '.' identifier arguments
 	;
 
-selector
-	:	'!'
+selector:
+		'!'
 	|	assignableSelector
 	|	argumentPart
 	;
 
-argumentPart
-	:	typeArguments? arguments
+argumentPart:
+		typeArguments? arguments
 	;
 
-incrementOperator
-	:	'++'
+incrementOperator:
+		'++'
 	|	'--'
 	;
 
@@ -802,12 +798,12 @@ identifierNotFUNCTION:
 	|	ON // Not a built-in identifier.
 	|	SHOW // Not a built-in identifier.
 	|	SYNC // Not a built-in identifier.
-	|	/*{ asyncEtcPredicate(getCurrentToken().getType()) }?*/ (AWAIT|YIELD)
+	|	(AWAIT|YIELD) // Esse trecho escrito dessa maneira fazia sentido pois havia uma função sendo executada...
 	;
 
 identifier:
 		identifierNotFUNCTION
-	|	FUNCTION  // Built-in identifier that can be used as a type.
+	|	FUNCTION	// Built-in identifier that can be used as a type.
 	;
 
 qualifiedName:
@@ -815,8 +811,8 @@ qualifiedName:
 	|	typeIdentifier '.' typeIdentifier '.' identifier
 	;
 
-typeIdentifier
-	:	IDENTIFIER
+typeIdentifier:
+		IDENTIFIER
 	|	DYNAMIC // Built-in identifier that can be used as a type.
 	|	ASYNC // Not a built-in identifier.
 	|	HIDE // Not a built-in identifier.
@@ -824,7 +820,7 @@ typeIdentifier
 	|	ON // Not a built-in identifier.
 	|	SHOW // Not a built-in identifier.
 	|	SYNC // Not a built-in identifier.
-	|	/*{ asyncEtcPredicate(getCurrentToken().getType()) }?*/ (AWAIT|YIELD)
+	|	(AWAIT|YIELD) // Esse trecho escrito dessa maneira fazia sentido pois havia uma função sendo executada...
 	;
 
 // Chapter 16.38 - Type Test
@@ -891,9 +887,9 @@ localVariableDeclaration:
 
 // Chapter 17.4 - Local Function Declaration
 
-localFunctionDeclaration
-    :    metadata functionSignature functionBody
-    ;
+localFunctionDeclaration:
+		metadata functionSignature functionBody
+	;
 
 // Chapter 17.5 - If
 
@@ -903,73 +899,73 @@ ifStatement:
 
 // Chapter 17.6 - For
 
-forStatement
-    :    AWAIT? FOR '(' forLoopParts ')' statement
-    ;
+forStatement:
+		AWAIT? FOR '(' forLoopParts ')' statement
+	;
 
-forLoopParts
-    :    metadata declaredIdentifier IN expression
-    |    metadata identifier IN expression
-    |    forInitializerStatement expression? ';' expressionList?
-    ;
+forLoopParts:
+		metadata declaredIdentifier IN expression
+	|	metadata identifier IN expression
+	|	forInitializerStatement expression? ';' expressionList?
+	;
 
 // The localVariableDeclaration cannot be CONST, but that can
 // be enforced in a later phase, and the grammar allows it.
-forInitializerStatement
-    :    localVariableDeclaration
-    |    expression? ';'
-    ;
+forInitializerStatement:
+		localVariableDeclaration
+	|	expression? ';'
+	;
 
 // Chapter 17.7 - While
 
-whileStatement
-    :    WHILE '(' expression ')' statement
-    ;
+whileStatement:
+		WHILE '(' expression ')' statement
+	;
 
 // Chapter 17.8 - Do
 
-doStatement
-    :    DO statement WHILE '(' expression ')' ';'
-    ;
+doStatement:
+		DO statement WHILE '(' expression ')' ';'
+	;
 
 // Chapter 17.9 - Switch
 
-switchStatement
-    :    SWITCH '(' expression ')' LBRACE switchCase* defaultCase? RBRACE
-    ;
+switchStatement:
+		SWITCH '(' expression ')' LBRACE switchCase* defaultCase? RBRACE
+	;
 
-switchCase
-    :    label* CASE expression ':' statements
-    ;
+switchCase:
+		label* CASE expression ':' statements
+	;
 
-defaultCase
-    :    label* DEFAULT ':' statements
-    ;
+defaultCase:
+		label* DEFAULT ':' statements
+	;
 
 // Chapter 17.10 - Rethrow
 
-rethrowStatement
-    :    RETHROW ';'
-    ;
+rethrowStatement:
+		RETHROW ';'
+	;
 
 // Chapter 17.11 - Try
 
-tryStatement
-    :    TRY block (onPart+ finallyPart? | finallyPart)
-    ;
+tryStatement:
+		TRY block (onPart+ finallyPart? | finallyPart)
+	;
 
-onPart
-    :    catchPart block
-    |    ON typeNotVoid catchPart? block
-    ;
+onPart:
+		catchPart block
+	|	ON typeNotVoid catchPart? block
+	;
 
-catchPart
-    :    CATCH '(' identifier (',' identifier)? ')'
-    ;
+catchPart:
+		CATCH '(' identifier (',' identifier)? ')'
+	;
 
-finallyPart
-    :    FINALLY block
-    ;
+finallyPart:
+		FINALLY block
+	;
 
 // Chapter 17.12 - Return
 
@@ -985,35 +981,35 @@ label:
 
 // 17.14 - Break
 
-breakStatement
-  : 'break' identifier? ';'
-  ;
+breakStatement:
+		'break' identifier? ';'
+	;
 
 // 17.13 - Continue
 
-continueStatement
-  : 'continue' identifier? ';'
-  ;
+continueStatement:
+		'continue' identifier? ';'
+	;
 
 // 17.16 - Yield and Yield-Each
 
-yieldStatement
-  : 'yield' expression ';'
-  ;
+yieldStatement:
+		'yield' expression ';'
+	;
 
-yieldEachStatement
-  : 'yield*' expression ';'
-  ;
+yieldEachStatement:
+		'yield*' expression ';'
+	;
 
 // 17.17 Assert
 
-assertStatement
-  : assertion ';'
-  ;
+assertStatement:
+		assertion ';'
+	;
 
-assertion
-  : 'assert' '(' expression (',' expression )? ','? ')'
-  ;
+assertion:
+		'assert' '(' expression (',' expression )? ','? ')'
+	;
 
 // Chapter 18 - Libraries
 
@@ -1131,7 +1127,6 @@ typedIdentifier:
 		type identifier
 	;
 
-//TODO: Onde exatamente essa regra é aplicada?
 constructorDesignation:
 		typeIdentifier
 	|	qualifiedName
@@ -1140,7 +1135,6 @@ constructorDesignation:
 
 //Chapter 19.3 - Type Aliases
 
-//TODO: Testar essa regra.
 typeAlias:
 		TYPEDEF typeIdentifier typeParameters? '=' functionType ';'
 	|	TYPEDEF functionTypeAlias
@@ -1155,8 +1149,8 @@ functionPrefix:
 	|	identifier
 	;
 
-singleLineString
-	:	RAW_SINGLE_LINE_STRING
+singleLineString:
+		RAW_SINGLE_LINE_STRING
 	|	SINGLE_LINE_STRING_SQ_BEGIN_END
 	|	SINGLE_LINE_STRING_SQ_BEGIN_MID expression (SINGLE_LINE_STRING_SQ_MID_MID expression)* SINGLE_LINE_STRING_SQ_MID_END
 	|	SINGLE_LINE_STRING_DQ_BEGIN_END
@@ -1165,7 +1159,7 @@ singleLineString
 
 //TODO: VOLTAR COM MULTILINE STRING DEPOIS? TOMAR CUIDADO POIS ESTAVA QUEBRANDO O TESTE DE INHERITANCE.DART
 //multiLineString
-//	:	RAW_MULTI_LINE_STRING
+//		RAW_MULTI_LINE_STRING
 //	|	MULTI_LINE_STRING_SQ_BEGIN_END
 //	|	MULTI_LINE_STRING_SQ_BEGIN_MID expression (MULTI_LINE_STRING_SQ_MID_MID expression)* MULTI_LINE_STRING_SQ_MID_END
 //	|	MULTI_LINE_STRING_DQ_BEGIN_END
@@ -1403,25 +1397,28 @@ NUMBER:
 	|	DIGIT+ EXPONENT?
 	|	'.' DIGIT+ EXPONENT?
 	;
+
 HEX_NUMBER:
 		'0x' HEX_DIGIT+
 	|	'0X' HEX_DIGIT+
 	;
+
 RAW_SINGLE_LINE_STRING:
 		'r' '\'' (~('\'' | '\r' | '\n'))* '\''
 	|	'r' '"' (~('"' | '\r' | '\n'))* '"'
 	;
+
 //RAW_MULTI_LINE_STRING:
 //		'r' '"""' (.)*? '"""'
 //	|	'r' '\'\'\'' (.)*? '\'\'\''
 //	;
 
 LBRACE:
-		'{' /*{ enterBrace(); }*/
+		'{'
 	;
 
 RBRACE:
-		/*{ currentBraceLevel(BRACE_NORMAL) }? { exitBrace(); }*/ '}'
+		 '}'
 	;
 
 fragment
@@ -1466,18 +1463,16 @@ SINGLE_LINE_STRING_SQ_BEGIN_END:
 	;
 
 SINGLE_LINE_STRING_SQ_BEGIN_MID:
-		'\'' STRING_CONTENT_SQ* '${' /*{ enterBraceSingleQuote(); }*/
+		'\'' STRING_CONTENT_SQ* '${'
 	;
 
 SINGLE_LINE_STRING_SQ_MID_MID:
-		/*{ currentBraceLevel(BRACE_SINGLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_SQ* '${'
-		 /*{ enterBraceSingleQuote(); }*/
+		 '}' STRING_CONTENT_SQ* '${'
+
 	;
 
 SINGLE_LINE_STRING_SQ_MID_END:
-		/*{ currentBraceLevel(BRACE_SINGLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_SQ* '\''
+		 '}' STRING_CONTENT_SQ* '\''
 	;
 
 fragment
@@ -1491,18 +1486,16 @@ SINGLE_LINE_STRING_DQ_BEGIN_END:
 	;
 
 SINGLE_LINE_STRING_DQ_BEGIN_MID:
-		'"' STRING_CONTENT_DQ* '${' /*{ enterBraceDoubleQuote(); }*/
+		'"' STRING_CONTENT_DQ* '${'
 	;
 
 SINGLE_LINE_STRING_DQ_MID_MID:
-		/*{ currentBraceLevel(BRACE_DOUBLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_DQ* '${'
-		 /*{ enterBraceDoubleQuote(); }*/
+		 '}' STRING_CONTENT_DQ* '${'
+
 	;
 
 SINGLE_LINE_STRING_DQ_MID_END:
-		/*{ currentBraceLevel(BRACE_DOUBLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_DQ* '"'
+		 '}' STRING_CONTENT_DQ* '"'
 	;
 
 fragment
@@ -1512,6 +1505,7 @@ QUOTES_SQ:
 	|	'\'\''
 	;
 
+// Explicação do SDK.
 // Read string contents, which may be almost anything, but stop when seeing
 // '\'\'\'' and when seeing '${'. We do this by allowing all other
 // possibilities including escapes, simple interpolation, and fewer than
@@ -1528,18 +1522,16 @@ STRING_CONTENT_TSQ:
 
 //MULTI_LINE_STRING_SQ_BEGIN_MID:
 //		'\'\'\'' STRING_CONTENT_TSQ* QUOTES_SQ '${'
-//		 /*{ enterBraceThreeSingleQuotes(); }*/
+//
 //	;
 
 //MULTI_LINE_STRING_SQ_MID_MID:
-//		/*{ currentBraceLevel(BRACE_THREE_SINGLE) }?
-//		 { exitBrace(); }*/ '}' STRING_CONTENT_TSQ* QUOTES_SQ '${'
-//		 /*{ enterBraceThreeSingleQuotes(); }*/
+//		'}' STRING_CONTENT_TSQ* QUOTES_SQ '${'
+//
 //	;
 
 //MULTI_LINE_STRING_SQ_MID_END:
-//		/*{ currentBraceLevel(BRACE_THREE_SINGLE) }?
-//		 { exitBrace(); }*/ '}' STRING_CONTENT_TSQ* '\'\'\''
+//		'}' STRING_CONTENT_TSQ* '\'\'\''
 //	;
 
 fragment
@@ -1549,6 +1541,7 @@ QUOTES_DQ:
 	|	'""'
 	;
 
+// Explicação do SDK.
 // Read string contents, which may be almost anything, but stop when seeing
 // '"""' and when seeing '${'. We do this by allowing all other possibilities
 // including escapes, simple interpolation, and fewer-than-three '"'.
@@ -1564,18 +1557,16 @@ STRING_CONTENT_TDQ:
 
 //MULTI_LINE_STRING_DQ_BEGIN_MID:
 //		'"""' STRING_CONTENT_TDQ* QUOTES_DQ '${'
-//		 /*{ enterBraceThreeDoubleQuotes(); }*/
+//
 //	;
 
 //MULTI_LINE_STRING_DQ_MID_MID:
-//		/*{ currentBraceLevel(BRACE_THREE_DOUBLE) }?
-//		 { exitBrace(); }*/ '}' STRING_CONTENT_TDQ* QUOTES_DQ '${'
-//		 /*{ enterBraceThreeDoubleQuotes(); }*/
+//		'}' STRING_CONTENT_TDQ* QUOTES_DQ '${'
+//
 //	;
 
 //MULTI_LINE_STRING_DQ_MID_END:
-//		/*{ currentBraceLevel(BRACE_THREE_DOUBLE) }?
-//		 { exitBrace(); }*/ '}' STRING_CONTENT_TDQ* '"""'
+//		 '}' STRING_CONTENT_TDQ* '"""'
 //	;
 
 fragment

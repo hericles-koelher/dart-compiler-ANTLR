@@ -21,7 +21,7 @@ clean:
 #Testes
 
 run:
-	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/functions.dart
+	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/ast.dart
 
 test_all:
 	echo "Starting tests:\n"
