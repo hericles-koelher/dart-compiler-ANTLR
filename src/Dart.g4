@@ -391,7 +391,7 @@ booleanLiteral:
 // Chapter 16.7 - Strings
 
 stringLiteral:
-		(multiLineString | singleLineString)+
+		(singleLineString)+
 	;
 
 // Chapter 16.8 - Symbols
@@ -773,9 +773,9 @@ assignableSelector:
 
 // TODO: O que é uri?
 // Not used in the specification (needed here for <uri>).
-stringLiteralWithoutInterpolation:
-		singleLineStringWithoutInterpolation+
-	;
+//stringLiteralWithoutInterpolation:
+//		singleLineStringWithoutInterpolation+
+//	;
 
 // Chapter 16.37 - Identifier Reference
 
@@ -863,7 +863,6 @@ statement:
 		label* nonLabelledStatement
 	;
 
-//TODO: FALTA OTAVIO AJEITAR
 nonLabelledStatement:
 		block
 	|	localVariableDeclaration
@@ -1167,35 +1166,29 @@ functionPrefix:
 
 // TODO: O que é uri?
 // Not used in the specification (needed here for <uri>).
-singleLineStringWithoutInterpolation
-	:	RAW_SINGLE_LINE_STRING
-	|	SINGLE_LINE_STRING_DQ_BEGIN_END
-	|	SINGLE_LINE_STRING_SQ_BEGIN_END
-	;
+//singleLineStringWithoutInterpolation
+//	:	RAW_SINGLE_LINE_STRING
+//	|	SINGLE_LINE_STRING_DQ_BEGIN_END
+//	|	SINGLE_LINE_STRING_SQ_BEGIN_END
+//	;
+
 
 singleLineString
 	:	RAW_SINGLE_LINE_STRING
 	|	SINGLE_LINE_STRING_SQ_BEGIN_END
-	|	SINGLE_LINE_STRING_SQ_BEGIN_MID expression
-		(SINGLE_LINE_STRING_SQ_MID_MID expression)*
-		SINGLE_LINE_STRING_SQ_MID_END
+	|	SINGLE_LINE_STRING_SQ_BEGIN_MID expression (SINGLE_LINE_STRING_SQ_MID_MID expression)* SINGLE_LINE_STRING_SQ_MID_END
 	|	SINGLE_LINE_STRING_DQ_BEGIN_END
-	|	SINGLE_LINE_STRING_DQ_BEGIN_MID expression
-		(SINGLE_LINE_STRING_DQ_MID_MID expression)*
-		SINGLE_LINE_STRING_DQ_MID_END
+	|	SINGLE_LINE_STRING_DQ_BEGIN_MID expression (SINGLE_LINE_STRING_DQ_MID_MID expression)* SINGLE_LINE_STRING_DQ_MID_END
 	;
 
-multiLineString
-	:	RAW_MULTI_LINE_STRING
-	|	MULTI_LINE_STRING_SQ_BEGIN_END
-	|	MULTI_LINE_STRING_SQ_BEGIN_MID expression
-		(MULTI_LINE_STRING_SQ_MID_MID expression)*
-		MULTI_LINE_STRING_SQ_MID_END
-	|	MULTI_LINE_STRING_DQ_BEGIN_END
-	|	MULTI_LINE_STRING_DQ_BEGIN_MID expression
-		(MULTI_LINE_STRING_DQ_MID_MID expression)*
-		MULTI_LINE_STRING_DQ_MID_END
-	;
+//TODO: VOLTAR COM MULTILINE STRING DEPOIS? TOMAR CUIDADO POIS ESTAVA QUEBRANDO O TESTE DE INHERITANCE.DART
+//multiLineString
+//	:	RAW_MULTI_LINE_STRING
+//	|	MULTI_LINE_STRING_SQ_BEGIN_END
+//	|	MULTI_LINE_STRING_SQ_BEGIN_MID expression (MULTI_LINE_STRING_SQ_MID_MID expression)* MULTI_LINE_STRING_SQ_MID_END
+//	|	MULTI_LINE_STRING_DQ_BEGIN_END
+//	|	MULTI_LINE_STRING_DQ_BEGIN_MID expression (MULTI_LINE_STRING_DQ_MID_MID expression)* MULTI_LINE_STRING_DQ_MID_END
+//	;
 
 // ------------------------------- Lexer Rules -------------------------------
 
@@ -1436,9 +1429,17 @@ RAW_SINGLE_LINE_STRING:
 		'r' '\'' (~('\'' | '\r' | '\n'))* '\''
 	|	'r' '"' (~('"' | '\r' | '\n'))* '"'
 	;
-RAW_MULTI_LINE_STRING:
-		'r' '"""' (.)*? '"""'
-	|	'r' '\'\'\'' (.)*? '\'\'\''
+//RAW_MULTI_LINE_STRING:
+//		'r' '"""' (.)*? '"""'
+//	|	'r' '\'\'\'' (.)*? '\'\'\''
+//	;
+
+LBRACE:
+		'{' /*{ enterBrace(); }*/
+	;
+
+RBRACE:
+		/*{ currentBraceLevel(BRACE_NORMAL) }? { exitBrace(); }*/ '}'
 	;
 
 fragment
@@ -1539,25 +1540,25 @@ STRING_CONTENT_TSQ:
 		 (STRING_CONTENT_COMMON | '"' | '\r' | '\n' | '\\\r' | '\\\n')
 	;
 
-MULTI_LINE_STRING_SQ_BEGIN_END:
-		'\'\'\'' STRING_CONTENT_TSQ* '\'\'\''
-	;
+//MULTI_LINE_STRING_SQ_BEGIN_END:
+//		'\'\'\'' STRING_CONTENT_TSQ* '\'\'\''
+//	;
 
-MULTI_LINE_STRING_SQ_BEGIN_MID:
-		'\'\'\'' STRING_CONTENT_TSQ* QUOTES_SQ '${'
-		 /*{ enterBraceThreeSingleQuotes(); }*/
-	;
+//MULTI_LINE_STRING_SQ_BEGIN_MID:
+//		'\'\'\'' STRING_CONTENT_TSQ* QUOTES_SQ '${'
+//		 /*{ enterBraceThreeSingleQuotes(); }*/
+//	;
 
-MULTI_LINE_STRING_SQ_MID_MID:
-		/*{ currentBraceLevel(BRACE_THREE_SINGLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_TSQ* QUOTES_SQ '${'
-		 /*{ enterBraceThreeSingleQuotes(); }*/
-	;
+//MULTI_LINE_STRING_SQ_MID_MID:
+//		/*{ currentBraceLevel(BRACE_THREE_SINGLE) }?
+//		 { exitBrace(); }*/ '}' STRING_CONTENT_TSQ* QUOTES_SQ '${'
+//		 /*{ enterBraceThreeSingleQuotes(); }*/
+//	;
 
-MULTI_LINE_STRING_SQ_MID_END:
-		/*{ currentBraceLevel(BRACE_THREE_SINGLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_TSQ* '\'\'\''
-	;
+//MULTI_LINE_STRING_SQ_MID_END:
+//		/*{ currentBraceLevel(BRACE_THREE_SINGLE) }?
+//		 { exitBrace(); }*/ '}' STRING_CONTENT_TSQ* '\'\'\''
+//	;
 
 fragment
 QUOTES_DQ:
@@ -1575,33 +1576,25 @@ STRING_CONTENT_TDQ:
 		 (STRING_CONTENT_COMMON | '\'' | '\r' | '\n' | '\\\r' | '\\\n')
 	;
 
-MULTI_LINE_STRING_DQ_BEGIN_END:
-		'"""' STRING_CONTENT_TDQ* '"""'
-	;
+//MULTI_LINE_STRING_DQ_BEGIN_END:
+//		'"""' STRING_CONTENT_TDQ* '"""'
+//	;
 
-MULTI_LINE_STRING_DQ_BEGIN_MID:
-		'"""' STRING_CONTENT_TDQ* QUOTES_DQ '${'
-		 /*{ enterBraceThreeDoubleQuotes(); }*/
-	;
+//MULTI_LINE_STRING_DQ_BEGIN_MID:
+//		'"""' STRING_CONTENT_TDQ* QUOTES_DQ '${'
+//		 /*{ enterBraceThreeDoubleQuotes(); }*/
+//	;
 
-MULTI_LINE_STRING_DQ_MID_MID:
-		/*{ currentBraceLevel(BRACE_THREE_DOUBLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_TDQ* QUOTES_DQ '${'
-		 /*{ enterBraceThreeDoubleQuotes(); }*/
-	;
+//MULTI_LINE_STRING_DQ_MID_MID:
+//		/*{ currentBraceLevel(BRACE_THREE_DOUBLE) }?
+//		 { exitBrace(); }*/ '}' STRING_CONTENT_TDQ* QUOTES_DQ '${'
+//		 /*{ enterBraceThreeDoubleQuotes(); }*/
+//	;
 
-MULTI_LINE_STRING_DQ_MID_END:
-		/*{ currentBraceLevel(BRACE_THREE_DOUBLE) }?
-		 { exitBrace(); }*/ '}' STRING_CONTENT_TDQ* '"""'
-	;
-
-LBRACE:
-		'{' /*{ enterBrace(); }*/
-	;
-
-RBRACE:
-		/*{ currentBraceLevel(BRACE_NORMAL) }? { exitBrace(); }*/ '}'
-	;
+//MULTI_LINE_STRING_DQ_MID_END:
+//		/*{ currentBraceLevel(BRACE_THREE_DOUBLE) }?
+//		 { exitBrace(); }*/ '}' STRING_CONTENT_TDQ* '"""'
+//	;
 
 fragment
 IDENTIFIER_START_NO_DOLLAR:
