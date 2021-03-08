@@ -892,14 +892,12 @@ expressionStatement:
 
 // Chapter 17.3 - Local Variable Declaration
 
-//TODO: RETIRAR METADATA?
 localVariableDeclaration:
 	metadata initializedVariableDeclaration ';'
 	;
 
 // Chapter 17.4 - Local Function Declaration
 
-//TODO: RETIRAR METADATA?
 localFunctionDeclaration
     :    metadata functionSignature functionBody
     ;
