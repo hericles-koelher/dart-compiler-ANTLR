@@ -1,5 +1,31 @@
 grammar Dart;
 
+@parser::header{
+import java.util.Stack;
+}
+
+@parser::members{
+// Mantém um registro para que seja possivel determinar
+// quando devemos tratar await e yield como palavras reservadas
+// ou como identificadores.
+private Stack<Boolean> awaitAndYieldAreKeywords = new Stack<Boolean>();
+{awaitAndYieldAreKeywords.push(false);}
+
+void startAsyncFunction(){awaitAndYieldAreKeywords.push(true);}
+
+void startNonAsyncFunction(){awaitAndYieldAreKeywords.push(false);}
+
+void endFunction(){awaitAndYieldAreKeywords.pop();}
+
+boolean areKeywords(int tokenId){
+	if(tokenId == AWAIT || tokenId == YIELD){
+		return awaitAndYieldAreKeywords.peek();
+	}
+
+	return false;
+}
+}
+
 start: topLevelDefinition* EOF;
 
 // ------------------------------- Grammar Rules -------------------------------
@@ -49,9 +75,10 @@ formalParameterPart:
 	;
 
 functionBody:
-		'=>' expression
-	|	ASYNC? '=>' expression ';'
-	|	(ASYNC | ASYNC '*' | SYNC '*')? block
+		'=>' {startNonAsyncFunction();} expression {endFunction();} ';'
+	|	ASYNC '=>' {startAsyncFunction();} expression {endFunction();} ';'
+	|	(ASYNC | ASYNC '*' | SYNC '*') {startAsyncFunction();} block {endFunction();}
+	| 	{startNonAsyncFunction();} block {endFunction();}
 	;
 
 block:
@@ -460,8 +487,8 @@ functionExpression:
 	;
 
 functionExpressionBody:
-		'=>'	expression
-	|	ASYNC '=>'	expression
+		'=>' {startNonAsyncFunction();} expression {endFunction();}
+	|	ASYNC {startAsyncFunction();} '=>'	expression {endFunction();}
 	;
 
 functionExpressionWithoutCascade:
@@ -469,10 +496,10 @@ functionExpressionWithoutCascade:
 	;
 
 functionExpressionWithoutCascadeBody:
-		'=>'
-		expressionWithoutCascade
-	|	ASYNC '=>'
-		expressionWithoutCascade
+		'=>' {startNonAsyncFunction();}
+		expressionWithoutCascade {endFunction();}
+	|	ASYNC '=>' {startAsyncFunction();}
+		expressionWithoutCascade {endFunction();}
 	;
 
 
@@ -482,8 +509,8 @@ functionPrimary:
 	;
 
 functionPrimaryBody:
-		 block
-	|	(ASYNC | ASYNC '*' | SYNC '*') block
+		{startNonAsyncFunction();} block {endFunction();}
+	|	(ASYNC | ASYNC '*' | SYNC '*') {startAsyncFunction();} block {endFunction();}
 	;
 
 // Chapter 16.14 - This
@@ -798,7 +825,7 @@ identifierNotFUNCTION:
 	|	ON // Not a built-in identifier.
 	|	SHOW // Not a built-in identifier.
 	|	SYNC // Not a built-in identifier.
-	|	(AWAIT|YIELD) // Esse trecho escrito dessa maneira fazia sentido pois havia uma função sendo executada...
+	|	{!areKeywords(getCurrentToken().getType())}? (AWAIT|YIELD)
 	;
 
 identifier:
@@ -820,7 +847,7 @@ typeIdentifier:
 	|	ON // Not a built-in identifier.
 	|	SHOW // Not a built-in identifier.
 	|	SYNC // Not a built-in identifier.
-	|	(AWAIT|YIELD) // Esse trecho escrito dessa maneira fazia sentido pois havia uma função sendo executada...
+	|	{!areKeywords(getCurrentToken().getType())}? (AWAIT|YIELD)
 	;
 
 // Chapter 16.38 - Type Test
