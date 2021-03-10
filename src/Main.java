@@ -16,7 +16,6 @@ public class Main {
             parser.addErrorListener(new ThrowingErrorListener());
 
             parser.start();
-
         } catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Please inform a filename!");
             return;
@@ -25,8 +24,8 @@ public class Main {
             return;
         } catch (Exception e){
             // TODO: melhorar mensagem de erro.
-            e.printStackTrace();
-            //System.out.println("Parse failed!");
+            //e.printStackTrace();
+            System.out.println("Parse failed!");
             return;
         }
 

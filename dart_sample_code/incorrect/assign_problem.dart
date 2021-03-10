@@ -1,4 +1,4 @@
 var person;
 var item;
 
-person + item = item
+t(){person + item = item}
