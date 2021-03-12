@@ -13,10 +13,6 @@ public class Main {
             parser.setErrorHandler(new BailErrorStrategy());
             parser.addErrorListener(new ThrowingErrorListener());
 
-            DartSTListener dtListener = new DartSTListener();
-
-            parser.addParseListener(dtListener);
-
             parser.start();
 
         } catch (ArrayIndexOutOfBoundsException e){
