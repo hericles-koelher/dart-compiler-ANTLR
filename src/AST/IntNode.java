@@ -1,5 +1,8 @@
 package AST;
 
+import Types.Type;
+import Types.Types;
+
 public class IntNode extends AbstractExpressionNode{
     public String stringValue;
 
@@ -9,6 +12,13 @@ public class IntNode extends AbstractExpressionNode{
 
     @Override
     public String toString() {
-        return null;
+        return "IntNode{" +
+                "stringValue='" + stringValue + '\'' +
+                '}';
+    }
+
+    @Override
+    public Type getType() {
+        return Types.getType("int");
     }
 }

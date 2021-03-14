@@ -1,17 +1,20 @@
 package AST;
 
+import Types.Type;
+
 public class VariableDeclarationNode extends AbstractStatementNode{
-    //TODO: mudar esse esquema de tipo?
-    public String type;
+    public Type type;
     public String name;
     public AbstractExpressionNode initializer;
 
-    public VariableDeclarationNode(String type, String name){
+    //TODO: lembrar de testar unificação de tipos aqui
+
+    public VariableDeclarationNode(Type type, String name){
         this.type = type;
         this.name = name;
     }
 
-    public VariableDeclarationNode(String type, String name,
+    public VariableDeclarationNode(Type type, String name,
                                    AbstractExpressionNode initializer){
         this.type = type;
         this.name = name;

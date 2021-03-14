@@ -1,5 +1,7 @@
 package AST;
 
+import Types.Type;
+
 public class ConditionalExpressionNode extends AbstractExpressionNode {
     //TODO: forçar evaluableExpression a ser booleana
     public AbstractExpressionNode evaluableExpression;
@@ -19,5 +21,11 @@ public class ConditionalExpressionNode extends AbstractExpressionNode {
                 ", firstOption=" + firstOption +
                 ", secondOption=" + secondOption +
                 '}';
+    }
+
+    @Override
+    public Type getType() {
+        //TODO: usar função de unificação quando estiver pronta...
+        return null;
     }
 }

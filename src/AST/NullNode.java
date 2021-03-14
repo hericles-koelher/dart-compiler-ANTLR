@@ -1,8 +1,17 @@
 package AST;
 
+import Types.Type;
+import Types.Types;
+
 public class NullNode extends AbstractExpressionNode{
     @Override
     public String toString() {
-        return null;
+        return "NullNode{}";
+    }
+
+    // Será que isso é aceitavel? ehueueheuhueheuheu
+    @Override
+    public Type getType() {
+        return Types.getType("Null");
     }
 }

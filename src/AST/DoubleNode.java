@@ -1,5 +1,8 @@
 package AST;
 
+import Types.Type;
+import Types.Types;
+
 public class DoubleNode extends AbstractExpressionNode{
     public String stringValue;
 
@@ -12,5 +15,10 @@ public class DoubleNode extends AbstractExpressionNode{
         return "DoubleNode{" +
                 "stringValue='" + stringValue + '\'' +
                 '}';
+    }
+
+    @Override
+    public Type getType() {
+        return Types.getType("double");
     }
 }
