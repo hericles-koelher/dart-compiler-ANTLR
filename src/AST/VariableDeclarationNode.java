@@ -1,20 +1,21 @@
 package AST;
 
-public class VariableDeclarationNode implements BaseNode{
+public class VariableDeclarationNode extends AbstractStatementNode{
     //TODO: mudar esse esquema de tipo?
     public String type;
     public String name;
-    public ExpressionNode value;
+    public AbstractExpressionNode initializer;
 
     public VariableDeclarationNode(String type, String name){
         this.type = type;
         this.name = name;
     }
 
-    public VariableDeclarationNode(String type, String name, ExpressionNode varValue){
+    public VariableDeclarationNode(String type, String name,
+                                   AbstractExpressionNode initializer){
         this.type = type;
         this.name = name;
-        this.value = varValue;
+        this.initializer = initializer;
     }
 
     @Override
@@ -22,7 +23,7 @@ public class VariableDeclarationNode implements BaseNode{
         return "VariableDeclarationNode{" +
                 "type='" + type + '\'' +
                 ", name='" + name + '\'' +
-                ", varValue='" + value + '\'' +
+                ", varValue='" + initializer + '\'' +
                 '}';
     }
 }

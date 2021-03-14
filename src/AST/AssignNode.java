@@ -1,11 +1,7 @@
 package AST;
 
-public class AssignNode extends ExpressionNode{
-    //TODO: decompor o lado esquerdo quando List, Map e Set forem adicionados
-    public BaseNode left;
-    public ExpressionNode right;
-
-    public AssignNode(BaseNode left, ExpressionNode right){
+public class AssignNode extends AbstractTwoChildNode {
+    public AssignNode(AbstractNode left, AbstractExpressionNode right){
         this.left = left;
         this.right = right;
     }

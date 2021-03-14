@@ -13,15 +13,7 @@ public class Main {
             parser.setErrorHandler(new BailErrorStrategy());
             parser.addErrorListener(new ThrowingErrorListener());
 
-            //parser.start();
-
-            //Codigo de testes
-            var visitor = new GlobalVisitor();
-            var x = (DartParser.TopLevelDefinitionContext) parser.start().topLevelDefinition().toArray()[0];
-
-            var y = visitor.visitTopLevelDefinition(x);
-
-            System.out.println(y);
+            parser.start();
         } catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Please inform a filename!");
             return;
