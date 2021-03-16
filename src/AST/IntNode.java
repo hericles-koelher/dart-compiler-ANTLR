@@ -1,7 +1,7 @@
 package AST;
 
 import Types.Type;
-import Types.Types;
+import Types.TypeManager;
 
 public class IntNode extends AbstractExpressionNode{
     public String stringValue;
@@ -19,6 +19,6 @@ public class IntNode extends AbstractExpressionNode{
 
     @Override
     public Type getType() {
-        return Types.getType("int");
+        return TypeManager.getType("int");
     }
 }

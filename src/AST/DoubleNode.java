@@ -1,7 +1,7 @@
 package AST;
 
 import Types.Type;
-import Types.Types;
+import Types.TypeManager;
 
 public class DoubleNode extends AbstractExpressionNode{
     public String stringValue;
@@ -19,6 +19,6 @@ public class DoubleNode extends AbstractExpressionNode{
 
     @Override
     public Type getType() {
-        return Types.getType("double");
+        return TypeManager.getType("double");
     }
 }

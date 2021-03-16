@@ -1,7 +1,7 @@
 package AST;
 
 import Types.Type;
-import Types.Types;
+import Types.TypeManager;
 
 public class NullNode extends AbstractExpressionNode{
     @Override
@@ -12,6 +12,6 @@ public class NullNode extends AbstractExpressionNode{
     // Será que isso é aceitavel? ehueueheuhueheuheu
     @Override
     public Type getType() {
-        return Types.getType("Null");
+        return TypeManager.getType("Null");
     }
 }

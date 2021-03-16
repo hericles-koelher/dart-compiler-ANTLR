@@ -1,14 +1,11 @@
 package Types;
 
-class List<T extends Type> extends CompositeType {
-    private final Type subType;
+final public class List<T extends _Type> extends _Type {
+    //vai ser util quando tiver de comparar com o tipo dos elementos da lista
+    public final _Type subType;
 
     public List(T subType){
+        super("List<"+ subType +'>');
         this.subType = subType;
-    }
-
-    @Override
-    public java.lang.String toString() {
-        return "List<"+ subType +'>';
     }
 }
