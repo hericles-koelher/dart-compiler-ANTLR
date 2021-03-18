@@ -7,7 +7,9 @@ public class VariableDeclarationNode extends AbstractStatementNode{
     public String name;
     public AbstractExpressionNode initializer;
 
-    //TODO: lembrar de testar unificação de tipos aqui
+    //TODO: lembrar de testar unificação de tipos aqui.
+
+    //TODO: Atualizar a tabela de simbolos aqui.
 
     public VariableDeclarationNode(Type type, String name){
         this.type = type;

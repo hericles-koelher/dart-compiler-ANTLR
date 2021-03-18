@@ -2,8 +2,10 @@ package AST;
 
 import java.util.LinkedList;
 
-public class BlockNode extends AbstractMultChildNode{
-    public BlockNode(LinkedList<AbstractNode> statements) {
+public class BlockNode extends AbstractNode{
+    public LinkedList<AbstractStatementNode> children;
+
+    public BlockNode(LinkedList<AbstractStatementNode> statements) {
         this.children = statements;
     }
 
