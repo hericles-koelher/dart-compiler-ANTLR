@@ -1,17 +1,17 @@
 package AST;
 
 import Types.Type;
+import Types.TypeManager;
 
 public class TruncatedOverNode extends AbstractTwoChildNode{
     public TruncatedOverNode(AbstractExpressionNode left, AbstractExpressionNode right){
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
     @Override
     public Type getType() {
-        return null;
+        return TypeManager.getType("int");
     }
 
     @Override

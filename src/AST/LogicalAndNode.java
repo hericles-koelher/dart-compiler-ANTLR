@@ -1,22 +1,21 @@
 package AST;
 
 import Types.Type;
+import Types.TypeManager;
 
 public class LogicalAndNode extends AbstractTwoChildNode{
     public LogicalAndNode(AbstractExpressionNode left, AbstractExpressionNode right){
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
-    // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
     @Override
     public Type getType() {
-        return null;
+        return TypeManager.getType("bool");
     }
 
     @Override
     public String toString() {
-        return "PlusNode{"+
+        return "LogicalAndNode{"+
                 "left="+left+
                 ", right="+right+
                 '}';

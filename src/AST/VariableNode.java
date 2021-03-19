@@ -20,7 +20,6 @@ public class VariableNode extends AbstractExpressionNode{
     }
 
     //TODO: recuperar o tipo a partir da tabela de simbolos...
-    // chato vai ser bolar um esquema pro escopo...
     @Override
     public Type getType() {
         return null;

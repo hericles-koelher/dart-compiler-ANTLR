@@ -4,8 +4,7 @@ import Types.Type;
 
 public class TimesNode extends AbstractTwoChildNode{
     public TimesNode(AbstractExpressionNode left, AbstractExpressionNode right){
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...

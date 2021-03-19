@@ -7,14 +7,17 @@ import java.util.LinkedList;
 public class FunctionNode extends AbstractExpressionNode{
     public Type type;
     public String name;
-    public LinkedList<AbstractNode> parameters;
+    public LinkedList<ParameterNode> parameters;
     public AbstractNode body;
 
-    //TODO: definir os tipos de parametros
-    // (posicional, opcional nomeado e opcional posicional (e mais tipos se tiver))?
+    public FunctionNode(String name, LinkedList<ParameterNode> parameters, AbstractNode body){
+        this.type = Types.TypeManager.getType("dynamic");
+        this.name = name;
+        this.parameters = parameters;
+        this.body = body;
+    }
 
-    //TODO: atualizar a tabela de simbolos aqui.
-    public FunctionNode(Type type, String name, LinkedList<AbstractNode> parameters, AbstractNode body){
+    public FunctionNode(Type type, String name, LinkedList<ParameterNode> parameters, AbstractNode body){
         this.type = type;
         this.name = name;
         this.parameters = parameters;

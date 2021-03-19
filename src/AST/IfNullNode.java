@@ -4,8 +4,7 @@ import Types.Type;
 
 public class IfNullNode extends AbstractTwoChildNode{
     public IfNullNode(AbstractExpressionNode left, AbstractExpressionNode right){
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
@@ -16,7 +15,7 @@ public class IfNullNode extends AbstractTwoChildNode{
 
     @Override
     public String toString() {
-        return "PlusNode{"+
+        return "IfNullNode{"+
                 "left="+left+
                 ", right="+right+
                 '}';

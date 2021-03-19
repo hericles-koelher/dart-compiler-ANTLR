@@ -3,8 +3,8 @@ package AST;
 import Types.Type;
 import Types.TypeManager;
 
-public class LogicalOrNode extends AbstractTwoChildNode{
-    public LogicalOrNode(AbstractExpressionNode left, AbstractExpressionNode right){
+public class GreaterNode extends AbstractTwoChildNode{
+    public GreaterNode(AbstractExpressionNode left, AbstractExpressionNode right){
         super(left, right);
     }
 
@@ -15,7 +15,7 @@ public class LogicalOrNode extends AbstractTwoChildNode{
 
     @Override
     public String toString() {
-        return "LogicalOrNode{"+
+        return "GreaterNode{"+
                 "left="+left+
                 ", right="+right+
                 '}';
