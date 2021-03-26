@@ -9,29 +9,49 @@ public class TypeManager {
 
     // Permitindo somente variações de list e map...
     public static void addType(Type type) throws Exception{
-        switch (((_Type) type).name) {
-            case "int", "double", "bool", "String", "dynamic", "Null"
-                    -> throw new Exception("Cannot add type " + ((_Type) type).name + " !");
-            default -> compositeTypes.put(type.toString(), type);
+        switch (type.toString()){
+            case "int":
+            case "double":
+            case "bool":
+            case "String":
+            case "dynamic":
+            case "Null":
+                throw new Exception("Cannot add type " + ((_Type) type).name + " !");
+            default:
+                compositeTypes.put(type.toString(), type);
         }
     }
 
     public static boolean lookup(String typeName){
-        return switch (typeName) {
-            case "int", "double", "bool", "String", "dynamic", "Null" -> true;
-            default -> compositeTypes.containsKey(typeName);
-        };
+        switch (typeName){
+            case "int":
+            case "double":
+            case "bool":
+            case "String":
+            case "dynamic":
+            case "Null":
+                return true;
+            default:
+                return compositeTypes.containsKey(typeName);
+        }
     }
 
     public static Type getType(String typeName){
-        return switch (typeName) {
-            case "int" -> _Type.TYPE_INT;
-            case "double" -> _Type.TYPE_DOUBLE;
-            case "bool" -> _Type.TYPE_BOOL;
-            case "String" -> _Type.TYPE_STRING;
-            case "Null" -> _Type.TYPE_NULL;
-            case "dynamic" -> _Type.TYPE_DYNAMIC;
-            default -> compositeTypes.get(typeName);
-        };
+        switch (typeName){
+            case "int":
+                return _Type.TYPE_INT;
+            case "double":
+                return _Type.TYPE_DOUBLE;
+            case "bool":
+                return _Type.TYPE_BOOL;
+            case "String":
+                return _Type.TYPE_STRING;
+            case "dynamic":
+                return _Type.TYPE_DYNAMIC;
+            case "Null":
+                return _Type.TYPE_NULL;
+            default:
+                return compositeTypes.get(typeName);
+        }
     }
 }

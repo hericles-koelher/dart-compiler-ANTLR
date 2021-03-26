@@ -2,6 +2,8 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import java.lang.ArrayIndexOutOfBoundsException;
 import java.nio.file.NoSuchFileException;
+import Dart.DartLexer;
+import Dart.DartParser;
 
 public class Main {
     public static void main(String[] args) {
