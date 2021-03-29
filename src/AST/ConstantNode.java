@@ -1,6 +1,7 @@
 package AST;
 
 import Types.Type;
+import Types.TypeManager;
 
 public class ConstantNode extends AbstractExpressionNode{
     public Type type;
@@ -25,4 +26,9 @@ public class ConstantNode extends AbstractExpressionNode{
     public Type getType() {
         return type;
     }
+
+    public static final ConstantNode NullNode = new ConstantNode(
+            TypeManager.getType("Null"),
+            "null"
+    );
 }

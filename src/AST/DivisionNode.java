@@ -2,8 +2,8 @@ package AST;
 
 import Types.Type;
 
-public class MinusNode extends AbstractTwoChildNode{
-    public MinusNode(AbstractExpressionNode left, AbstractExpressionNode right){
+public class DivisionNode extends AbstractTwoChildNode{
+    public DivisionNode(AbstractExpressionNode left, AbstractExpressionNode right){
         super(left, right);
     }
 
