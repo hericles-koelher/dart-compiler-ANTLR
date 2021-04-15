@@ -12,7 +12,6 @@ public class Listener extends DartBaseListener {
 
     @Override
     public void exitStringLiteral(DartParser.StringLiteralContext ctx) {
-        System.out.println('a');
         st.addString(ctx.getText());
     }
 }
