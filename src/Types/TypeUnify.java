@@ -6,7 +6,7 @@ enum TypeEnum {
     BOOL_TYPE,
     STR_TYPE,
     NO_TYPE, // Used when we need to pass a non-existing type to a function.
-};
+}
 
 enum Conv {  // Basic conversions between types.
     B2I,
@@ -16,7 +16,7 @@ enum Conv {  // Basic conversions between types.
     I2S,
     R2S,
     NONE,
-};
+}
 
 public class TypeUnify {
     _Type type;
@@ -50,8 +50,7 @@ public class TypeUnify {
     };
 
     static TypeUnify UnifyPlus(_Type lt, _Type rt) {
-        TypeUnify unify = PlusRelation[typeToEnum(lt).ordinal()][typeToEnum(rt).ordinal()];
-        return unify;
+        return PlusRelation[typeToEnum(lt).ordinal()][typeToEnum(rt).ordinal()];
     }
 
     static TypeUnify[][] OtherRelation = {
@@ -62,8 +61,7 @@ public class TypeUnify {
     };
 
     static TypeUnify UnifyOther(_Type lt, _Type rt) {
-        TypeUnify unify = OtherRelation[typeToEnum(lt).ordinal()][typeToEnum(rt).ordinal()]
-        return unify;
+       return  OtherRelation[typeToEnum(lt).ordinal()][typeToEnum(rt).ordinal()];
     }
 
     static TypeUnify[][] ComparisonRelation = {
@@ -74,8 +72,7 @@ public class TypeUnify {
     };
 
     TypeUnify UnifyComparison(_Type lt, _Type rt) {
-        TypeUnify unify = ComparisonRelation[typeToEnum(lt).ordinal()][typeToEnum(rt).ordinal()]
-        return unify;
+        return ComparisonRelation[typeToEnum(lt).ordinal()][typeToEnum(rt).ordinal()];
     }
 
 }
