@@ -2,6 +2,8 @@ package AST;
 
 import Types.Type;
 
+import static Types.TypeUnify.UnifyOther;
+
 public class SubtractionNode extends AbstractTwoChildNode{
     public SubtractionNode(AbstractExpressionNode left, AbstractExpressionNode right){
         super(left, right);
@@ -9,9 +11,10 @@ public class SubtractionNode extends AbstractTwoChildNode{
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
     @Override
-    public Type getType() {
-        return null;
+    public Type getType() throws Exception{
+        return UnifyOther(this.left.getType(), this.right.getType()).type;
     }
+
 
     @Override
     public String toString() {

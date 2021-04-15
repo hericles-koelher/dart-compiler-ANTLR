@@ -16,7 +16,7 @@ public class FunctionCallNode extends AbstractExpressionNode{
 
     // TODO: buscar tipo na tabela de simbolos
     @Override
-    public Type getType() {
+    public Type getType() throws Exception{
         return null;
     }
 

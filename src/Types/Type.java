@@ -2,21 +2,17 @@ package Types;
 
 import java.util.Objects;
 
-public abstract class Type {
-    public abstract String toString();
-}
-
-class _Type extends Type{
+public class Type {
     public String name;
 
-    public static final _Type TYPE_INT = new _Type("int");
-    public static final _Type TYPE_DOUBLE = new _Type("double");
-    public static final _Type TYPE_BOOL = new _Type("bool");
-    public static final _Type TYPE_STRING = new _Type("String");
-    public static final _Type TYPE_DYNAMIC = new _Type("dynamic");
-    public static final _Type TYPE_NULL = new _Type("Null");
+    public static final Type TYPE_INT = new Type("int");
+    public static final Type TYPE_DOUBLE = new Type("double");
+    public static final Type TYPE_BOOL = new Type("bool");
+    public static final Type TYPE_STRING = new Type("String");
+    public static final Type TYPE_DYNAMIC = new Type("dynamic");
+    public static final Type TYPE_NULL = new Type("Null");
 
-    protected _Type(String name){
+    protected Type(String name){
         this.name = name;
     }
 
@@ -28,8 +24,8 @@ class _Type extends Type{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof _Type)) return false;
-        _Type type = (_Type) o;
+        if (!(o instanceof Type)) return false;
+        Type type = (Type) o;
         return name.equals(type.name);
     }
 

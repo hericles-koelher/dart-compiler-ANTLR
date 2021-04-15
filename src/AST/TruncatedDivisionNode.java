@@ -10,7 +10,7 @@ public class TruncatedDivisionNode extends AbstractTwoChildNode{
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
     @Override
-    public Type getType() {
+    public Type getType() throws Exception{
         return TypeManager.getType("int");
     }
 

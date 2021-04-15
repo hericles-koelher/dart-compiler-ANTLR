@@ -14,7 +14,7 @@ public class IsNode extends AbstractExpressionNode{
     }
 
     @Override
-    public Type getType() {
+    public Type getType() throws Exception{
         return TypeManager.getType("bool");
     }
 

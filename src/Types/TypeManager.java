@@ -16,7 +16,7 @@ public class TypeManager {
             case "String":
             case "dynamic":
             case "Null":
-                throw new Exception("Cannot add type " + ((_Type) type).name + " !");
+                throw new Exception("Cannot add type " + ((Type) type).name + " !");
             default:
                 compositeTypes.put(type.toString(), type);
         }
@@ -36,20 +36,20 @@ public class TypeManager {
         }
     }
 
-    public static Type getType(String typeName){
+    public static Type getType(String typeName) {
         switch (typeName){
             case "int":
-                return _Type.TYPE_INT;
+                return Type.TYPE_INT;
             case "double":
-                return _Type.TYPE_DOUBLE;
+                return Type.TYPE_DOUBLE;
             case "bool":
-                return _Type.TYPE_BOOL;
+                return Type.TYPE_BOOL;
             case "String":
-                return _Type.TYPE_STRING;
+                return Type.TYPE_STRING;
             case "dynamic":
-                return _Type.TYPE_DYNAMIC;
+                return Type.TYPE_DYNAMIC;
             case "Null":
-                return _Type.TYPE_NULL;
+                return Type.TYPE_NULL;
             default:
                 return compositeTypes.get(typeName);
         }

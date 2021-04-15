@@ -9,7 +9,7 @@ public class LogicalAndNode extends AbstractTwoChildNode{
     }
 
     @Override
-    public Type getType() {
+    public Type getType() throws Exception{
         return TypeManager.getType("bool");
     }
 

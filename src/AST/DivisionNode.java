@@ -1,6 +1,7 @@
 package AST;
 
 import Types.Type;
+import static Types.TypeUnify.UnifyOther;
 
 public class DivisionNode extends AbstractTwoChildNode{
     public DivisionNode(AbstractExpressionNode left, AbstractExpressionNode right){
@@ -9,8 +10,8 @@ public class DivisionNode extends AbstractTwoChildNode{
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
     @Override
-    public Type getType() {
-        return null;
+    public Type getType() throws Exception{
+        return UnifyOther(this.left.getType(), this.right.getType()).type;
     }
 
     @Override

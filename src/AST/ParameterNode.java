@@ -27,7 +27,7 @@ public class ParameterNode extends AbstractExpressionNode{
     }
 
     @Override
-    public Type getType() {
+    public Type getType() throws Exception{
         return type;
     }
 

@@ -16,7 +16,7 @@ public class AssignNode extends AbstractTwoChildNode {
     }
 
     @Override
-    public Type getType() {
+    public Type getType() throws Exception{
         return left.getType();
     }
 }

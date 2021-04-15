@@ -1,6 +1,9 @@
 package AST;
 
 import Types.Type;
+import Types.TypeUnify;
+
+import static Types.TypeUnify.UnifyPlus;
 
 public class AdditionNode extends AbstractTwoChildNode{
     public AdditionNode(AbstractExpressionNode left, AbstractExpressionNode right){
@@ -9,8 +12,8 @@ public class AdditionNode extends AbstractTwoChildNode{
 
     // TODO: esse daqui tem que retornar a unificação dos tipos de left e right...
     @Override
-    public Type getType() {
-        return null;
+    public Type getType() throws Exception{
+        return UnifyPlus(this.left.getType(), this.right.getType()).type;
     }
 
     @Override
