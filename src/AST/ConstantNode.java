@@ -3,13 +3,17 @@ package AST;
 import Types.Type;
 import Types.TypeManager;
 
-public class ConstantNode extends AbstractExpressionNode{
+public class ConstantNode extends AbstractExpressionNode {
+    public static final ConstantNode NullNode = new ConstantNode(
+            TypeManager.getType("Null"),
+            "null"
+    );
     public Type type;
     // Devo manter como string?
     // Caraca vai ser osso tratar listas e maps...
     public String value;
 
-    public ConstantNode(Type type, String value){
+    public ConstantNode(Type type, String value) {
         this.type = type;
         this.value = value;
     }
@@ -23,12 +27,7 @@ public class ConstantNode extends AbstractExpressionNode{
     }
 
     @Override
-    public Type getType() throws Exception{
+    public Type getType() throws Exception {
         return type;
     }
-
-    public static final ConstantNode NullNode = new ConstantNode(
-            TypeManager.getType("Null"),
-            "null"
-    );
 }

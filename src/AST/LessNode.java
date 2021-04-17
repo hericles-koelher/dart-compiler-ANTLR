@@ -1,12 +1,11 @@
 package AST;
 
 import Types.Type;
-import Types.TypeManager;
 
 import static Types.TypeUnify.UnifyComparison;
 
-public class LessNode extends AbstractTwoChildNode{
-    public LessNode(AbstractExpressionNode left, AbstractExpressionNode right){
+public class LessNode extends AbstractTwoChildNode {
+    public LessNode(AbstractExpressionNode left, AbstractExpressionNode right) {
         super(left, right);
     }
 
@@ -26,9 +25,9 @@ public class LessNode extends AbstractTwoChildNode{
 
     @Override
     public String toString() {
-        return "LessNode{"+
-                "left="+left+
-                ", right="+right+
+        return "LessNode{" +
+                "left=" + left +
+                ", right=" + right +
                 '}';
     }
 }

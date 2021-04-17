@@ -2,7 +2,7 @@ package SymbolTable;
 
 import Types.Type;
 
-public class Parameter{
+public class Parameter {
     public final Type type;
     public final String name;
 

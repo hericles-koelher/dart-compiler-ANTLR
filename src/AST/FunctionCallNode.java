@@ -4,11 +4,11 @@ import Types.Type;
 
 import java.util.LinkedList;
 
-public class FunctionCallNode extends AbstractExpressionNode{
+public class FunctionCallNode extends AbstractExpressionNode {
     public String name;
     public LinkedList<AbstractNode> args;
 
-    public FunctionCallNode(String name, LinkedList<AbstractNode> args){
+    public FunctionCallNode(String name, LinkedList<AbstractNode> args) {
         this.name = name;
         this.args = args;
         // TODO: verificar se os tipo, nome e posição dos args batem
@@ -16,7 +16,7 @@ public class FunctionCallNode extends AbstractExpressionNode{
 
     // TODO: buscar tipo na tabela de simbolos
     @Override
-    public Type getType() throws Exception{
+    public Type getType() throws Exception {
         return null;
     }
 

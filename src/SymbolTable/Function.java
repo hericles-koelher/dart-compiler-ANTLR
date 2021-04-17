@@ -1,11 +1,12 @@
 package SymbolTable;
 
 import Types.Type;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Function{
+public class Function {
     public final Integer scopeId;
     public final int declarationLine;
     public final Type type;
@@ -16,7 +17,7 @@ public class Function{
 
     Function(Integer scopeId, int declarationLine, Type type,
              String name, Parameter[] positionalParameters,
-             Parameter[] optionalPositionalParameters){
+             Parameter[] optionalPositionalParameters) {
         this.scopeId = scopeId;
         this.declarationLine = declarationLine;
         this.type = type;
@@ -28,7 +29,7 @@ public class Function{
 
     Function(Integer scopeId, int declarationLine, Type type,
              String name, Parameter[] positionalParameters,
-             HashMap<String, Parameter> namedParameters){
+             HashMap<String, Parameter> namedParameters) {
         this.scopeId = scopeId;
         this.declarationLine = declarationLine;
         this.type = type;

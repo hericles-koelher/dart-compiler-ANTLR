@@ -3,7 +3,7 @@ package AST;
 import Types.Type;
 
 public class AssignNode extends AbstractTwoChildNode {
-    public AssignNode(VariableNode left, AbstractExpressionNode right){
+    public AssignNode(VariableNode left, AbstractExpressionNode right) {
         // TODO: outro lugar pra testar unificação dps
         super(left, right);
     }
@@ -16,7 +16,7 @@ public class AssignNode extends AbstractTwoChildNode {
     }
 
     @Override
-    public Type getType() throws Exception{
+    public Type getType() throws Exception {
         return left.getType();
     }
 }

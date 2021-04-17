@@ -1,7 +1,6 @@
 package AST;
 
 import Types.Type;
-import Types.TypeManager;
 
 import static Types.TypeUnify.UnifyComparison;
 

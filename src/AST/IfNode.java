@@ -1,6 +1,6 @@
 package AST;
 
-public class IfNode extends AbstractStatementNode{
+public class IfNode extends AbstractStatementNode {
     public AbstractExpressionNode conditionalExpression;
     public AbstractStatementNode child;
     public AbstractStatementNode elseChild;
@@ -8,20 +8,20 @@ public class IfNode extends AbstractStatementNode{
     // if-else
     public IfNode(AbstractExpressionNode expr,
                   AbstractStatementNode child,
-                  AbstractStatementNode elseChild){
+                  AbstractStatementNode elseChild) {
         conditionalExpression = expr;
         this.child = child;
         this.elseChild = elseChild;
     }
 
     // if
-    public IfNode(AbstractExpressionNode expr, AbstractStatementNode child){
+    public IfNode(AbstractExpressionNode expr, AbstractStatementNode child) {
         conditionalExpression = expr;
         this.child = child;
     }
 
     // if without body
-    public IfNode(AbstractExpressionNode expr){
+    public IfNode(AbstractExpressionNode expr) {
         conditionalExpression = expr;
         child = ConstantNode.NullNode;
     }

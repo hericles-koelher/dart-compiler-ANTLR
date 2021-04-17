@@ -1,3 +1,4 @@
 package AST;
 
-public abstract class AbstractStatementNode extends AbstractNode{}
+public abstract class AbstractStatementNode extends AbstractNode {
+}

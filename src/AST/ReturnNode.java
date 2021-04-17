@@ -1,14 +1,14 @@
 package AST;
 
-public class ReturnNode extends AbstractStatementNode{
+public class ReturnNode extends AbstractStatementNode {
     public AbstractExpressionNode child;
 
     // return;
-    public ReturnNode(){
+    public ReturnNode() {
         this.child = ConstantNode.NullNode;
     }
 
-    public ReturnNode(AbstractExpressionNode child){
+    public ReturnNode(AbstractExpressionNode child) {
         this.child = child;
     }
 

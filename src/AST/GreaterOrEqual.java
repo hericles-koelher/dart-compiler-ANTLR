@@ -1,13 +1,11 @@
 package AST;
 
 import Types.Type;
-import Types.TypeManager;
 
 import static Types.TypeUnify.UnifyComparison;
-import static Types.TypeUnify.UnifyOther;
 
-public class GreaterOrEqual extends AbstractTwoChildNode{
-    public GreaterOrEqual(AbstractExpressionNode left, AbstractExpressionNode right){
+public class GreaterOrEqual extends AbstractTwoChildNode {
+    public GreaterOrEqual(AbstractExpressionNode left, AbstractExpressionNode right) {
         super(left, right);
     }
 
@@ -25,12 +23,11 @@ public class GreaterOrEqual extends AbstractTwoChildNode{
     }
 
 
-
     @Override
     public String toString() {
-        return "GreaterOrEqualNode{"+
-                "left="+left+
-                ", right="+right+
+        return "GreaterOrEqualNode{" +
+                "left=" + left +
+                ", right=" + right +
                 '}';
     }
 }

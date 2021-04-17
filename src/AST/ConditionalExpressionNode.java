@@ -8,7 +8,7 @@ public class ConditionalExpressionNode extends AbstractExpressionNode {
     public AbstractExpressionNode firstOption;
     public AbstractExpressionNode secondOption;
 
-    ConditionalExpressionNode(AbstractExpressionNode evalExp, AbstractExpressionNode firstOption, AbstractExpressionNode secondOption){
+    ConditionalExpressionNode(AbstractExpressionNode evalExp, AbstractExpressionNode firstOption, AbstractExpressionNode secondOption) {
         this.evaluableExpression = evalExp;
         this.firstOption = firstOption;
         this.secondOption = secondOption;

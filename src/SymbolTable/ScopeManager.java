@@ -9,15 +9,15 @@ import java.util.Stack;
 // e declaração de variaveis.
 
 public class ScopeManager {
-    private static Integer id = 0;
     // A pilha vai ser util na hora de popular a tabela de simbolos
     private static final Stack<Integer> scopeStack = new Stack<>();
     // Já o hashmap vai ser util na hora da busca pelas referencias
     private static final HashMap<Integer, Scope> scopeHashMap = new HashMap<>();
+    private static Integer id = 0;
 
     // Sempre lembrar de inicializar isso...
     // Poderia criar condições pra isso, mas não tô afim
-    public static void init(){
+    public static void init() {
         var globalScope = new Scope(id, null);
         scopeStack.push(id);
         scopeHashMap.put(id, globalScope);
@@ -25,25 +25,27 @@ public class ScopeManager {
     }
 
     // Retorna o id do escopo em uso...
-    public static Integer getScopeId(){ return scopeStack.peek(); }
+    public static Integer getScopeId() {
+        return scopeStack.peek();
+    }
 
     // Retorna null caso o parentId seja do escopo global
-    public static Integer getScopeParentId(Integer scopeId){
+    public static Integer getScopeParentId(Integer scopeId) {
         return scopeHashMap.get(scopeId).parentId;
     }
 
-    public static void createScope(){
+    public static void createScope() {
         scopeHashMap.put(id, new Scope(id, getScopeId()));
         scopeStack.push(id);
         id++;
     }
 
-    public static void removeScope(){
+    public static void removeScope() {
         scopeStack.pop();
     }
 }
 
-class Scope{
+class Scope {
     public final Integer id;
     public final Integer parentId;
 

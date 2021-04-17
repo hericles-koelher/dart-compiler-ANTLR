@@ -2,15 +2,11 @@ package AST;
 
 import Types.Type;
 
-public class ParameterNode extends AbstractExpressionNode{
+public class ParameterNode extends AbstractExpressionNode {
     public final ParameterType paramType;
     public final Type type;
     public final String name;
     public final AbstractExpressionNode initializer;
-
-    public enum ParameterType{
-        Positional, OptionalNamed, OptionalPositional
-    }
 
     public ParameterNode(ParameterType paramType, Type type, String name) {
         this.paramType = paramType;
@@ -27,12 +23,16 @@ public class ParameterNode extends AbstractExpressionNode{
     }
 
     @Override
-    public Type getType() throws Exception{
+    public Type getType() throws Exception {
         return type;
     }
 
     @Override
     public String toString() {
         return null;
+    }
+
+    public enum ParameterType {
+        Positional, OptionalNamed, OptionalPositional
     }
 }

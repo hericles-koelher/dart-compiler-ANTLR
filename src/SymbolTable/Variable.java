@@ -1,15 +1,16 @@
 package SymbolTable;
 
 import Types.Type;
+
 import java.util.Objects;
 
-public class Variable{
+public class Variable {
     public Type type;
     public String name;
     public Integer scopeId;
     public int declarationLine;
 
-    Variable(Type type, String name, Integer scopeId, int declarationLine){
+    public Variable(Type type, String name, Integer scopeId, int declarationLine) {
         this.type = type;
         this.name = name;
         this.scopeId = scopeId;

@@ -4,20 +4,20 @@ import Types.Type;
 
 import java.util.LinkedList;
 
-public class FunctionNode extends AbstractExpressionNode{
+public class FunctionNode extends AbstractExpressionNode {
     public Type type;
     public String name;
     public LinkedList<ParameterNode> parameters;
     public AbstractNode body;
 
-    public FunctionNode(String name, LinkedList<ParameterNode> parameters, AbstractNode body){
+    public FunctionNode(String name, LinkedList<ParameterNode> parameters, AbstractNode body) {
         this.type = Types.TypeManager.getType("dynamic");
         this.name = name;
         this.parameters = parameters;
         this.body = body;
     }
 
-    public FunctionNode(Type type, String name, LinkedList<ParameterNode> parameters, AbstractNode body){
+    public FunctionNode(Type type, String name, LinkedList<ParameterNode> parameters, AbstractNode body) {
         this.type = type;
         this.name = name;
         this.parameters = parameters;
@@ -36,7 +36,7 @@ public class FunctionNode extends AbstractExpressionNode{
     }
 
     @Override
-    public Type getType() throws Exception{
+    public Type getType() throws Exception {
         return type;
     }
 }

@@ -23,7 +23,7 @@ public class StringTable {
         return this.st.get(i);
     }
 
-    public void printStringTable() {
+    public void print() {
         System.out.println("String table:");
         for (int i = 0; i < this.st.size(); i++) {
             System.out.printf("Entry %d -- %s%n", i, this.st.get(i));
