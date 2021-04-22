@@ -2,8 +2,8 @@ package SymbolTable;
 
 import Types.Type;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class Function {
@@ -11,13 +11,13 @@ public class Function {
     public final int declarationLine;
     public final Type type;
     public final String name;
-    public final Parameter[] positionalParameters;
-    public final Parameter[] optionalPositionalParameters;
+    public final List<Parameter> positionalParameters;
+    public final List<Parameter> optionalPositionalParameters;
     public final HashMap<String, Parameter> namedParameters;
 
-    Function(Integer scopeId, int declarationLine, Type type,
-             String name, Parameter[] positionalParameters,
-             Parameter[] optionalPositionalParameters) {
+    public Function(Integer scopeId, int declarationLine, Type type,
+                    String name, List<Parameter> positionalParameters,
+                    List<Parameter> optionalPositionalParameters) {
         this.scopeId = scopeId;
         this.declarationLine = declarationLine;
         this.type = type;
@@ -27,9 +27,9 @@ public class Function {
         this.namedParameters = null;
     }
 
-    Function(Integer scopeId, int declarationLine, Type type,
-             String name, Parameter[] positionalParameters,
-             HashMap<String, Parameter> namedParameters) {
+    public Function(Integer scopeId, int declarationLine, Type type,
+                    String name, List<Parameter> positionalParameters,
+                    HashMap<String, Parameter> namedParameters) {
         this.scopeId = scopeId;
         this.declarationLine = declarationLine;
         this.type = type;
@@ -45,8 +45,8 @@ public class Function {
                 "scopeId=" + scopeId +
                 ", type=" + type +
                 ", name='" + name + '\'' +
-                ", positionalParameters=" + Arrays.toString(positionalParameters) +
-                ", optionalPositionalParameters=" + Arrays.toString(optionalPositionalParameters) +
+                ", positionalParameters=" + positionalParameters +
+                ", optionalPositionalParameters=" + optionalPositionalParameters +
                 ", namedParameters=" + namedParameters +
                 '}';
     }

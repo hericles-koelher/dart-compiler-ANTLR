@@ -16,7 +16,7 @@ public class TypeManager {
             case "String":
             case "dynamic":
             case "Null":
-                throw new Exception("Cannot add type " + ((Type) type).name + " !");
+                throw new Exception("Cannot add type " + type.name + " !");
             default:
                 compositeTypes.put(type.toString(), type);
         }

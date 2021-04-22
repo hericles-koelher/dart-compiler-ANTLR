@@ -534,7 +534,7 @@ constObjectExpression:
 // Chapter 16.17.1 - Actual Arguments Lists
 
 arguments:
-		'(' (argumentList ','?)? ')'
+		'(' argumentList? ')'
 	;
 
 argumentList:
@@ -1175,6 +1175,7 @@ functionPrefix:
 		type identifier
 	|	identifier
 	;
+
 
 singleLineString:
 		RAW_SINGLE_LINE_STRING
