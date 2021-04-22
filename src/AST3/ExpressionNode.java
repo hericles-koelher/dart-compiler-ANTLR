@@ -7,37 +7,39 @@ import java.io.FileWriter;
 public class ExpressionNode extends StatementsNode {
     public PrimaryNode primaryNode0;
     public PrimaryNode primaryNode1;
-    public InitializedVariableNode variableNode;
-    public ExpressionNode expressionNode;
+    public InitializedVariableNode variableNode0;
+    public InitializedVariableNode variableNode1;
+    public ExpressionNode expressionNode0;
+    public ExpressionNode expressionNode1;
     public Operation operation;
 
     public ExpressionNode() {
     }
 
-    public ExpressionNode(PrimaryNode primaryNode0, ExpressionNode expressionNode, Operation operation) {
+    public ExpressionNode(PrimaryNode primaryNode0, ExpressionNode expressionNode0, Operation operation) {
         this.primaryNode0 = primaryNode0;
-        this.expressionNode = expressionNode;
+        this.expressionNode0 = expressionNode0;
         this.operation = operation;
     }
 
-    public ExpressionNode(InitializedVariableNode variableNode, ExpressionNode expressionNode, Operation operation) {
-        this.variableNode = variableNode;
-        this.expressionNode = expressionNode;
+    public ExpressionNode(InitializedVariableNode variableNode0, ExpressionNode expressionNode0, Operation operation) {
+        this.variableNode0 = variableNode0;
+        this.expressionNode0 = expressionNode0;
         this.operation = operation;
     }
 
-    public ExpressionNode(ExpressionNode expressionNode, Operation operation) {
-        this.expressionNode = expressionNode;
+    public ExpressionNode(ExpressionNode expressionNode0, Operation operation) {
+        this.expressionNode0 = expressionNode0;
         this.operation = operation;
     }
 
-    public ExpressionNode(InitializedVariableNode variableNode, Operation operation) {
-        this.variableNode = variableNode;
+    public ExpressionNode(InitializedVariableNode variableNode0, Operation operation) {
+        this.variableNode0 = variableNode0;
         this.operation = operation;
     }
 
-    public ExpressionNode(InitializedVariableNode variableNode, PrimaryNode primaryNode0, Operation operation) {
-        this.variableNode = variableNode;
+    public ExpressionNode(InitializedVariableNode variableNode0, PrimaryNode primaryNode0, Operation operation) {
+        this.variableNode0 = variableNode0;
         this.primaryNode0 = primaryNode0;
         this.operation = operation;
     }
@@ -52,8 +54,12 @@ public class ExpressionNode extends StatementsNode {
 
         writer.write("\"];\n");
 
-        if (this.variableNode != null) {
-            Integer child_nr = this.variableNode.printNode(writer);
+        if (this.variableNode0 != null) {
+            Integer child_nr = this.variableNode0.printNode(writer);
+            writer.write(String.format("node%d -> node%d;\n", my_nr, child_nr));
+        }
+        if (this.variableNode1 != null) {
+            Integer child_nr = this.variableNode1.printNode(writer);
             writer.write(String.format("node%d -> node%d;\n", my_nr, child_nr));
         }
         if (this.primaryNode0 != null) {
@@ -64,8 +70,12 @@ public class ExpressionNode extends StatementsNode {
             Integer child_nr = this.primaryNode1.printNode(writer);
             writer.write(String.format("node%d -> node%d;\n", my_nr, child_nr));
         }
-        if (this.expressionNode != null) {
-            Integer child_nr = this.expressionNode.printNode(writer);
+        if (this.expressionNode0 != null) {
+            Integer child_nr = this.expressionNode0.printNode(writer);
+            writer.write(String.format("node%d -> node%d;\n", my_nr, child_nr));
+        }
+        if (this.expressionNode1 != null) {
+            Integer child_nr = this.expressionNode1.printNode(writer);
             writer.write(String.format("node%d -> node%d;\n", my_nr, child_nr));
         }
 

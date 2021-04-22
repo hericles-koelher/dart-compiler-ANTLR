@@ -113,7 +113,7 @@ public class Visitor3 extends DartBaseVisitor<Node> {
         if (ctx.expression() != null) {
             expressionNode.primaryNode0 = (PrimaryNode) ctx.expression().accept(this);
             expressionNode.operation = Operation.Assignment;
-            expressionNode.variableNode = varialbleNode;
+            expressionNode.variableNode0 = varialbleNode;
 
             return expressionNode;
         }
@@ -815,7 +815,17 @@ public class Visitor3 extends DartBaseVisitor<Node> {
         }
         if (ctx.children.size() > 1) {
             ExpressionNode expressionNode = new ExpressionNode();
-            expressionNode.primaryNode0 = (LiteralNode) ctx.children.get(0).accept(this);
+
+            Node n = ctx.children.get(0).accept(this);
+            if(n instanceof PrimaryNode) {
+                expressionNode.primaryNode0 = (PrimaryNode) n;
+            }
+            if(n instanceof ExpressionNode) {
+                expressionNode.expressionNode0 = (ExpressionNode) n;
+            }
+            if(n instanceof InitializedVariableNode) {
+                expressionNode.variableNode0 = (InitializedVariableNode) n;
+            }
 
             for (int i = 1; i < ctx.children.size(); i += 2) {
                 String token = ((TokenNode) ctx.children.get(i).accept(this)).token;
@@ -823,17 +833,32 @@ public class Visitor3 extends DartBaseVisitor<Node> {
 
                 Node node = ctx.children.get(i + 1).accept(this);
                 if (node instanceof LiteralNode) {
-                    expressionNode.primaryNode1 = (LiteralNode) node;
+                    if(expressionNode.primaryNode0 == null) {
+                        expressionNode.primaryNode0 = (LiteralNode) node;
+                    } else {
+                        expressionNode.primaryNode1 = (LiteralNode) node;
+                    }
+
+                    ExpressionNode newExpressionNode = new ExpressionNode();
+                    newExpressionNode.expressionNode0 = expressionNode;
+                    expressionNode = newExpressionNode;
                 }
                 if (node instanceof ExpressionNode) {
-                    ExpressionNode newExpressionNode = (ExpressionNode) node;
-                    newExpressionNode.expressionNode = expressionNode;
+                    if(expressionNode.expressionNode0 == null) {
+                        expressionNode.expressionNode0 = (ExpressionNode) node;
+                    } else {
+                        expressionNode.expressionNode1 = (ExpressionNode) node;
+                    }
+
+                    ExpressionNode newExpressionNode = new ExpressionNode();
+                    newExpressionNode.expressionNode0 = expressionNode;
                     expressionNode = newExpressionNode;
                 }
             }
 
-            return expressionNode;
+            return expressionNode.operation == null ? expressionNode.expressionNode0 : expressionNode;
         }
+
 
         return ctx.multiplicativeExpression(0).accept(this);
     }
@@ -850,8 +875,50 @@ public class Visitor3 extends DartBaseVisitor<Node> {
         if (ctx.SUPER() != null) {
             throw new NodeNotImplmentedException();
         }
-        if (ctx.unaryExpression().size() > 1) {
-            throw new NodeNotImplmentedException();
+        if (ctx.children.size() > 1) {
+            ExpressionNode expressionNode = new ExpressionNode();
+
+            Node n = ctx.children.get(0).accept(this);
+            if(n instanceof PrimaryNode) {
+                expressionNode.primaryNode0 = (PrimaryNode) n;
+            }
+            if(n instanceof ExpressionNode) {
+                expressionNode.expressionNode0 = (ExpressionNode) n;
+            }
+            if(n instanceof InitializedVariableNode) {
+                expressionNode.variableNode0 = (InitializedVariableNode) n;
+            }
+
+            for (int i = 1; i < ctx.children.size(); i += 2) {
+                String token = ((TokenNode) ctx.children.get(i).accept(this)).token;
+                expressionNode.operation = OperationManager.getOperation(token);
+
+                Node node = ctx.children.get(i + 1).accept(this);
+                if (node instanceof LiteralNode) {
+                    if(expressionNode.primaryNode0 == null) {
+                        expressionNode.primaryNode0 = (LiteralNode) node;
+                    } else {
+                        expressionNode.primaryNode1 = (LiteralNode) node;
+                    }
+
+                    ExpressionNode newExpressionNode = new ExpressionNode();
+                    newExpressionNode.expressionNode0 = expressionNode;
+                    expressionNode = newExpressionNode;
+                }
+                if (node instanceof ExpressionNode) {
+                    if(expressionNode.expressionNode0 == null) {
+                        expressionNode.expressionNode0 = (ExpressionNode) node;
+                    } else {
+                        expressionNode.expressionNode1 = (ExpressionNode) node;
+                    }
+
+                    ExpressionNode newExpressionNode = new ExpressionNode();
+                    newExpressionNode.expressionNode0 = expressionNode;
+                    expressionNode = newExpressionNode;
+                }
+            }
+
+            return expressionNode.operation == null ? expressionNode.expressionNode0 : expressionNode;
         }
 
         return ctx.unaryExpression(0).accept(this);
@@ -859,8 +926,9 @@ public class Visitor3 extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitMultiplicativeOperator(DartParser.MultiplicativeOperatorContext ctx) {
-        return super.visitMultiplicativeOperator(ctx);
-    }
+        TerminalNode terminal = (TerminalNode) ctx.children.get(0);
+
+        return new TokenNode(terminal.getText(), terminal.getSymbol().getLine());    }
 
     @Override
     public Node visitUnaryExpression(DartParser.UnaryExpressionContext ctx) {

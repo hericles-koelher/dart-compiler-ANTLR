@@ -7,6 +7,10 @@ public abstract class OperationManager {
                 return Operation.Addition;
             case "-":
                 return Operation.Subtraction;
+            case "*":
+                return Operation.Multiplication;
+            case "/":
+                return Operation.Division;
             case "print":
                 return Operation.Print;
             default:
