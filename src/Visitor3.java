@@ -817,14 +817,15 @@ public class Visitor3 extends DartBaseVisitor<Node> {
             ExpressionNode expressionNode = new ExpressionNode();
 
             Node n = ctx.children.get(0).accept(this);
-            if(n instanceof PrimaryNode) {
+            if(n instanceof LiteralNode) {
                 expressionNode.primaryNode0 = (PrimaryNode) n;
             }
             if(n instanceof ExpressionNode) {
                 expressionNode.expressionNode0 = (ExpressionNode) n;
             }
-            if(n instanceof InitializedVariableNode) {
-                expressionNode.variableNode0 = (InitializedVariableNode) n;
+            if(n instanceof IdentifierNode) {
+                Variable v = this.vt.getVar(((IdentifierNode) n).identifier, ScopeManager.getScopeId());
+                expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
             }
 
             for (int i = 1; i < ctx.children.size(); i += 2) {
@@ -848,6 +849,18 @@ public class Visitor3 extends DartBaseVisitor<Node> {
                         expressionNode.expressionNode0 = (ExpressionNode) node;
                     } else {
                         expressionNode.expressionNode1 = (ExpressionNode) node;
+                    }
+
+                    ExpressionNode newExpressionNode = new ExpressionNode();
+                    newExpressionNode.expressionNode0 = expressionNode;
+                    expressionNode = newExpressionNode;
+                }
+                if (node instanceof IdentifierNode) {
+                    Variable v = this.vt.getVar(((IdentifierNode) node).identifier, ScopeManager.getScopeId());
+                    if(expressionNode.variableNode0 == null) {
+                        expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
+                    } else {
+                        expressionNode.variableNode1 = new InitializedVariableNode(v.type, v.name, 0);
                     }
 
                     ExpressionNode newExpressionNode = new ExpressionNode();
@@ -879,14 +892,15 @@ public class Visitor3 extends DartBaseVisitor<Node> {
             ExpressionNode expressionNode = new ExpressionNode();
 
             Node n = ctx.children.get(0).accept(this);
-            if(n instanceof PrimaryNode) {
-                expressionNode.primaryNode0 = (PrimaryNode) n;
+            if(n instanceof LiteralNode) {
+                expressionNode.primaryNode0 = (LiteralNode) n;
             }
             if(n instanceof ExpressionNode) {
                 expressionNode.expressionNode0 = (ExpressionNode) n;
             }
-            if(n instanceof InitializedVariableNode) {
-                expressionNode.variableNode0 = (InitializedVariableNode) n;
+            if(n instanceof IdentifierNode) {
+                Variable v = this.vt.getVar(((IdentifierNode) n).identifier, ScopeManager.getScopeId());
+                expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
             }
 
             for (int i = 1; i < ctx.children.size(); i += 2) {
@@ -910,6 +924,18 @@ public class Visitor3 extends DartBaseVisitor<Node> {
                         expressionNode.expressionNode0 = (ExpressionNode) node;
                     } else {
                         expressionNode.expressionNode1 = (ExpressionNode) node;
+                    }
+
+                    ExpressionNode newExpressionNode = new ExpressionNode();
+                    newExpressionNode.expressionNode0 = expressionNode;
+                    expressionNode = newExpressionNode;
+                }
+                if (node instanceof IdentifierNode) {
+                    Variable v = this.vt.getVar(((IdentifierNode) node).identifier, ScopeManager.getScopeId());
+                    if(expressionNode.variableNode0 == null) {
+                        expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
+                    } else {
+                        expressionNode.variableNode1 = new InitializedVariableNode(v.type, v.name, 0);
                     }
 
                     ExpressionNode newExpressionNode = new ExpressionNode();
