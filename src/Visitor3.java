@@ -62,7 +62,6 @@ public class Visitor3 extends DartBaseVisitor<Node> {
         Variable var = new Variable(type, identifier, ScopeManager.getScopeId(), line);
         this.vt.addVar(var);
 
-
         return new DeclaredIdentifierNode(type, identifier, 0);
     }
 
@@ -1285,7 +1284,9 @@ public class Visitor3 extends DartBaseVisitor<Node> {
             IdentifierNode signature = (IdentifierNode) ctx.functionSignature().accept(this);
             StatementsNode body = (StatementsNode) ctx.functionBody().accept(this);
 
-            Type type = TypeManager.getType("null");
+            Type type = TypeManager.getType(
+                    ctx.type() != null ? ctx.type().getText() : "dynamic"
+            );
             String identifier = signature.identifier;
             Integer line = signature.line;
 
@@ -1295,7 +1296,9 @@ public class Visitor3 extends DartBaseVisitor<Node> {
             try {
                 this.ft.addFunction(function);
             } catch (Exception e) {
-                e.printStackTrace();
+                // e.printStackTrace();
+                System.out.println("Erro na inserção na tabela de funções");
+                System.out.println("A função " + identifier + "já existe na tabela!");
             }
 
             return fn;

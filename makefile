@@ -2,16 +2,18 @@ SRC_DIR=src
 CLASS_DIR=$(SRC_DIR)/Classes
 ANTLR4=tools/antlr-4.9.1-complete.jar
 PACKAGE=Dart
+PACKAGE_DIR=$(SRC_DIR)/$(PACKAGE)
+JAVA_FILES=$(shell find -name "*.java")
 
 all: Classes
 
 #Criação dos arquivos .class
 Classes: Dart
-	javac -d $(CLASS_DIR) -cp $(ANTLR4) $(SRC_DIR)/AST/*.java $(SRC_DIR)/$(PACKAGE)/*.java $(SRC_DIR)/Types/*.java $(SRC_DIR)/SymbolTable/*.java $(SRC_DIR)/Main.java
+	javac -d $(CLASS_DIR) -cp $(ANTLR4) $(JAVA_FILES)
 
 #Codigo do Scanner+Parser
 Dart:
-	java -jar $(ANTLR4) -visitor -no-listener -package $(PACKAGE) -o $(SRC_DIR)/$(PACKAGE) -Xexact-output-dir $(SRC_DIR)/Dart.g4
+	java -jar $(ANTLR4) -visitor -package $(PACKAGE) -o $(PACKAGE_DIR) -Xexact-output-dir $(SRC_DIR)/Dart.g4
 
 clean:
 	rm -rf $(CLASS_DIR)
@@ -19,7 +21,8 @@ clean:
 #Testes
 
 run:
-	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/correct/1.dart
+	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/correct/4.dart
+	dot -Tpdf ast1.dot -o ast1.pdf
 
 func:
 	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/correct/functions.dart

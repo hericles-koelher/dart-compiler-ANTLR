@@ -5,38 +5,26 @@ import Types.Type;
 import java.util.LinkedList;
 
 public class FunctionNode extends AbstractExpressionNode {
-    public Type type;
     public String name;
-    public LinkedList<ParameterNode> parameters;
+    public Integer scopeId;
     public AbstractNode body;
 
-    public FunctionNode(String name, LinkedList<ParameterNode> parameters, AbstractNode body) {
-        this.type = Types.TypeManager.getType("dynamic");
+    public FunctionNode(Integer scopeId, String name, AbstractNode body) {
         this.name = name;
-        this.parameters = parameters;
+        this.scopeId = scopeId;
         this.body = body;
     }
 
-    public FunctionNode(Type type, String name, LinkedList<ParameterNode> parameters, AbstractNode body) {
-        this.type = type;
+    public FunctionNode(Integer scopeId, String name, LinkedList<ParameterNode> parameters, AbstractNode body) {
         this.name = name;
-        this.parameters = parameters;
+        this.scopeId = scopeId;
         // Aqui adicionar um nó de unificação se necessário
         this.body = body;
     }
 
     @Override
-    public String toString() {
-        return "FunctionNode{" +
-                "type=" + type +
-                ", name='" + name + '\'' +
-                ", parameters=" + parameters +
-                ", body=" + body +
-                '}';
-    }
-
-    @Override
     public Type getType() throws Exception {
-        return type;
+        // TODO: recuperar tipo da tabela
+        return null;
     }
 }
