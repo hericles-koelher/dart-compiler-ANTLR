@@ -1,6 +1,7 @@
 SRC_DIR=src
 CLASS_DIR=$(SRC_DIR)/Classes
 ANTLR4=tools/antlr-4.9.1-complete.jar
+ASM=tools/asm-9.1.jar
 PACKAGE=Dart
 PACKAGE_DIR=$(SRC_DIR)/$(PACKAGE)
 JAVA_FILES=$(shell find -name "*.java")
