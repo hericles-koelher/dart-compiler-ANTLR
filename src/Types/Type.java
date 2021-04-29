@@ -4,43 +4,28 @@ import java.util.Objects;
 
 public class Type {
 
-    // "Constante"
-    public enum Name{
-        INT("int"),
-        DOUBLE("double"),
-        BOOL("bool"),
-        STRING("String"),
-        DYNAMIC("dynamic"),
-        NULL("Null")
-        ;
+    public static final String INT_NAME = "int";
+    public static final String DOUBLE_NAME = "double";
+    public static final String BOOL_NAME = "bool";
+    public static final String STRING_NAME = "String";
+    public static final String DYNAMIC_NAME = "dynamic";
+    public static final String NULL_NAME = "Null";
 
-        private String _name;
+    public static final Type TYPE_INT = new Type(INT_NAME);
+    public static final Type TYPE_DOUBLE = new Type(DOUBLE_NAME);
+    public static final Type TYPE_BOOL = new Type(BOOL_NAME);
+    public static final Type TYPE_STRING = new Type(STRING_NAME);
+    public static final Type TYPE_DYNAMIC = new Type(DYNAMIC_NAME);
+    public static final Type TYPE_NULL = new Type(NULL_NAME);
+    public String name;
 
-        private Name(String name) {
-            this._name = name;
-        }
-
-        @Override
-        public String toString() {
-            return _name;
-        }
-    }
-
-    public static final Type TYPE_INT = new Type(Name.INT);
-    public static final Type TYPE_DOUBLE = new Type(Name.DOUBLE);
-    public static final Type TYPE_BOOL = new Type(Name.BOOL);
-    public static final Type TYPE_STRING = new Type(Name.STRING);
-    public static final Type TYPE_DYNAMIC = new Type(Name.DYNAMIC);
-    public static final Type TYPE_NULL = new Type(Name.NULL);
-    public Name name;
-
-    protected Type(Name name) {
+    protected Type(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return name.toString();
+        return name;
     }
 
     @Override

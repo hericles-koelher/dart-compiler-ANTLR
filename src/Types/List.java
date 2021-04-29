@@ -8,4 +8,9 @@ final public class List<T extends Type> extends Type {
         super("List<" + subType + '>');
         this.subType = subType;
     }
+
+    @Override
+    public String toString() {
+        return "List<" + subType + ">";
+    }
 }
