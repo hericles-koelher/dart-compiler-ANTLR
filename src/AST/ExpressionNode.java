@@ -1,6 +1,6 @@
-package AST3;
+package AST;
 
-import AST3.operations.Operation;
+import AST.operations.Operation;
 
 import java.io.FileWriter;
 

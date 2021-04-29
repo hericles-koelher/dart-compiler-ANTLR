@@ -1,4 +1,4 @@
-package AST3;
+package AST;
 
 public class NumericLiteralNode extends LiteralNode {
     public Integer literal;

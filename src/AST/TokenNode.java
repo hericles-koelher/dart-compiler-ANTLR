@@ -1,4 +1,4 @@
-package AST3;
+package AST;
 
 public class TokenNode extends Node {
     public final String token;

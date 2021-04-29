@@ -1,4 +1,4 @@
-package AST3.exceptions;
+package AST.exceptions;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 

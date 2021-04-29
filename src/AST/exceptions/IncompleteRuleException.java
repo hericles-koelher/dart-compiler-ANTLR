@@ -1,4 +1,4 @@
-package AST3.exceptions;
+package AST.exceptions;
 
 public class IncompleteRuleException extends RuntimeException {
 }

@@ -1,4 +1,4 @@
-package AST3.operations;
+package AST.operations;
 
 public abstract class OperationManager {
     public static Operation getOperation(String symbol) {

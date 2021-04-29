@@ -1,4 +1,4 @@
-package AST3;
+package AST;
 
 public class IdentifierNode extends PrimaryNode {
     public final String identifier;

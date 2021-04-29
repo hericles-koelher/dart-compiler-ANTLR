@@ -25,21 +25,18 @@ run:
 	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/correct/4.dart
 	dot -Tpdf ast1.dot -o ast1.pdf
 
-func:
-	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/correct/functions.dart
-
-test_c:
-	@echo "Testing correct sample:\n"
-	@for file in dart_sample_code/correct/*; do\
-		echo $$file;\
-		java -cp $(CLASS_DIR):$(ANTLR4) Main $$file;\
-		echo "\n";\
-	done
-
-test_err:
-	@echo "Testing incorrect sample:\n"
-	@for file in dart_sample_code/incorrect/*; do\
-		echo $$file;\
-		java -cp $(CLASS_DIR):$(ANTLR4) Main $$file;\
-		echo "\n";\
-	done
+# test_c:
+# 	@echo "Testing correct sample:\n"
+# 	@for file in dart_sample_code/correct/*; do\
+# 		echo $$file;\
+# 		java -cp $(CLASS_DIR):$(ANTLR4) Main $$file;\
+# 		echo "\n";\
+# 	done
+#
+# test_err:
+# 	@echo "Testing incorrect sample:\n"
+# 	@for file in dart_sample_code/incorrect/*; do\
+# 		echo $$file;\
+# 		java -cp $(CLASS_DIR):$(ANTLR4) Main $$file;\
+# 		echo "\n";\
+# 	done

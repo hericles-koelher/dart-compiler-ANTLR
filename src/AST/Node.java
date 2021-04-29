@@ -1,4 +1,4 @@
-package AST3;
+package AST;
 
 import java.io.FileWriter;
 import java.util.ArrayList;

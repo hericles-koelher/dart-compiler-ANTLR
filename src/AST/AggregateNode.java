@@ -1,4 +1,4 @@
-package AST3;
+package AST;
 
 public class AggregateNode extends Node {
 }

@@ -3,21 +3,44 @@ package Types;
 import java.util.Objects;
 
 public class Type {
-    public static final Type TYPE_INT = new Type("int");
-    public static final Type TYPE_DOUBLE = new Type("double");
-    public static final Type TYPE_BOOL = new Type("bool");
-    public static final Type TYPE_STRING = new Type("String");
-    public static final Type TYPE_DYNAMIC = new Type("dynamic");
-    public static final Type TYPE_NULL = new Type("Null");
-    public String name;
 
-    protected Type(String name) {
+    // "Constante"
+    public enum Name{
+        INT("int"),
+        DOUBLE("double"),
+        BOOL("bool"),
+        STRING("String"),
+        DYNAMIC("dynamic"),
+        NULL("Null")
+        ;
+
+        private String _name;
+
+        private Name(String name) {
+            this._name = name;
+        }
+
+        @Override
+        public String toString() {
+            return _name;
+        }
+    }
+
+    public static final Type TYPE_INT = new Type(Name.INT);
+    public static final Type TYPE_DOUBLE = new Type(Name.DOUBLE);
+    public static final Type TYPE_BOOL = new Type(Name.BOOL);
+    public static final Type TYPE_STRING = new Type(Name.STRING);
+    public static final Type TYPE_DYNAMIC = new Type(Name.DYNAMIC);
+    public static final Type TYPE_NULL = new Type(Name.NULL);
+    public Name name;
+
+    protected Type(Name name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return name;
+        return name.toString();
     }
 
     @Override

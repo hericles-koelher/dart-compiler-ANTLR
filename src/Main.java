@@ -1,4 +1,4 @@
-import AST3.Node;
+import AST.Node;
 import Dart.DartLexer;
 import Dart.DartParser;
 import SymbolTable.FunctionSymbolTable;
@@ -35,7 +35,7 @@ public class Main {
 //            System.out.println();
 //            vt.print();
 
-            Node node = new Visitor3(st, vt, ft).visit(parseTree);
+            Node node = new ParseTreeVisitor(st, vt, ft).visit(parseTree);
             node.print(writer);
             System.out.println();
 

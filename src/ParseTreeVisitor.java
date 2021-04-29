@@ -1,8 +1,8 @@
-import AST3.*;
-import AST3.exceptions.IncompleteRuleException;
-import AST3.exceptions.NodeNotImplmentedException;
-import AST3.operations.Operation;
-import AST3.operations.OperationManager;
+import AST.*;
+import AST.exceptions.IncompleteRuleException;
+import AST.exceptions.NodeNotImplmentedException;
+import AST.operations.Operation;
+import AST.operations.OperationManager;
 import Dart.DartBaseVisitor;
 import Dart.DartParser;
 import SymbolTable.*;
@@ -13,13 +13,13 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 
-public class Visitor3 extends DartBaseVisitor<Node> {
+public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     private final StringTable st;
     private final VarSymbolTable vt;
     private final FunctionSymbolTable ft;
 
-    public Visitor3(StringTable st, VarSymbolTable vt, FunctionSymbolTable ft) {
+    public ParseTreeVisitor(StringTable st, VarSymbolTable vt, FunctionSymbolTable ft) {
         this.st = st;
         this.vt = vt;
         this.ft = ft;

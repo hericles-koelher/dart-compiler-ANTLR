@@ -1,4 +1,4 @@
-package AST3;
+package AST;
 
 public class StringLiteralNode extends LiteralNode {
     public final String literal;

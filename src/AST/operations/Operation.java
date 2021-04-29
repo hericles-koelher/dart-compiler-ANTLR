@@ -1,4 +1,4 @@
-package AST3.operations;
+package AST.operations;
 
 public enum Operation {
     Addition,
