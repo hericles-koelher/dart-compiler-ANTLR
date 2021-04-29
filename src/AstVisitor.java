@@ -1,13 +1,16 @@
 import AST.*;
 import Types.Type;
-import org.objectweb.asm.ClassVisitor;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import static org.objectweb.asm.Opcodes.*;
 
 public class AstVisitor {
-	private final ClassVisitor _cw;
+	private final ClassWriter _cw;
 
 	public AstVisitor(){
 		_cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -16,15 +19,15 @@ public class AstVisitor {
 	private String dartTypeToJvmType(Type type) throws Exception {
 		// FIXME:
 		return switch (type.name) {
-			case Type.INT_NAME -> "I";
-			case Type.DOUBLE_NAME ->"D";
-			case Type.BOOL_NAME -> "Z";
-			case Type.STRING_NAME -> "L" + String.class.getName();
+			case Type.INT_NAME -> org.objectweb.asm.Type.getDescriptor(int.class);
+			case Type.DOUBLE_NAME -> org.objectweb.asm.Type.getDescriptor(double.class);
+			case Type.BOOL_NAME -> org.objectweb.asm.Type.getDescriptor(boolean.class);
+			case Type.STRING_NAME -> org.objectweb.asm.Type.getDescriptor(String.class);
 			// case Type.DYNAMIC_NAME ->  // Nem sei como fazer isso na JVM
 			// Pequena gambiarra temporaria
-			case Type.DYNAMIC_NAME -> "V";
+			case Type.DYNAMIC_NAME -> org.objectweb.asm.Type.getDescriptor(void.class);
 			// No dart uma função de retorno void retorna um objeto do tipo Null
-			case Type.NULL_NAME ->  "V";
+			case Type.NULL_NAME ->  org.objectweb.asm.Type.getDescriptor(void.class);
 			default -> throw new Exception("Erro de conversão de tipos para JVM");
 		};
 	}
@@ -39,9 +42,15 @@ public class AstVisitor {
 		_cw.visitEnd();
 	}
 
-//	public byte[] write(){
-//		return _cw.toByteArray();
-//	}
+	public void write(FileOutputStream fileOutputStream){
+		try {
+			fileOutputStream.write(_cw.toByteArray());
+		} catch (IOException e) {
+			// e.printStackTrace();
+			System.out.println(e.getMessage());
+			System.out.println("\nDeu Ruim :)\n");
+		}
+	}
 
 	// Responsavel por gerar o codigo de cada função
 	private void visit(FunctionDefinitionNode node){

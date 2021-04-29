@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.nio.file.NoSuchFileException;
 
@@ -37,6 +38,13 @@ public class Main {
 
             Node node = new ParseTreeVisitor(st, vt, ft).visit(parseTree);
             node.print(writer);
+
+            FileOutputStream out = new FileOutputStream("Out.class");
+            AstVisitor astVisitor = new AstVisitor();
+
+            astVisitor.visit(node);
+            astVisitor.write(out);
+
             System.out.println();
 
             writer.close();
