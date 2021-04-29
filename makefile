@@ -10,7 +10,7 @@ all: Classes
 
 #Criação dos arquivos .class
 Classes: Dart
-	javac -d $(CLASS_DIR) -cp $(ANTLR4) $(JAVA_FILES)
+	javac -d $(CLASS_DIR) -cp $(ANTLR4):$(ASM) $(JAVA_FILES)
 
 #Codigo do Scanner+Parser
 Dart:
@@ -22,7 +22,7 @@ clean:
 #Testes
 
 run:
-	java -cp $(CLASS_DIR):$(ANTLR4) Main dart_sample_code/correct/4.dart
+	java -cp $(CLASS_DIR):$(ANTLR4):$(ASM) Main dart_sample_code/correct/4.dart
 	dot -Tpdf ast1.dot -o ast1.pdf
 
 # test_c:
