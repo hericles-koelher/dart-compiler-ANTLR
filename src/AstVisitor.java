@@ -35,7 +35,7 @@ public class AstVisitor {
 	public void visit(Node node){
 		_cw.visit(V1_5, ACC_PUBLIC, "Main", null, null, null);
 
-		// Atualmente considerando que node é um FunctionDefinitionNode.
+		// Atualmente considerando que node só tem um FunctionDefinitionNode.
 		visit((FunctionDefinitionNode) node.getChildren().get(0));
 
 		// Como o nome do metodo já indica, sinaliza o final da classe.
