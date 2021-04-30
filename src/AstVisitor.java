@@ -33,6 +33,15 @@ public class AstVisitor {
 	}
 
 	public void visit(Node node){
+
+		// Só pra garantir que durante os teste nenhum nó não desejado
+		// execute o codigo de criação de função.
+		if(!node.getClass().getName().equals(ProgramNode.class.getName()))
+		{
+			System.out.println("Ignorando nó!");
+			return;
+		}
+
 		_cw.visit(V1_5, ACC_PUBLIC, "Main", null, null, null);
 
 		// Atualmente considerando que node só tem um FunctionDefinitionNode.
@@ -68,6 +77,10 @@ public class AstVisitor {
 			// e.printStackTrace();
 			System.out.println(e.getMessage());
 			System.exit(1);
+		}
+
+		for (var childNode: node.getChildren()) {
+			visit(childNode);
 		}
 
 		mv.visitCode();
