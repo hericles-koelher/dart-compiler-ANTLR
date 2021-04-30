@@ -49,8 +49,15 @@ public class AstVisitor {
 		_cw.visit(V1_5, ACC_PUBLIC, "Main", null, null, null);
 
 		for (var childNode: _ast.getChildren()) {
-			visit(childNode.getClass().cast(childNode));
-			System.out.println(childNode.getClass().cast(childNode).getClass());
+			String className = childNode.getClass().getSimpleName();
+			if(className.equals("FunctionDefinitionNode")){
+				visitFunctionDefinition((FunctionDefinitionNode) childNode);
+			}
+
+			// TODO: Implementar isso aqui depois
+			if(className.equals("GlobalVariableNode")){
+				visit(childNode);
+			}
 		}
 
 		// Como o nome do metodo já indica, sinaliza o final da classe.
@@ -62,8 +69,16 @@ public class AstVisitor {
 		System.out.println(node.getClass());
 	}
 
+	private void visitAssign(AssignNode node){
+		System.out.println("Assign");
+	}
+
+	private void visitFunctionCall(FunctionCallNode node){
+		System.out.println("Function Call");
+	}
+
 	// Responsavel por gerar o codigo de cada função
-	private void visit(FunctionDefinitionNode node){
+	private void visitFunctionDefinition(FunctionDefinitionNode node){
 		//TODO: aprender como definir "descriptor list"
 		// Link: https://asm.ow2.io/faq.html#Q7
 		MethodVisitor mv = null;
@@ -80,11 +95,17 @@ public class AstVisitor {
 			System.exit(1);
 		}
 
-		for (var childNode: node.getChildren()) {
-			visit(childNode);
-		}
-
 		mv.visitCode();
+
+		for (var childNode: node.getChildren()) {
+			switch (childNode.getClass().getSimpleName()){
+				case "AssignNode" -> visitAssign((AssignNode) childNode);
+				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode);
+				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode);
+				case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode);
+				default -> visit(childNode);
+			}
+		}
 
 		// Chamando só por obrigação, pq o tamanho necessário para
 		// stack, variaveis e mais já é calculado, pois a classe Main
@@ -93,12 +114,12 @@ public class AstVisitor {
 		mv.visitEnd();
 	}
 
-	private void visit(VariableDeclarationNode node){
-		System.out.println("WORKS");
+	private void visitVariableDeclaration(VariableDeclarationNode node){
+		System.out.println("Variable Declaration");
 	}
 
-	private void visit(VariableDefinitionNode node){
-		System.out.println("DO NOT WORK");
+	private void visitVariableDefinition(VariableDefinitionNode node){
+		System.out.println("Variable Definition");
 	}
 
 	public void write(FileOutputStream fileOutputStream){
