@@ -12,7 +12,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
@@ -838,8 +837,6 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitPostfixExpression(DartParser.PostfixExpressionContext ctx) {
         if (ctx.primary() != null) {
-            System.out.println(ctx.getText() + " XABLAU1\n");
-
             if (ctx.selector().size() == 0) {
                 return ctx.primary().accept(this);
             }
@@ -1013,7 +1010,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         if(decId.COVARIANT() != null)
             throw new IncompleteRuleException();
 
-        String typeName = null;
+        String typeName;
 
         if(decId.finalConstVarOrType().varOrType().type() != null)
             typeName = decId.finalConstVarOrType().varOrType().type().getText();

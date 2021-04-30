@@ -49,14 +49,18 @@ public class AstVisitor {
 		_cw.visit(V1_5, ACC_PUBLIC, "Main", null, null, null);
 
 		for (var childNode: _ast.getChildren()) {
-			visit(childNode);
+			visit(childNode.getClass().cast(childNode));
+			System.out.println(childNode.getClass().cast(childNode).getClass());
 		}
 
 		// Como o nome do metodo já indica, sinaliza o final da classe.
 		_cw.visitEnd();
 	}
 
-	private void visit(Node node){System.out.println("Ops, não era pra rodar isso!");}
+	private void visit(Node node){
+		System.out.println("Ops, não era pra rodar isso!");
+		System.out.println(node.getClass());
+	}
 
 	// Responsavel por gerar o codigo de cada função
 	private void visit(FunctionDefinitionNode node){
@@ -87,6 +91,14 @@ public class AstVisitor {
 		// foi definida utilizando a flag COMPUTE_FRAMES.
 		mv.visitMaxs(0,0);
 		mv.visitEnd();
+	}
+
+	private void visit(VariableDeclarationNode node){
+		System.out.println("WORKS");
+	}
+
+	private void visit(VariableDefinitionNode node){
+		System.out.println("DO NOT WORK");
 	}
 
 	public void write(FileOutputStream fileOutputStream){
