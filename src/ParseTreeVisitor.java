@@ -2,7 +2,6 @@ import AST.*;
 import AST.exceptions.IncompleteRuleException;
 import AST.exceptions.NodeNotImplmentedException;
 import AST.operations.Operation;
-import AST.operations.OperationManager;
 import Dart.DartBaseVisitor;
 import Dart.DartParser;
 import SymbolTable.*;
@@ -12,6 +11,8 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
@@ -49,20 +50,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitDeclaredIdentifier(DartParser.DeclaredIdentifierContext ctx) {
-        if (ctx.COVARIANT() != null) {
-            throw new NodeNotImplmentedException();
-        }
-
-        IdentifierNode typeIdentifier = (IdentifierNode) ctx.finalConstVarOrType().accept(this);
-        IdentifierNode variableNode = (IdentifierNode) ctx.identifier().accept(this);
-
-        Type type = TypeManager.getType(typeIdentifier.identifier);
-        String identifier = variableNode.identifier;
-        Integer line = variableNode.line;
-        Variable var = new Variable(type, identifier, ScopeManager.getScopeId(), line);
-        this.vt.addVar(var);
-
-        return new DeclaredIdentifierNode(type, identifier, 0);
+        return super.visitDeclaredIdentifier(ctx);
     }
 
     @Override
@@ -99,25 +87,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitInitializedVariableDeclaration(DartParser.InitializedVariableDeclarationContext ctx) {
-        if (ctx.initializedIdentifier().size() > 0) {
-            throw new NodeNotImplmentedException();
-        }
-
-        DeclaredIdentifierNode identifierNode = (DeclaredIdentifierNode) ctx.declaredIdentifier().accept(this);
-
-        ExpressionNode expressionNode = new ExpressionNode();
-        InitializedVariableNode varialbleNode = new InitializedVariableNode(
-                identifierNode.type, identifierNode.identifier, identifierNode.position
-        );
-        if (ctx.expression() != null) {
-            expressionNode.primaryNode0 = (PrimaryNode) ctx.expression().accept(this);
-            expressionNode.operation = Operation.Assignment;
-            expressionNode.variableNode0 = varialbleNode;
-
-            return expressionNode;
-        }
-
-        return varialbleNode;
+       return super.visitInitializedVariableDeclaration(ctx);
     }
 
     @Override
@@ -132,14 +102,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitFunctionSignature(DartParser.FunctionSignatureContext ctx) {
-        if (ctx.type() != null) {
-            throw new NodeNotImplmentedException();
-        }
-
-        ctx.metadata().accept(this);
-        ctx.formalParameterPart().accept(this);
-
-        return ctx.identifierNotFUNCTION().accept(this);
+        return super.visitFunctionSignature(ctx);
     }
 
     @Override
@@ -403,45 +366,14 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitExpression(DartParser.ExpressionContext ctx) {
-        if (ctx.conditionalExpression() != null) {
-            Node node = ctx.conditionalExpression().accept(this);
-            if (node instanceof PrimaryNode) {
-                if (node instanceof LiteralNode) {
-                    return node;
-                }
-                if (node instanceof IdentifierNode) {
-                    IdentifierNode identifierNode = (IdentifierNode) node;
-                    Variable v = this.vt.getVar(identifierNode.identifier, ScopeManager.getScopeId());
-
-                    return new InitializedVariableNode(v.type, v.name, 0);
-                }
-
-                throw new NodeNotImplmentedException();
-            }
-            if (node instanceof ExpressionNode) {
-                //TODO OLHAR
-                return node;
-            }
-
-            throw new NodeNotImplmentedException();
+        if(ctx.assignableExpression() != null){
+            var left = (VariableNode) ctx.assignableExpression().accept(this);
+            var right = (AbstractExpressionNode) ctx.expression().accept(this);
+            return new AssignNode(left, right);
         }
-        if (ctx.assignableExpression() != null && ctx.assignmentOperator() != null && ctx.expression() != null) {
-            ctx.assignmentOperator().accept(this);
-            Node node = ctx.expression().accept(this);
 
-            String identifier = ((IdentifierNode) ctx.assignableExpression().accept(this)).identifier;
-            Variable v = this.vt.getVar(identifier, ScopeManager.getScopeId());
-            InitializedVariableNode variableNode = new InitializedVariableNode(v.type, v.name, 0);
-
-            if (node instanceof ExpressionNode) {
-                return new ExpressionNode(variableNode, (ExpressionNode) node, Operation.Assignment);
-            }
-            if (node instanceof PrimaryNode) {
-                return new ExpressionNode(variableNode, (PrimaryNode) node, Operation.Assignment);
-            }
-
-            throw new NodeNotImplmentedException();
-        }
+        if(ctx.conditionalExpression() != null)
+            return ctx.conditionalExpression().accept(this);
 
         throw new NodeNotImplmentedException();
     }
@@ -463,7 +395,8 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitPrimary(DartParser.PrimaryContext ctx) {
         if (ctx.identifier() != null) {
-            return ctx.identifier().accept(this);
+            // return ctx.identifier().accept(this);
+            return new VariableNode(0, ScopeManager.getScopeId(), ctx.identifier().getText());
         }
         if (ctx.literal() != null) {
             return ctx.literal().accept(this);
@@ -812,67 +745,23 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         if (ctx.SUPER() != null) {
             throw new NodeNotImplmentedException();
         }
-        if (ctx.children.size() > 1) {
-            ExpressionNode expressionNode = new ExpressionNode();
 
-            Node n = ctx.children.get(0).accept(this);
-            if(n instanceof LiteralNode) {
-                expressionNode.primaryNode0 = (PrimaryNode) n;
-            }
-            if(n instanceof ExpressionNode) {
-                expressionNode.expressionNode0 = (ExpressionNode) n;
-            }
-            if(n instanceof IdentifierNode) {
-                Variable v = this.vt.getVar(((IdentifierNode) n).identifier, ScopeManager.getScopeId());
-                expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
-            }
+        var exprList = ctx.multiplicativeExpression();
 
-            for (int i = 1; i < ctx.children.size(); i += 2) {
-                String token = ((TokenNode) ctx.children.get(i).accept(this)).token;
-                expressionNode.operation = OperationManager.getOperation(token);
+        if(exprList.size() == 1)
+            return exprList.get(0).accept(this);
 
-                Node node = ctx.children.get(i + 1).accept(this);
-                if (node instanceof LiteralNode) {
-                    if(expressionNode.primaryNode0 == null) {
-                        expressionNode.primaryNode0 = (LiteralNode) node;
-                    } else {
-                        expressionNode.primaryNode1 = (LiteralNode) node;
-                    }
+        var left = (AbstractExpressionNode) exprList.get(0).accept(this);
+        var right = (AbstractExpressionNode) exprList.get(1).accept(this);
+        var opNode = new OperationNode(left, Operation.Addition, right);
 
-                    ExpressionNode newExpressionNode = new ExpressionNode();
-                    newExpressionNode.expressionNode0 = expressionNode;
-                    expressionNode = newExpressionNode;
-                }
-                if (node instanceof ExpressionNode) {
-                    if(expressionNode.expressionNode0 == null) {
-                        expressionNode.expressionNode0 = (ExpressionNode) node;
-                    } else {
-                        expressionNode.expressionNode1 = (ExpressionNode) node;
-                    }
 
-                    ExpressionNode newExpressionNode = new ExpressionNode();
-                    newExpressionNode.expressionNode0 = expressionNode;
-                    expressionNode = newExpressionNode;
-                }
-                if (node instanceof IdentifierNode) {
-                    Variable v = this.vt.getVar(((IdentifierNode) node).identifier, ScopeManager.getScopeId());
-                    if(expressionNode.variableNode0 == null) {
-                        expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
-                    } else {
-                        expressionNode.variableNode1 = new InitializedVariableNode(v.type, v.name, 0);
-                    }
-
-                    ExpressionNode newExpressionNode = new ExpressionNode();
-                    newExpressionNode.expressionNode0 = expressionNode;
-                    expressionNode = newExpressionNode;
-                }
-            }
-
-            return expressionNode.operation == null ? expressionNode.expressionNode0 : expressionNode;
+        for(int i = 2; exprList.size() - i > 0; i++){
+            var newRightNode = (AbstractExpressionNode) exprList.get(i).accept(this);
+            opNode = new OperationNode(opNode, Operation.Addition, newRightNode);
         }
 
-
-        return ctx.multiplicativeExpression(0).accept(this);
+        return opNode;
     }
 
     @Override
@@ -887,66 +776,23 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         if (ctx.SUPER() != null) {
             throw new NodeNotImplmentedException();
         }
-        if (ctx.children.size() > 1) {
-            ExpressionNode expressionNode = new ExpressionNode();
 
-            Node n = ctx.children.get(0).accept(this);
-            if(n instanceof LiteralNode) {
-                expressionNode.primaryNode0 = (LiteralNode) n;
-            }
-            if(n instanceof ExpressionNode) {
-                expressionNode.expressionNode0 = (ExpressionNode) n;
-            }
-            if(n instanceof IdentifierNode) {
-                Variable v = this.vt.getVar(((IdentifierNode) n).identifier, ScopeManager.getScopeId());
-                expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
-            }
+        var exprList = ctx.unaryExpression();
 
-            for (int i = 1; i < ctx.children.size(); i += 2) {
-                String token = ((TokenNode) ctx.children.get(i).accept(this)).token;
-                expressionNode.operation = OperationManager.getOperation(token);
+        if(exprList.size() == 1)
+            return exprList.get(0).accept(this);
 
-                Node node = ctx.children.get(i + 1).accept(this);
-                if (node instanceof LiteralNode) {
-                    if(expressionNode.primaryNode0 == null) {
-                        expressionNode.primaryNode0 = (LiteralNode) node;
-                    } else {
-                        expressionNode.primaryNode1 = (LiteralNode) node;
-                    }
+        var left = (AbstractExpressionNode) exprList.get(0).accept(this);
+        var right = (AbstractExpressionNode) exprList.get(1).accept(this);
+        var opNode = new OperationNode(left, Operation.Multiplication, right);
 
-                    ExpressionNode newExpressionNode = new ExpressionNode();
-                    newExpressionNode.expressionNode0 = expressionNode;
-                    expressionNode = newExpressionNode;
-                }
-                if (node instanceof ExpressionNode) {
-                    if(expressionNode.expressionNode0 == null) {
-                        expressionNode.expressionNode0 = (ExpressionNode) node;
-                    } else {
-                        expressionNode.expressionNode1 = (ExpressionNode) node;
-                    }
 
-                    ExpressionNode newExpressionNode = new ExpressionNode();
-                    newExpressionNode.expressionNode0 = expressionNode;
-                    expressionNode = newExpressionNode;
-                }
-                if (node instanceof IdentifierNode) {
-                    Variable v = this.vt.getVar(((IdentifierNode) node).identifier, ScopeManager.getScopeId());
-                    if(expressionNode.variableNode0 == null) {
-                        expressionNode.variableNode0 = new InitializedVariableNode(v.type, v.name, 0);
-                    } else {
-                        expressionNode.variableNode1 = new InitializedVariableNode(v.type, v.name, 0);
-                    }
-
-                    ExpressionNode newExpressionNode = new ExpressionNode();
-                    newExpressionNode.expressionNode0 = expressionNode;
-                    expressionNode = newExpressionNode;
-                }
-            }
-
-            return expressionNode.operation == null ? expressionNode.expressionNode0 : expressionNode;
+        for(int i = 2; exprList.size() - i > 0; i++){
+            left = (AbstractExpressionNode) exprList.get(i).accept(this);
+            opNode = new OperationNode(left, Operation.Multiplication, opNode);
         }
 
-        return ctx.unaryExpression(0).accept(this);
+        return opNode;
     }
 
     @Override
@@ -992,6 +838,8 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitPostfixExpression(DartParser.PostfixExpressionContext ctx) {
         if (ctx.primary() != null) {
+            System.out.println(ctx.getText() + " XABLAU1\n");
+
             if (ctx.selector().size() == 0) {
                 return ctx.primary().accept(this);
             }
@@ -999,10 +847,19 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
                 throw new NodeNotImplmentedException();
             }
 
-            IdentifierNode primary = (IdentifierNode) ctx.primary().accept(this);
-            InitializedVariableNode variableNode = (InitializedVariableNode) ctx.selector(0).accept(this);
+            String name = ctx.primary().getText();
 
-            return new ExpressionNode(variableNode, OperationManager.getOperation(primary.identifier));
+            var exprList = ctx.selector(0).argumentPart()
+                    .arguments().argumentList().expressionList().expression();
+
+            LinkedList<AbstractExpressionNode> args = new LinkedList<>();
+
+            for(var expr : exprList){
+                args.add((AbstractExpressionNode) expr.accept(this));
+            }
+
+            return new FunctionCallNode(name, args);
+
         }
 
         throw new NodeNotImplmentedException();
@@ -1044,7 +901,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitAssignableExpression(DartParser.AssignableExpressionContext ctx) {
         if (ctx.identifier() != null) {
-            return ctx.identifier().accept(this);
+            return new VariableNode(0, ScopeManager.getScopeId(), ctx.identifier().getText());
         }
 
         throw new NodeNotImplmentedException();
@@ -1067,19 +924,11 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitIdentifierNotFUNCTION(DartParser.IdentifierNotFUNCTIONContext ctx) {
-        if (ctx.IDENTIFIER() != null) {
-            return new IdentifierNode(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getSymbol().getLine());
-        }
-
-        throw new NodeNotImplmentedException();
+        return super.visitIdentifierNotFUNCTION(ctx);
     }
 
     @Override
     public Node visitIdentifier(DartParser.IdentifierContext ctx) {
-        if (ctx.identifierNotFUNCTION() != null) {
-            return ctx.identifierNotFUNCTION().accept(this);
-        }
-
         throw new NodeNotImplmentedException();
     }
 
@@ -1090,11 +939,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitTypeIdentifier(DartParser.TypeIdentifierContext ctx) {
-        if (ctx.IDENTIFIER() != null) {
-            return new IdentifierNode(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getSymbol().getLine());
-        }
-
-        throw new NodeNotImplmentedException();
+        return super.visitTypeIdentifier(ctx);
     }
 
     @Override
@@ -1141,7 +986,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         if (ctx.localVariableDeclaration() != null) {
             return ctx.localVariableDeclaration().accept(this);
         }
-        if (ctx.expressionStatement().accept(this) != null) {
+        if (ctx.expressionStatement() != null) {
             return ctx.expressionStatement().accept(this);
         }
 
@@ -1160,7 +1005,41 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitLocalVariableDeclaration(DartParser.LocalVariableDeclarationContext ctx) {
         ctx.metadata().accept(this);
-        return ctx.initializedVariableDeclaration().accept(this);
+
+        var varCtx = ctx.initializedVariableDeclaration();
+
+        var decId = varCtx.declaredIdentifier();
+
+        if(decId.COVARIANT() != null)
+            throw new IncompleteRuleException();
+
+        String typeName = null;
+
+        if(decId.finalConstVarOrType().varOrType().type() != null)
+            typeName = decId.finalConstVarOrType().varOrType().type().getText();
+        else
+            throw new IncompleteRuleException();
+
+
+        String name = decId.identifier().getText();
+        Type type = TypeManager.getType(typeName);
+
+        Integer scopeId = ScopeManager.getScopeId();
+
+        var variable = new Variable(type, name, scopeId, 0);
+
+        vt.addVar(variable);
+
+        if(varCtx.expression() != null){
+            var initializer = visitExpression(varCtx.expression());
+
+            return new VariableDefinitionNode(scopeId,
+                    type, name, initializer, 0);
+        }else{
+            return new VariableDeclarationNode(scopeId, type, name, 0);
+        }
+//
+//        return ctx.initializedVariableDeclaration().accept(this);
     }
 
     @Override
@@ -1281,24 +1160,23 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitTopLevelDefinition(DartParser.TopLevelDefinitionContext ctx) {
         if (ctx.functionSignature() != null && ctx.functionBody() != null) {
-            IdentifierNode signature = (IdentifierNode) ctx.functionSignature().accept(this);
+            String name = ctx.functionSignature().identifierNotFUNCTION().getText();
+
             StatementsNode body = (StatementsNode) ctx.functionBody().accept(this);
 
             Type type = TypeManager.getType(
                     ctx.type() != null ? ctx.type().getText() : "dynamic"
             );
-            String identifier = signature.identifier;
-            Integer line = signature.line;
 
-            FunctionDefinitionNode fn = new FunctionDefinitionNode(type, identifier, body.getChildren());
-            Function function = new Function(ScopeManager.getScopeId(), line, type, identifier, new ArrayList<>(), new ArrayList<>());
+            FunctionDefinitionNode fn = new FunctionDefinitionNode(type, name, body.getChildren());
+            Function function = new Function(ScopeManager.getScopeId(), 0, type, name, new ArrayList<>(), new ArrayList<>());
 
             try {
                 this.ft.addFunction(function);
             } catch (Exception e) {
                 // e.printStackTrace();
                 System.out.println("Erro na inserção na tabela de funções");
-                System.out.println("A função " + identifier + "já existe na tabela!");
+                System.out.println("A função " + name + "já existe na tabela!");
             }
 
             return fn;

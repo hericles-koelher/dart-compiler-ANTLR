@@ -40,9 +40,9 @@ public class Main {
             node.print(writer);
 
             FileOutputStream out = new FileOutputStream("Out.class");
-            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor astVisitor = new AstVisitor(node, vt, ft, st);
 
-            astVisitor.visit(node);
+            astVisitor.visit();
             astVisitor.write(out);
 
             System.out.println();

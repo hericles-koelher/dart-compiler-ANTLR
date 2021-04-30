@@ -13,7 +13,8 @@ public class ScopeManager {
     private static final Stack<Integer> scopeStack = new Stack<>();
     // Já o hashmap vai ser util na hora da busca pelas referencias
     private static final HashMap<Integer, Scope> scopeHashMap = new HashMap<>();
-    private static Integer id = 0;
+    public static final Integer globalScopeId = 0;
+    private static Integer id = globalScopeId;
 
     // Sempre lembrar de inicializar isso...
     // Poderia criar condições pra isso, mas não tô afim

@@ -1,4 +1,4 @@
 package AST;
 
-public class LiteralNode extends PrimaryNode {
+public abstract class LiteralNode extends AbstractExpressionNode {
 }
