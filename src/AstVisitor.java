@@ -17,7 +17,7 @@ public class AstVisitor {
 	private final VarSymbolTable _varSymbolTable;
 	private final FunctionSymbolTable _functionSymbolTable;
 	private final StringTable _stringTable;
-	private int variableIndex = 0;
+	private int newLocalVariableIndex = 0;
 
 	public AstVisitor(Node ast, VarSymbolTable varSymbolTable,
 					  FunctionSymbolTable functionSymbolTable,
@@ -35,7 +35,8 @@ public class AstVisitor {
 			case Type.INT_NAME -> "I";
 			case Type.DOUBLE_NAME -> "D";
 			case Type.BOOL_NAME -> "Z";
-			case Type.STRING_NAME -> org.objectweb.asm.Type.getDescriptor(String.class);
+			// Uma array de char
+			case Type.STRING_NAME -> "[C";
 			// case Type.DYNAMIC_NAME ->  // Nem sei como fazer isso na JVM
 			// Pequena gambiarra temporaria
 			case Type.DYNAMIC_NAME -> "V";
@@ -84,14 +85,23 @@ public class AstVisitor {
 	private void visitFunctionDefinition(FunctionDefinitionNode node){
 		//TODO: aprender como definir "descriptor list"
 		// Link: https://asm.ow2.io/faq.html#Q7
+
+		HashMap<String, Integer> localVarIndex = new HashMap<>();
+		this.newLocalVariableIndex = 0;
+
 		MethodVisitor mv = null;
 
 		try {
 			// Por enquanto assumindo que a função não possui parametros
 			String descriptor = "()"+dartTypeToJvmType(node.type);
 
-			if(node.name.equals("main"))
+			if(node.name.equals("main")){
+				// TODO: arrumar isso aqui dps
+				//  tenho que descobrir como chamar a jvm sem passar pelo java...
 				descriptor = "([Ljava/lang/String;)V";
+				// O indice 0 será para o array de args
+				newLocalVariableIndex = 1;
+			}
 
 			mv = _cw.visitMethod(
 					ACC_PUBLIC + ACC_STATIC,
@@ -103,38 +113,55 @@ public class AstVisitor {
 			System.exit(1);
 		}
 
-		HashMap<String, Integer> varIndex = new HashMap<>();
-		this.variableIndex = 0;
-
 		mv.visitCode();
 
 		for (var childNode: node.getChildren()) {
-			switch (childNode.getClass().getSimpleName()){
-				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, varIndex);
-				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, varIndex);
-				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, varIndex);
-				case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode, mv, varIndex);
-				default -> visit(childNode);
+			try{
+				switch (childNode.getClass().getSimpleName()){
+					case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
+					case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, localVarIndex);
+					case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, localVarIndex);
+					case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode, mv, localVarIndex);
+					default -> visit(childNode);
+				}
+			}catch (Exception e){
+				System.out.println("Erro: " + e.getMessage());
 			}
 		}
+
+		// Gambiarra temporaria
+		mv.visitInsn(RETURN);
 
 		// Chamando só por obrigação, pq o tamanho necessário para
 		// stack, variaveis e mais já é calculado, pois a classe Main
 		// foi definida utilizando a flag COMPUTE_FRAMES.
-		mv.visitMaxs(0,0);
+		mv.visitMaxs(-1,-1);
 		mv.visitEnd();
 	}
 
 	private void visitVariableDeclaration(VariableDeclarationNode node,
-										  MethodVisitor mv, HashMap<String, Integer> varIndex){
+										  MethodVisitor mv, HashMap<String,
+											Integer> varIndex) throws Exception {
 		System.out.println("Variable Declaration");
-		int index = variableIndex++;
+		int index = newLocalVariableIndex++;
 
 		varIndex.put(node.name, index);
 
-		// Teste
-		mv.visitInsn(ICONST_2);
-		mv.visitIntInsn(ISTORE, index);
+		switch (node.type.name) {
+			case Type.BOOL_NAME, Type.INT_NAME -> {
+				mv.visitLdcInsn(0);
+				mv.visitVarInsn(ISTORE, index);
+			}
+			case Type.DOUBLE_NAME -> {
+				mv.visitLdcInsn(0.0);
+				mv.visitVarInsn(DSTORE, index);
+			}
+			case Type.STRING_NAME -> {
+				mv.visitInsn(ACONST_NULL);
+				mv.visitVarInsn(ASTORE, index);
+			}
+			default -> System.out.println("Não defini as instruções para o tipo " + node.type.name);
+		}
 	}
 
 	private void visitVariableDefinition(VariableDefinitionNode node,
