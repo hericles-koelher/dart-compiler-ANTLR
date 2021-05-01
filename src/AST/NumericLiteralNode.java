@@ -1,7 +1,6 @@
 package AST;
 
 public class NumericLiteralNode extends LiteralNode {
-    public Integer literal;
     public Integer line;
 
     public NumericLiteralNode(Integer literal, Integer line) {
@@ -11,6 +10,6 @@ public class NumericLiteralNode extends LiteralNode {
 
     @Override
     protected String nodeInfo() {
-        return String.format("%s literal: %d", this.getClass().getSimpleName(), this.literal);
+        return String.format("%s literal: %d", this.getClass().getSimpleName(), (Integer) this.literal);
     }
 }

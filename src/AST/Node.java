@@ -2,11 +2,12 @@ package AST;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Node {
     protected static Integer nr;
-    private final List<Node> children = new ArrayList<>();
+    private final LinkedList<Node> children = new LinkedList<>();
 
     public void addChild(Node node) {
         if (node != null) {
@@ -18,11 +19,11 @@ public abstract class Node {
         return this.children.get(i);
     }
 
-    public void addChildren(List<Node> nodes) {
+    public void addChildren(LinkedList<Node> nodes) {
         this.children.addAll(nodes);
     }
 
-    public List<Node> getChildren() {
+    public LinkedList<Node> getChildren() {
         return this.children;
     }
 

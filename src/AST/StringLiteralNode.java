@@ -1,7 +1,6 @@
 package AST;
 
 public class StringLiteralNode extends LiteralNode {
-    public final String literal;
     public final Integer line;
 
     public StringLiteralNode(String literal, Integer line) {
@@ -11,6 +10,8 @@ public class StringLiteralNode extends LiteralNode {
 
     @Override
     protected String nodeInfo() {
-        return String.format("%s literal: %s", this.getClass().getSimpleName(), this.literal);
+        // TODO: tirar isso depois, pois só corrige um problema do Graphviz
+        String filteredString = this.literal.toString().replace("\"", "");
+        return String.format("%s literal: %s", this.getClass().getSimpleName(), filteredString);
     }
 }

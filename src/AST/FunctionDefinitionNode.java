@@ -2,13 +2,14 @@ package AST;
 
 import Types.Type;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class FunctionDefinitionNode extends Node {
     public final Type type;
     public final String name;
 
-    public FunctionDefinitionNode(Type type, String name, List<Node> nodes) {
+    public FunctionDefinitionNode(Type type, String name, LinkedList<Node> nodes) {
         this.type = type;
         this.name = name;
         this.addChildren(nodes);

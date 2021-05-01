@@ -78,6 +78,24 @@ public class AstVisitor {
 	private void visitFunctionCall(FunctionCallNode node,
 								   MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Function Call");
+
+		// Tenho que repensar isso aqui ehueeheuhehe
+		if(node.name.equals("print")){
+			var arg = node.getChildren().get(0);
+
+			// Caso seja uma constante XD
+			if(arg instanceof LiteralNode){
+				String literalValue = ((LiteralNode) arg).literal.toString();
+
+				mv.visitFieldInsn(GETSTATIC, "java/lang/System",
+						"out", "Ljava/io/PrintStream;");
+
+				mv.visitLdcInsn(literalValue);
+
+				mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
+						"println", "(Ljava/lang/String;)V", false);
+			}
+		}
 	}
 
 	// Responsavel por gerar o codigo de cada função
@@ -116,16 +134,12 @@ public class AstVisitor {
 		mv.visitCode();
 
 		for (var childNode: node.getChildren()) {
-			try{
-				switch (childNode.getClass().getSimpleName()){
-					case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
-					case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, localVarIndex);
-					case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, localVarIndex);
-					case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode, mv, localVarIndex);
-					default -> visit(childNode);
-				}
-			}catch (Exception e){
-				System.out.println("Erro: " + e.getMessage());
+			switch (childNode.getClass().getSimpleName()){
+				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
+				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, localVarIndex);
+				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, localVarIndex);
+				case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode, mv, localVarIndex);
+				default -> visit(childNode);
 			}
 		}
 
@@ -141,20 +155,24 @@ public class AstVisitor {
 
 	private void visitVariableDeclaration(VariableDeclarationNode node,
 										  MethodVisitor mv, HashMap<String,
-											Integer> varIndex) throws Exception {
+											Integer> varIndex){
 		System.out.println("Variable Declaration");
 		int index = newLocalVariableIndex++;
 
 		varIndex.put(node.name, index);
 
 		switch (node.type.name) {
-			case Type.BOOL_NAME, Type.INT_NAME -> {
+			case Type.INT_NAME -> {
 				mv.visitLdcInsn(0);
 				mv.visitVarInsn(ISTORE, index);
 			}
 			case Type.DOUBLE_NAME -> {
 				mv.visitLdcInsn(0.0);
 				mv.visitVarInsn(DSTORE, index);
+			}
+			case Type.BOOL_NAME -> {
+				mv.visitLdcInsn(false);
+				mv.visitVarInsn(ISTORE, index);
 			}
 			case Type.STRING_NAME -> {
 				mv.visitInsn(ACONST_NULL);

@@ -849,10 +849,10 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
             var exprList = ctx.selector(0).argumentPart()
                     .arguments().argumentList().expressionList().expression();
 
-            LinkedList<AbstractExpressionNode> args = new LinkedList<>();
+            LinkedList<Node> args = new LinkedList<>();
 
             for(var expr : exprList){
-                args.add((AbstractExpressionNode) expr.accept(this));
+                args.add(expr.accept(this));
             }
 
             return new FunctionCallNode(name, args);
@@ -1334,7 +1334,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     public Node visitSingleLineString(DartParser.SingleLineStringContext ctx) {
         if (ctx.SINGLE_LINE_STRING_DQ_BEGIN_END() != null) {
             return new StringLiteralNode(
-                    ctx.SINGLE_LINE_STRING_DQ_BEGIN_END().getText().replace("\"", "\\\""),
+                    ctx.SINGLE_LINE_STRING_DQ_BEGIN_END().getText(),
                     ctx.SINGLE_LINE_STRING_DQ_BEGIN_END().getSymbol().getLine()
             );
         }
