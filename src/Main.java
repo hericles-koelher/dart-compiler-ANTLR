@@ -16,7 +16,6 @@ import java.nio.file.NoSuchFileException;
 public class Main {
     public static void main(String[] args) {
 
-
         try {
             FileWriter writer = new FileWriter("ast1.dot");
 
@@ -40,7 +39,7 @@ public class Main {
             Node node = new ParseTreeVisitor(st, vt, ft).visit(parseTree);
             node.print(writer);
 
-            File file = new File("output/Out.class");
+            File file = new File("output/Main.class");
             file.getParentFile().mkdirs();
 
             FileOutputStream out = new FileOutputStream(file);

@@ -3,12 +3,11 @@ import SymbolTable.FunctionSymbolTable;
 import SymbolTable.StringTable;
 import SymbolTable.VarSymbolTable;
 import Types.Type;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -18,6 +17,7 @@ public class AstVisitor {
 	private final VarSymbolTable _varSymbolTable;
 	private final FunctionSymbolTable _functionSymbolTable;
 	private final StringTable _stringTable;
+	private int variableIndex = 0;
 
 	public AstVisitor(Node ast, VarSymbolTable varSymbolTable,
 					  FunctionSymbolTable functionSymbolTable,
@@ -46,7 +46,7 @@ public class AstVisitor {
 	}
 
 	public void visit(){
-		_cw.visit(V1_5, ACC_PUBLIC, "Main", null, null, null);
+		_cw.visit(V14, ACC_PUBLIC, "Main", null, "java/lang/Object", null);
 
 		for (var childNode: _ast.getChildren()) {
 			String className = childNode.getClass().getSimpleName();
@@ -69,15 +69,18 @@ public class AstVisitor {
 		System.out.println(node.getClass());
 	}
 
-	private void visitAssign(AssignNode node){
+	private void visitAssign(AssignNode node,
+							 MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Assign");
 	}
 
-	private void visitFunctionCall(FunctionCallNode node){
+	private void visitFunctionCall(FunctionCallNode node,
+								   MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Function Call");
 	}
 
 	// Responsavel por gerar o codigo de cada função
+	// Não sei o motivo, mas se o corpo da função main for vazio da erro de execução
 	private void visitFunctionDefinition(FunctionDefinitionNode node){
 		//TODO: aprender como definir "descriptor list"
 		// Link: https://asm.ow2.io/faq.html#Q7
@@ -85,9 +88,14 @@ public class AstVisitor {
 
 		try {
 			// Por enquanto assumindo que a função não possui parametros
+			String descriptor = "()"+dartTypeToJvmType(node.type);
+
+			if(node.name.equals("main"))
+				descriptor = "([Ljava/lang/String;)V";
+
 			mv = _cw.visitMethod(
 					ACC_PUBLIC + ACC_STATIC,
-					node.name,"()"+dartTypeToJvmType(node.type),
+					node.name, descriptor,
 					null, null);
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -95,14 +103,17 @@ public class AstVisitor {
 			System.exit(1);
 		}
 
+		HashMap<String, Integer> varIndex = new HashMap<>();
+		this.variableIndex = 0;
+
 		mv.visitCode();
 
 		for (var childNode: node.getChildren()) {
 			switch (childNode.getClass().getSimpleName()){
-				case "AssignNode" -> visitAssign((AssignNode) childNode);
-				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode);
-				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode);
-				case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode);
+				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, varIndex);
+				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, varIndex);
+				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, varIndex);
+				case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode, mv, varIndex);
 				default -> visit(childNode);
 			}
 		}
@@ -114,11 +125,20 @@ public class AstVisitor {
 		mv.visitEnd();
 	}
 
-	private void visitVariableDeclaration(VariableDeclarationNode node){
+	private void visitVariableDeclaration(VariableDeclarationNode node,
+										  MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Variable Declaration");
+		int index = variableIndex++;
+
+		varIndex.put(node.name, index);
+
+		// Teste
+		mv.visitInsn(ICONST_2);
+		mv.visitIntInsn(ISTORE, index);
 	}
 
-	private void visitVariableDefinition(VariableDefinitionNode node){
+	private void visitVariableDefinition(VariableDefinitionNode node,
+										 MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Variable Definition");
 	}
 
