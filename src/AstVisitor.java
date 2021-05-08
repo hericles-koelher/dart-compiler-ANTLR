@@ -75,26 +75,48 @@ public class AstVisitor {
 		System.out.println("Assign");
 	}
 
+	private void hardCodedPrint(FunctionCallNode node,
+								MethodVisitor mv, HashMap<String, Integer> varIndex){
+		var arg = node.getChildren().get(0);
+
+		// Caso seja uma constante XD
+		if(arg instanceof LiteralNode){
+			String literalValue = ((LiteralNode) arg).literal.toString();
+
+			mv.visitFieldInsn(GETSTATIC, "java/lang/System",
+					"out", "Ljava/io/PrintStream;");
+
+			mv.visitLdcInsn(literalValue);
+
+			mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
+					"println", "(Ljava/lang/String;)V", false);
+		}else{
+			var variableNode = ((VariableNode)node.getChildren().get(0));
+
+			int localIdNumber = varIndex.get(variableNode.name);
+			Type varType = _varSymbolTable.getVar(variableNode.name, variableNode.scopeId).type;
+
+			switch (varType.name){
+				case Type.INT_NAME:
+					mv.visitFieldInsn(GETSTATIC, "java/lang/System",
+							"out", "Ljava/io/PrintStream;");
+					mv.visitVarInsn(ILOAD, localIdNumber);
+					mv.visitMethodInsn(INVOKESTATIC, "java/lang/String", "valueOf", "(I)Ljava/lang/String;", false);
+					mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
+							"println", "(Ljava/lang/String;)V", false);
+				default:
+					System.out.println("...");
+			}
+		}
+	}
+
 	private void visitFunctionCall(FunctionCallNode node,
 								   MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Function Call");
 
 		// Tenho que repensar isso aqui ehueeheuhehe
 		if(node.name.equals("print")){
-			var arg = node.getChildren().get(0);
-
-			// Caso seja uma constante XD
-			if(arg instanceof LiteralNode){
-				String literalValue = ((LiteralNode) arg).literal.toString();
-
-				mv.visitFieldInsn(GETSTATIC, "java/lang/System",
-						"out", "Ljava/io/PrintStream;");
-
-				mv.visitLdcInsn(literalValue);
-
-				mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
-						"println", "(Ljava/lang/String;)V", false);
-			}
+			hardCodedPrint(node, mv, varIndex);
 		}
 	}
 
@@ -185,6 +207,32 @@ public class AstVisitor {
 	private void visitVariableDefinition(VariableDefinitionNode node,
 										 MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Variable Definition");
+
+		// Por enquanto considerando apenas atribuição de constantes
+		// Ex:
+		// int a = 2;
+		// String b = "Olá";
+		if(node.initializer instanceof LiteralNode){
+			int index = newLocalVariableIndex++;
+
+			varIndex.put(node.name, index);
+
+			switch (node.type.name) {
+				case Type.INT_NAME -> {
+					mv.visitLdcInsn(((LiteralNode) node.initializer).literal);
+					mv.visitVarInsn(ISTORE, index);
+				}
+				case Type.DOUBLE_NAME -> {
+					mv.visitLdcInsn(((LiteralNode) node.initializer).literal);
+					mv.visitVarInsn(DSTORE, index);
+				}
+				case Type.STRING_NAME -> {
+					mv.visitLdcInsn(((LiteralNode) node.initializer).literal);
+					mv.visitVarInsn(ASTORE, index);
+				}
+				default -> System.out.println("Não defini as instruções para o tipo " + node.type.name);
+			}
+		}
 	}
 
 	public void write(FileOutputStream fileOutputStream){
