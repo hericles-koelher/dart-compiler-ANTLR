@@ -1,6 +1,6 @@
 import AST.*;
+import DartTypes.*;
 import SymbolTable.FunctionSymbolTable;
-import SymbolTable.StringTable;
 import SymbolTable.VarSymbolTable;
 import Types.Type;
 import org.objectweb.asm.ClassWriter;
@@ -16,33 +16,30 @@ public class AstVisitor {
 	private final Node _ast;
 	private final VarSymbolTable _varSymbolTable;
 	private final FunctionSymbolTable _functionSymbolTable;
-	private final StringTable _stringTable;
 	private int newLocalVariableIndex = 0;
 
 	public AstVisitor(Node ast, VarSymbolTable varSymbolTable,
-					  FunctionSymbolTable functionSymbolTable,
-					  StringTable stringTable){
+					  FunctionSymbolTable functionSymbolTable){
 		_cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		_ast = ast;
 		_varSymbolTable = varSymbolTable;
 		_functionSymbolTable = functionSymbolTable;
-		_stringTable = stringTable;
 	}
 
 	private String dartTypeToJvmType(Type type) throws Exception {
+
 		// FIXME:
 		return switch (type.name) {
-			case Type.INT_NAME -> "I";
-			case Type.DOUBLE_NAME -> "D";
-			case Type.BOOL_NAME -> "Z";
-			// Uma array de char
-			case Type.STRING_NAME -> "[C";
+			case Type.INT_NAME -> "LDartTypes/DartInt;";
+			case Type.DOUBLE_NAME -> "LDartTypes/DartDouble;";
+			case Type.BOOL_NAME -> "LDartTypes/DartBool;";
+			case Type.STRING_NAME -> "LDartTypes/DartString;";
 			// case Type.DYNAMIC_NAME ->  // Nem sei como fazer isso na JVM
 			// Pequena gambiarra temporaria
-			case Type.DYNAMIC_NAME -> "V";
+			case Type.DYNAMIC_NAME -> "LDartTypes/DartNull;";
 			// No dart uma função de retorno void retorna um objeto do tipo Null
 			// case Type.NULL_NAME ->
-			default -> throw new Exception("Erro de conversão de tipos para JVM");
+			default -> "BLA"; //throw new Exception("Erro de conversão de tipos para JVM");
 		};
 	}
 
@@ -50,15 +47,15 @@ public class AstVisitor {
 		_cw.visit(V14, ACC_PUBLIC, "Main", null, "java/lang/Object", null);
 
 		for (var childNode: _ast.getChildren()) {
-			String className = childNode.getClass().getSimpleName();
-			if(className.equals("FunctionDefinitionNode")){
+
+			if(childNode instanceof FunctionDefinitionNode){
 				visitFunctionDefinition((FunctionDefinitionNode) childNode);
 			}
 
 			// TODO: Implementar isso aqui depois
-			if(className.equals("GlobalVariableNode")){
-				visit(childNode);
-			}
+//			if(childNode instanceof GlobalVarNode){
+//				visit(childNode);
+//			}
 		}
 
 		// Como o nome do metodo já indica, sinaliza o final da classe.
@@ -116,6 +113,7 @@ public class AstVisitor {
 
 		// Tenho que repensar isso aqui ehueeheuhehe
 		if(node.name.equals("print")){
+			// Arrumar isso aqui pra invocar o print do pacote Runtime
 			hardCodedPrint(node, mv, varIndex);
 		}
 	}
@@ -137,7 +135,6 @@ public class AstVisitor {
 
 			if(node.name.equals("main")){
 				// TODO: arrumar isso aqui dps
-				//  tenho que descobrir como chamar a jvm sem passar pelo java...
 				descriptor = "([Ljava/lang/String;)V";
 				// O indice 0 será para o array de args
 				newLocalVariableIndex = 1;
@@ -160,7 +157,6 @@ public class AstVisitor {
 				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
 				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, localVarIndex);
 				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, localVarIndex);
-				case "VariableDeclarationNode" -> visitVariableDeclaration((VariableDeclarationNode) childNode, mv, localVarIndex);
 				default -> visit(childNode);
 			}
 		}
@@ -175,38 +171,13 @@ public class AstVisitor {
 		mv.visitEnd();
 	}
 
-	private void visitVariableDeclaration(VariableDeclarationNode node,
-										  MethodVisitor mv, HashMap<String,
-											Integer> varIndex){
-		System.out.println("Variable Declaration");
-		int index = newLocalVariableIndex++;
-
-		varIndex.put(node.name, index);
-
-		switch (node.type.name) {
-			case Type.INT_NAME -> {
-				mv.visitLdcInsn(0);
-				mv.visitVarInsn(ISTORE, index);
-			}
-			case Type.DOUBLE_NAME -> {
-				mv.visitLdcInsn(0.0);
-				mv.visitVarInsn(DSTORE, index);
-			}
-			case Type.BOOL_NAME -> {
-				mv.visitLdcInsn(false);
-				mv.visitVarInsn(ISTORE, index);
-			}
-			case Type.STRING_NAME -> {
-				mv.visitInsn(ACONST_NULL);
-				mv.visitVarInsn(ASTORE, index);
-			}
-			default -> System.out.println("Não defini as instruções para o tipo " + node.type.name);
-		}
-	}
-
 	private void visitVariableDefinition(VariableDefinitionNode node,
 										 MethodVisitor mv, HashMap<String, Integer> varIndex){
 		System.out.println("Variable Definition");
+
+		if(node.initializer == null){
+			// Faça instanciação do tipo utilizando o construtor vazio...
+		}
 
 		// Por enquanto considerando apenas atribuição de constantes
 		// Ex:

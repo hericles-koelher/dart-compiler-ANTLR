@@ -15,12 +15,10 @@ import java.util.LinkedList;
 
 public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
-    private final StringTable st;
     private final VarSymbolTable vt;
     private final FunctionSymbolTable ft;
 
-    public ParseTreeVisitor(StringTable st, VarSymbolTable vt, FunctionSymbolTable ft) {
-        this.st = st;
+    public ParseTreeVisitor(VarSymbolTable vt, FunctionSymbolTable ft) {
         this.vt = vt;
         this.ft = ft;
         ScopeManager.init();
@@ -424,7 +422,18 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     @Override
     public Node visitNumericLiteral(DartParser.NumericLiteralContext ctx) {
         if (ctx.NUMBER() != null) {
-            return new NumericLiteralNode(Integer.parseInt(ctx.NUMBER().getText()), ctx.NUMBER().getSymbol().getLine());
+            String numberStr = ctx.NUMBER().getText();
+
+            if(numberStr.contains("."))
+                return new LiteralNode(
+                    TypeManager.getType(Type.DOUBLE_NAME),
+                    Integer.parseInt(ctx.NUMBER().getText())
+                );
+            else
+                return new LiteralNode(
+                        TypeManager.getType(Type.INT_NAME),
+                        Integer.parseInt(ctx.NUMBER().getText())
+                );
         }
 
         throw new NodeNotImplmentedException();
@@ -1026,17 +1035,17 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         var variable = new Variable(type, name, scopeId, 0);
 
         vt.addVar(variable);
+        // aqui
 
-        if(varCtx.expression() != null){
-            var initializer = visitExpression(varCtx.expression());
+        Node initializer = null;
 
-            return new VariableDefinitionNode(scopeId,
+        if(varCtx.expression() != null)
+            initializer = varCtx.expression().accept(this);
+        //var initializer = varCtx.expression().accept(this);
+                // visitExpression(varCtx.expression());
+
+        return new VariableDefinitionNode(scopeId,
                     type, name, initializer, 0);
-        }else{
-            return new VariableDeclarationNode(scopeId, type, name, 0);
-        }
-//
-//        return ctx.initializedVariableDeclaration().accept(this);
     }
 
     @Override
@@ -1332,10 +1341,12 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitSingleLineString(DartParser.SingleLineStringContext ctx) {
+        // Removi aspas que zuavam o graphviz
         if (ctx.SINGLE_LINE_STRING_DQ_BEGIN_END() != null) {
-            return new StringLiteralNode(
-                    ctx.SINGLE_LINE_STRING_DQ_BEGIN_END().getText(),
-                    ctx.SINGLE_LINE_STRING_DQ_BEGIN_END().getSymbol().getLine()
+            return new LiteralNode(
+                    TypeManager.getType(Type.STRING_NAME),
+                    ctx.SINGLE_LINE_STRING_DQ_BEGIN_END().getText().replace("\"", "")
+
             );
         }
 

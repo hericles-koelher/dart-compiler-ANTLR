@@ -27,7 +27,7 @@ public class VariableDefinitionNode extends Node {
 	}
 
 	protected int printNode(FileWriter writer) throws Exception {
-		Integer my_nr = Node.nr++;
+		Integer my_nr = nr++;
 
 		writer.write(String.format("node%d[label=\"", my_nr));
 

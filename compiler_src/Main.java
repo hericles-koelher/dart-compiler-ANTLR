@@ -2,7 +2,6 @@ import AST.Node;
 import Dart.DartLexer;
 import Dart.DartParser;
 import SymbolTable.FunctionSymbolTable;
-import SymbolTable.StringTable;
 import SymbolTable.VarSymbolTable;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -25,7 +24,6 @@ public class Main {
             parser.setErrorHandler(new BailErrorStrategy());
             parser.addErrorListener(new ThrowingErrorListener());
 
-            var st = new StringTable();
             var vt = new VarSymbolTable();
             var ft = new FunctionSymbolTable();
 //            parser.addParseListener(new Listener(st, vt));
@@ -36,14 +34,14 @@ public class Main {
 //            System.out.println();
 //            vt.print();
 
-            Node node = new ParseTreeVisitor(st, vt, ft).visit(parseTree);
+            Node node = new ParseTreeVisitor(vt, ft).visit(parseTree);
             node.print(writer);
 
             File file = new File("output/Main.class");
             file.getParentFile().mkdirs();
 
             FileOutputStream out = new FileOutputStream(file);
-            AstVisitor astVisitor = new AstVisitor(node, vt, ft, st);
+            AstVisitor astVisitor = new AstVisitor(node, vt, ft);
 
             astVisitor.visit();
             astVisitor.write(out);

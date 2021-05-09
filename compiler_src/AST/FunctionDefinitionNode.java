@@ -3,7 +3,6 @@ package AST;
 import Types.Type;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class FunctionDefinitionNode extends Node {
     public final Type type;

@@ -1,7 +1,5 @@
 package AST;
 
-import Types.Type;
-
 import java.io.FileWriter;
 
 public class VariableNode extends AbstractExpressionNode{
@@ -20,7 +18,7 @@ public class VariableNode extends AbstractExpressionNode{
 	}
 
 	protected int printNode(FileWriter writer) throws Exception {
-		Integer my_nr = Node.nr++;
+		Integer my_nr = nr++;
 
 		writer.write(String.format("node%d[label=\"", my_nr));
 
