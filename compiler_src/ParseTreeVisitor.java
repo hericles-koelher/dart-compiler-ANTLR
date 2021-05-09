@@ -827,7 +827,6 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 		var token = ((TokenNode) ctx.multiplicativeOperator(0).accept(this)).token;
 		var opNode = new OperationNode(left, OperationManager.getOperation(token), right);
 
-
 		for (int i = 2; exprList.size() - i > 0; i++) {
 			left = (AbstractExpressionNode) exprList.get(i).accept(this);
 			token = ((TokenNode) ctx.multiplicativeOperator(i - 1).accept(this)).token;
