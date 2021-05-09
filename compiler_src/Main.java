@@ -14,7 +14,7 @@ import java.nio.file.NoSuchFileException;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println(String.valueOf(24));
+
         try {
             FileWriter writer = new FileWriter("ast1.dot");
 
