@@ -638,10 +638,10 @@ relationalExpression:
 	;
 
 relationalOperator:
-		'>='
-	|	'>'
-	|	'<='
-	|	'<'
+		GE = '>='
+	|	GT = '>'
+	|	LE = '<='
+	|	LT = '<'
 	;
 
 // Chapter 16.29 - Bitwise Expressions

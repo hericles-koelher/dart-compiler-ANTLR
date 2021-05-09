@@ -12,6 +12,10 @@ public class OperationNode extends AbstractTwoChildNode{
 		this.operation = operation;
 	}
 
+	public OperationNode(Operation operation) {
+		this.operation = operation;
+	}
+
 	@Override
 	protected String nodeInfo() {
 		return String.format("%s operation: %s", this.getClass().getSimpleName(), this.operation);

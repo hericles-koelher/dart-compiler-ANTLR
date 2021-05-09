@@ -84,7 +84,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitInitializedVariableDeclaration(DartParser.InitializedVariableDeclarationContext ctx) {
-       return super.visitInitializedVariableDeclaration(ctx);
+        return super.visitInitializedVariableDeclaration(ctx);
     }
 
     @Override
@@ -363,13 +363,13 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitExpression(DartParser.ExpressionContext ctx) {
-        if(ctx.assignableExpression() != null){
+        if (ctx.assignableExpression() != null) {
             var left = (VariableNode) ctx.assignableExpression().accept(this);
             var right = (AbstractExpressionNode) ctx.expression().accept(this);
             return new AssignNode(left, right);
         }
 
-        if(ctx.conditionalExpression() != null)
+        if (ctx.conditionalExpression() != null)
             return ctx.conditionalExpression().accept(this);
 
         throw new NodeNotImplmentedException();
@@ -424,10 +424,10 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         if (ctx.NUMBER() != null) {
             String numberStr = ctx.NUMBER().getText();
 
-            if(numberStr.contains("."))
+            if (numberStr.contains("."))
                 return new LiteralNode(
-                    TypeManager.getType(Type.DOUBLE_NAME),
-                    Integer.parseInt(ctx.NUMBER().getText())
+                        TypeManager.getType(Type.DOUBLE_NAME),
+                        Integer.parseInt(ctx.NUMBER().getText())
                 );
             else
                 return new LiteralNode(
@@ -675,11 +675,15 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitRelationalExpression(DartParser.RelationalExpressionContext ctx) {
-        if (ctx.SUPER() != null) {
+        if (ctx.SUPER() != null || ctx.typeTest() != null || ctx.typeCast() != null) {
             throw new NodeNotImplmentedException();
         }
-        if ((ctx.typeTest() != null || ctx.typeCast() != null || ctx.relationalOperator() != null)) {
-            throw new NodeNotImplmentedException();
+
+        if (ctx.bitwiseOrExpression().size() > 1) {
+            var op = (OperationNode)ctx.relationalOperator().accept(this);
+            op.left = (AbstractExpressionNode) ctx.bitwiseOrExpression(0).accept(this);
+            op.right = (AbstractExpressionNode) ctx.bitwiseOrExpression(1).accept(this);
+            return op;
         }
 
         return ctx.bitwiseOrExpression(0).accept(this);
@@ -687,7 +691,17 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitRelationalOperator(DartParser.RelationalOperatorContext ctx) {
-        return super.visitRelationalOperator(ctx);
+        if (ctx.GE != null) {
+            return new OperationNode(Operation.GreaterOrEqual);
+        } else if (ctx.GT != null) {
+            return new OperationNode(Operation.Greater);
+        } else if (ctx.LE != null) {
+            return new OperationNode(Operation.LessOrEqual);
+        } else if (ctx.LT != null) {
+            return new OperationNode(Operation.Less);
+        }
+
+        throw new NodeNotImplmentedException();
     }
 
     @Override
@@ -756,7 +770,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
         var exprList = ctx.multiplicativeExpression();
 
-        if(exprList.size() == 1)
+        if (exprList.size() == 1)
             return exprList.get(0).accept(this);
 
         var left = (AbstractExpressionNode) exprList.get(0).accept(this);
@@ -764,7 +778,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         var opNode = new OperationNode(left, Operation.Addition, right);
 
 
-        for(int i = 2; exprList.size() - i > 0; i++){
+        for (int i = 2; exprList.size() - i > 0; i++) {
             var newRightNode = (AbstractExpressionNode) exprList.get(i).accept(this);
             opNode = new OperationNode(opNode, Operation.Addition, newRightNode);
         }
@@ -787,7 +801,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
         var exprList = ctx.unaryExpression();
 
-        if(exprList.size() == 1)
+        if (exprList.size() == 1)
             return exprList.get(0).accept(this);
 
         var left = (AbstractExpressionNode) exprList.get(0).accept(this);
@@ -795,7 +809,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         var opNode = new OperationNode(left, Operation.Multiplication, right);
 
 
-        for(int i = 2; exprList.size() - i > 0; i++){
+        for (int i = 2; exprList.size() - i > 0; i++) {
             left = (AbstractExpressionNode) exprList.get(i).accept(this);
             opNode = new OperationNode(left, Operation.Multiplication, opNode);
         }
@@ -807,7 +821,8 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
     public Node visitMultiplicativeOperator(DartParser.MultiplicativeOperatorContext ctx) {
         TerminalNode terminal = (TerminalNode) ctx.children.get(0);
 
-        return new TokenNode(terminal.getText(), terminal.getSymbol().getLine());    }
+        return new TokenNode(terminal.getText(), terminal.getSymbol().getLine());
+    }
 
     @Override
     public Node visitUnaryExpression(DartParser.UnaryExpressionContext ctx) {
@@ -860,7 +875,7 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
             LinkedList<Node> args = new LinkedList<>();
 
-            for(var expr : exprList){
+            for (var expr : exprList) {
                 args.add(expr.accept(this));
             }
 
@@ -995,6 +1010,15 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
         if (ctx.expressionStatement() != null) {
             return ctx.expressionStatement().accept(this);
         }
+        if (ctx.ifStatement() != null) {
+            return ctx.ifStatement().accept(this);
+        }
+        if (ctx.whileStatement() != null) {
+            return ctx.whileStatement().accept(this);
+        }
+        if (ctx.block() != null) {
+            return ctx.block().accept(this);
+        }
 
         throw new NodeNotImplmentedException();
     }
@@ -1016,12 +1040,12 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
         var decId = varCtx.declaredIdentifier();
 
-        if(decId.COVARIANT() != null)
+        if (decId.COVARIANT() != null)
             throw new IncompleteRuleException();
 
         String typeName;
 
-        if(decId.finalConstVarOrType().varOrType().type() != null)
+        if (decId.finalConstVarOrType().varOrType().type() != null)
             typeName = decId.finalConstVarOrType().varOrType().type().getText();
         else
             throw new IncompleteRuleException();
@@ -1039,13 +1063,13 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
         Node initializer = null;
 
-        if(varCtx.expression() != null)
+        if (varCtx.expression() != null)
             initializer = varCtx.expression().accept(this);
         //var initializer = varCtx.expression().accept(this);
-                // visitExpression(varCtx.expression());
+        // visitExpression(varCtx.expression());
 
         return new VariableDefinitionNode(scopeId,
-                    type, name, initializer, 0);
+                type, name, initializer, 0);
     }
 
     @Override
@@ -1055,7 +1079,14 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitIfStatement(DartParser.IfStatementContext ctx) {
-        return super.visitIfStatement(ctx);
+        var ifNode = new IfNode();
+        ifNode.abstractExpressionNode = (AbstractExpressionNode) ctx.expression().accept(this);
+        ifNode.ifStatementsNode = (StatementsNode) ctx.statement(0).accept(this);
+        if(ctx.statement().size() > 1) {
+            ifNode.elseStatementsNode = (StatementsNode) ctx.statement(1).accept(this);
+        }
+
+        return ifNode;
     }
 
     @Override
@@ -1075,7 +1106,11 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
     @Override
     public Node visitWhileStatement(DartParser.WhileStatementContext ctx) {
-        return super.visitWhileStatement(ctx);
+        var whileNode = new WhileNode();
+        whileNode.abstractExpressionNode = (AbstractExpressionNode) ctx.expression().accept(this);
+        whileNode.statementsNode = (StatementsNode) ctx.statement().accept(this);
+
+        return whileNode;
     }
 
     @Override
