@@ -3,6 +3,7 @@ import DartTypes.*;
 import SymbolTable.FunctionSymbolTable;
 import SymbolTable.VarSymbolTable;
 import Types.Type;
+import Types.TypeUnify;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 

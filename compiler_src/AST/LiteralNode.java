@@ -3,7 +3,6 @@ package AST;
 import Types.Type;
 
 public class LiteralNode extends AbstractExpressionNode {
-	public Type type;
 	public Object literal;
 
 	public LiteralNode(Type type, Object literal){
