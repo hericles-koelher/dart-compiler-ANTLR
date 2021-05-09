@@ -14,7 +14,7 @@ RUNTIME_CLASS_FILES=$(shell find runtime_src/ -name "*.class")
 all: Classes
 
 #Criação dos arquivos .class
-Classes: Dart
+Classes: Runtime Dart
 	javac -d $(COMPILER_CLASS_DIR) -cp $(ANTLR4):$(ASM):$(RUNTIME) $(JAVA_FILES)
 
 #Codigo do Scanner+Parser

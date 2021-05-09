@@ -5,11 +5,16 @@ import SymbolTable.VarSymbolTable;
 import Types.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
 import static org.objectweb.asm.Opcodes.*;
+
+// O CODIGO TÁ CONFUSO PRA CARALHO, MAS É PQ AINDA TÕ PEGANDO O JEITO
+// COM A JVM E O ASM, LAMENTO MAS VOU GAMBIARRAR COM FORÇA.
+// ASS: Bruno
 
 public class AstVisitor {
 	private final ClassWriter _cw;
@@ -17,6 +22,11 @@ public class AstVisitor {
 	private final VarSymbolTable _varSymbolTable;
 	private final FunctionSymbolTable _functionSymbolTable;
 	private int newLocalVariableIndex = 0;
+	private final HashMap<String, String> typeDescriptorMap;
+	private final HashMap<String, String> dartArgTypeDescriptorMap;
+	private final HashMap<String, String> internalNameMap;
+	private final HashMap<String, String> dartArgInternalNameMap;
+	private final HashMap<String, String> dartTypeToJavaPrimitiveMap;
 
 	public AstVisitor(Node ast, VarSymbolTable varSymbolTable,
 					  FunctionSymbolTable functionSymbolTable){
@@ -24,23 +34,47 @@ public class AstVisitor {
 		_ast = ast;
 		_varSymbolTable = varSymbolTable;
 		_functionSymbolTable = functionSymbolTable;
-	}
 
-	private String dartTypeToJvmType(Type type) throws Exception {
+		// Determinando os descriptors dos tipos existentes...
+		typeDescriptorMap = new HashMap<>();
+		typeDescriptorMap.put(Type.INT_NAME, org.objectweb.asm.Type.getDescriptor(DartInt.class));
+		typeDescriptorMap.put(Type.DOUBLE_NAME, org.objectweb.asm.Type.getDescriptor(DartDouble.class));
+		typeDescriptorMap.put(Type.BOOL_NAME, org.objectweb.asm.Type.getDescriptor(DartBool.class));
+		typeDescriptorMap.put(Type.STRING_NAME, org.objectweb.asm.Type.getDescriptor(DartString.class));
+		typeDescriptorMap.put(Type.NULL_NAME, org.objectweb.asm.Type.getDescriptor(DartNull.class));
+		typeDescriptorMap.put("DartType", org.objectweb.asm.Type.getDescriptor(DartType.class));
 
-		// FIXME:
-		return switch (type.name) {
-			case Type.INT_NAME -> "LDartTypes/DartInt;";
-			case Type.DOUBLE_NAME -> "LDartTypes/DartDouble;";
-			case Type.BOOL_NAME -> "LDartTypes/DartBool;";
-			case Type.STRING_NAME -> "LDartTypes/DartString;";
-			// case Type.DYNAMIC_NAME ->  // Nem sei como fazer isso na JVM
-			// Pequena gambiarra temporaria
-			case Type.DYNAMIC_NAME -> "LDartTypes/DartNull;";
-			// No dart uma função de retorno void retorna um objeto do tipo Null
-			// case Type.NULL_NAME ->
-			default -> "BLA"; //throw new Exception("Erro de conversão de tipos para JVM");
-		};
+		// Determinando os descriptors dos tipos argumentos utilizados para criar
+		// os tipos do dart...
+		dartArgTypeDescriptorMap = new HashMap<>();
+		dartArgTypeDescriptorMap.put(Type.INT_NAME, org.objectweb.asm.Type.getDescriptor(Integer.class));
+		dartArgTypeDescriptorMap.put(Type.DOUBLE_NAME, org.objectweb.asm.Type.getDescriptor(Double.class));
+		dartArgTypeDescriptorMap.put(Type.BOOL_NAME, org.objectweb.asm.Type.getDescriptor(Boolean.class));
+		dartArgTypeDescriptorMap.put(Type.STRING_NAME, org.objectweb.asm.Type.getDescriptor(String.class));
+
+		// Determinando internal name dos tipos existentes...
+		internalNameMap = new HashMap<>();
+		internalNameMap.put(Type.INT_NAME, org.objectweb.asm.Type.getInternalName(DartInt.class));
+		internalNameMap.put(Type.DOUBLE_NAME, org.objectweb.asm.Type.getInternalName(DartDouble.class));
+		internalNameMap.put(Type.BOOL_NAME, org.objectweb.asm.Type.getInternalName(DartBool.class));
+		internalNameMap.put(Type.STRING_NAME, org.objectweb.asm.Type.getInternalName(DartString.class));
+		internalNameMap.put(Type.NULL_NAME, org.objectweb.asm.Type.getInternalName(DartNull.class));
+		internalNameMap.put("DartFunctions", org.objectweb.asm.Type.getInternalName(DartFunctions.class));
+
+		// Determinando os internal names dos tipos argumentos utilizados para criar
+		// os tipos do dart...
+		dartArgInternalNameMap = new HashMap<>();
+		dartArgInternalNameMap.put(Type.INT_NAME, org.objectweb.asm.Type.getInternalName(Integer.class));
+		dartArgInternalNameMap.put(Type.DOUBLE_NAME, org.objectweb.asm.Type.getInternalName(Double.class));
+		dartArgInternalNameMap.put(Type.BOOL_NAME, org.objectweb.asm.Type.getInternalName(Boolean.class));
+		dartArgInternalNameMap.put(Type.STRING_NAME, org.objectweb.asm.Type.getInternalName(String.class));
+
+		// Determinando os descriptors dos tipos argumentos utilizados para criar
+		// os argumentos utilizados para criar os tipos do dart... ZUADO...
+		dartTypeToJavaPrimitiveMap = new HashMap<>();
+		dartTypeToJavaPrimitiveMap.put(Type.INT_NAME, org.objectweb.asm.Type.getDescriptor(int.class));
+		dartTypeToJavaPrimitiveMap.put(Type.DOUBLE_NAME, org.objectweb.asm.Type.getDescriptor(double.class));
+		dartTypeToJavaPrimitiveMap.put(Type.BOOL_NAME, org.objectweb.asm.Type.getDescriptor(boolean.class));
 	}
 
 	public void visit(){
@@ -112,9 +146,61 @@ public class AstVisitor {
 		System.out.println("Function Call");
 
 		// Tenho que repensar isso aqui ehueeheuhehe
+		// Por enquanto esse pedaço hardcoded pra caralho tá aqui,
+		// mas o adequado seria primeiro separar o trecho que
+		// transforma um "literal java" em um "literal dart".
+		// Fora as partes q ainda nem fiz...
+		// E caralho com esse monte de HashMap tá ficando uma merda confusa...
+		// Vou arrumar isso dps
 		if(node.name.equals("print")){
 			// Arrumar isso aqui pra invocar o print do pacote Runtime
-			hardCodedPrint(node, mv, varIndex);
+
+			Node arg = node.getChildren().get(0);
+
+			if(arg instanceof LiteralNode){
+				LiteralNode lit = (LiteralNode) arg;
+
+				newLocalVariableIndex++;
+
+				mv.visitTypeInsn(NEW, internalNameMap.get(lit.type.name));
+				mv.visitInsn(DUP);
+
+
+				switch (lit.type.name) {
+					case Type.INT_NAME, Type.DOUBLE_NAME, Type.BOOL_NAME ->
+							{
+								// Criando arg do tipo necessario
+								mv.visitTypeInsn(NEW, dartArgInternalNameMap.get(lit.type.name));
+								mv.visitInsn(DUP);
+								mv.visitLdcInsn(lit.literal);
+
+								mv.visitMethodInsn(INVOKESPECIAL,
+										dartArgInternalNameMap.get(lit.type.name),
+										"<init>",
+										"(" + dartTypeToJavaPrimitiveMap.get(lit.type.name) + ")V",
+										false);
+							}
+					default -> {
+						// Isso aqui precisa estar aqui
+						mv.visitLdcInsn(lit.literal);
+						System.out.println("Não foi necessaŕio criar Arg");
+					}
+				}
+
+				// Criando a variavel local/temporaria
+				mv.visitMethodInsn(INVOKESPECIAL,
+						internalNameMap.get(lit.type.name),
+						"<init>",
+						"("+ dartArgTypeDescriptorMap.get(lit.type.name) +")V",
+						false);
+			}else{
+				// Nesse caso arg é uma instancia de VariableNode
+				//VariableNode var =
+				return;
+			}
+
+			mv.visitMethodInsn(INVOKESTATIC, internalNameMap.get("DartFunctions"),
+					"print", "("+ typeDescriptorMap.get("DartType") +")V", false);
 		}
 	}
 
@@ -131,7 +217,7 @@ public class AstVisitor {
 
 		try {
 			// Por enquanto assumindo que a função não possui parametros
-			String descriptor = "()"+dartTypeToJvmType(node.type);
+			String descriptor = "()" + typeDescriptorMap.get(node.type.name);
 
 			if(node.name.equals("main")){
 				// TODO: arrumar isso aqui dps
@@ -154,7 +240,7 @@ public class AstVisitor {
 
 		for (var childNode: node.getChildren()) {
 			switch (childNode.getClass().getSimpleName()){
-				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
+				//case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
 				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, localVarIndex);
 				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, localVarIndex);
 				default -> visit(childNode);
@@ -176,33 +262,21 @@ public class AstVisitor {
 		System.out.println("Variable Definition");
 
 		if(node.initializer == null){
-			// Faça instanciação do tipo utilizando o construtor vazio...
-		}
-
-		// Por enquanto considerando apenas atribuição de constantes
-		// Ex:
-		// int a = 2;
-		// String b = "Olá";
-		if(node.initializer instanceof LiteralNode){
+			// Instanciação do tipo utilizando o construtor vazio...
 			int index = newLocalVariableIndex++;
 
 			varIndex.put(node.name, index);
 
-			switch (node.type.name) {
-				case Type.INT_NAME -> {
-					mv.visitLdcInsn(((LiteralNode) node.initializer).literal);
-					mv.visitVarInsn(ISTORE, index);
-				}
-				case Type.DOUBLE_NAME -> {
-					mv.visitLdcInsn(((LiteralNode) node.initializer).literal);
-					mv.visitVarInsn(DSTORE, index);
-				}
-				case Type.STRING_NAME -> {
-					mv.visitLdcInsn(((LiteralNode) node.initializer).literal);
-					mv.visitVarInsn(ASTORE, index);
-				}
-				default -> System.out.println("Não defini as instruções para o tipo " + node.type.name);
-			}
+			mv.visitTypeInsn(NEW, internalNameMap.get(node.type.name));
+			mv.visitInsn(DUP);
+			mv.visitMethodInsn(INVOKESPECIAL,
+					internalNameMap.get(node.type.name),
+					"<init>",
+					"()V",
+					false);
+			mv.visitVarInsn(ASTORE, index);
+		}else{
+			// Instanciar variaveis inicializadas...
 		}
 	}
 

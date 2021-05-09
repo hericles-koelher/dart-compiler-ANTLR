@@ -1,3 +1,3 @@
 main() {
-  var x = 42;
+  int x;
 }
