@@ -6,7 +6,7 @@ public class Parameter {
     public final Type type;
     public final String name;
 
-    Parameter(Type type, String name) {
+    public Parameter(Type type, String name) {
         this.type = type;
         this.name = name;
     }

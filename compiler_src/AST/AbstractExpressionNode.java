@@ -1,3 +1,7 @@
 package AST;
 
-public abstract class AbstractExpressionNode extends Node{}
+import Types.Type;
+
+public abstract class AbstractExpressionNode extends Node{
+	public Type type;
+}

@@ -1,3 +1,3 @@
 main() {
-  int x;
+  print(4.0 + 1.3);
 }

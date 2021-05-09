@@ -1,5 +1,7 @@
 package AST;
 
+import Types.Type;
+
 import java.io.FileWriter;
 
 public class VariableNode extends AbstractExpressionNode{
@@ -7,10 +9,11 @@ public class VariableNode extends AbstractExpressionNode{
 	public Integer scopeId;
 	public String name;
 
-	public VariableNode(Integer position, Integer scopeId, String name){
+	public VariableNode(Integer position, Integer scopeId, String name, Type type){
 		this.position = position;
 		this.scopeId = scopeId;
 		this.name = name;
+		this.type = type;
 	}
 
 	protected String nodeInfo() {

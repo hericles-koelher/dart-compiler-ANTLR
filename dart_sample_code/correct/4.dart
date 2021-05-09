@@ -6,6 +6,6 @@ main() {
   print(s);
   print(b);
   print("Hello World");
-  print(4);
-  i = 2 + 3 / 4 * 5;
+  print(2 - 3 / 4 * 5);
+  i = 2 - 3 / 4 * 5;
 }

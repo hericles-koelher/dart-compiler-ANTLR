@@ -3,6 +3,7 @@ package SymbolTable;
 import Types.Type;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,13 +12,13 @@ public class Function {
     public final int declarationLine;
     public final Type type;
     public final String name;
-    public final List<Parameter> positionalParameters;
-    public final List<Parameter> optionalPositionalParameters;
+    public final LinkedList<Parameter> positionalParameters;
+    public final LinkedList<Parameter> optionalPositionalParameters;
     public final HashMap<String, Parameter> namedParameters;
 
     public Function(Integer scopeId, int declarationLine, Type type,
-                    String name, List<Parameter> positionalParameters,
-                    List<Parameter> optionalPositionalParameters) {
+                    String name, LinkedList<Parameter> positionalParameters,
+                    LinkedList<Parameter> optionalPositionalParameters) {
         this.scopeId = scopeId;
         this.declarationLine = declarationLine;
         this.type = type;
@@ -28,7 +29,7 @@ public class Function {
     }
 
     public Function(Integer scopeId, int declarationLine, Type type,
-                    String name, List<Parameter> positionalParameters,
+                    String name, LinkedList<Parameter> positionalParameters,
                     HashMap<String, Parameter> namedParameters) {
         this.scopeId = scopeId;
         this.declarationLine = declarationLine;
@@ -61,6 +62,6 @@ public class Function {
 
     @Override
     public int hashCode() {
-        return Objects.hash(scopeId, name);
+        return Objects.hash(name, scopeId);
     }
 }
