@@ -1048,6 +1048,10 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 			return ctx.ifStatement().accept(this);
 		}
 
+		if (ctx.whileStatement() != null) {
+			return ctx.whileStatement().accept(this);
+		}
+
 		throw new NodeNotImplmentedException();
 	}
 
@@ -1112,7 +1116,11 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
 		var _if = (StatementsNode) ctx.ifPart.accept(this);
 
-		var _else = (StatementsNode) ctx.elsePart.accept(this);
+		StatementsNode _else = null;
+
+		if(ctx.elsePart != null){
+			_else = (StatementsNode) ctx.elsePart.accept(this);
+		}
 
 		return new IfNode(condition, _if, _else);
 	}
@@ -1134,7 +1142,11 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
 	@Override
 	public Node visitWhileStatement(DartParser.WhileStatementContext ctx) {
-		return super.visitWhileStatement(ctx);
+		AbstractExpressionNode condition = (AbstractExpressionNode) ctx.expression().accept(this);
+
+		StatementsNode block = (StatementsNode) ctx.block().accept(this);
+
+		return new WhileNode(condition, block);
 	}
 
 	@Override

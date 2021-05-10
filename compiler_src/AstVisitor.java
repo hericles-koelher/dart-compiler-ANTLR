@@ -79,6 +79,11 @@ public class AstVisitor {
 
 	private void visitAssign(AssignNode node,
 							 MethodVisitor mv, HashMap<String, Integer> varIndex){
+		expressionSolver(node.right, mv, varIndex);
+
+		int index = varIndex.get(node.left.name);
+
+		mv.visitVarInsn(ASTORE, index);
 	}
 
 	private void getNull(MethodVisitor mv){
@@ -251,12 +256,9 @@ public class AstVisitor {
 		}
 	}
 
-	private void visitIf(IfNode node,
-						 MethodVisitor mv,
-						 HashMap<String, Integer> varIndex){
-		Label _if = new Label(), _else = new Label();
-
-		expressionSolver(node.condition, mv, varIndex);
+	private void boolEval(AbstractExpressionNode node,
+						  MethodVisitor mv, HashMap<String, Integer> varIndex){
+		expressionSolver(node, mv, varIndex);
 
 		// Empilhando o java Object
 		mv.visitFieldInsn(
@@ -264,7 +266,7 @@ public class AstVisitor {
 				"DartTypes/DartType",
 				"value",
 				"Ljava/lang/Object;"
-				);
+		);
 
 		// Fazendo cast pra Boolean
 		mv.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
@@ -276,25 +278,53 @@ public class AstVisitor {
 				"booleanValue",
 				"()Z",
 				false
-				);
+		);
+	}
 
-		// Pula para o label _else caso o valor empilhado por
-		// expressionSolver seja equivalente a 0 (falso)
-		mv.visitJumpInsn(IFEQ, _else);
+	private void visitIf(IfNode node,
+						 MethodVisitor mv,
+						 HashMap<String, Integer> varIndex){
+		Label _if = new Label(), _else = new Label();
+
+		// Carrega um booleano da jvm no topo da stack
+		boolEval(node.condition, mv, varIndex);
+
+		// Pula para o label _if caso o valor empilhado por
+		// expressionSolver seja equivalente a 1 (verdadeiro)
+		mv.visitJumpInsn(IFNE, _if);
+		// Faça coisas do else
+		if(node.elseStatementsNode != null){
+			visitStatements(node.elseStatementsNode.getChildren(), mv, varIndex);
+		}
+
+		// Pula para o final do else, ignorando todo o codigo dele completamente
+		mv.visitJumpInsn(GOTO, _else);
+
+		// Marca o local no bytecode correspondente ao label _else
+		mv.visitLabel(_if);
 		// Faça coisas do if
 		visitStatements(node.ifStatementsNode.getChildren(), mv, varIndex);
 
-		// Pula para o final do else, ignorando todo o codigo dele completamente
-		mv.visitJumpInsn(GOTO, _if);
-
-		// Marca o local no bytecode correspondente ao label _else
-		mv.visitLabel(_else);
-		// Faça coisas do else
-		visitStatements(node.elseStatementsNode.getChildren(), mv, varIndex);
-
 		// Marca o local no bytecode correspondente ao label _if
-		mv.visitLabel(_if);
+		mv.visitLabel(_else);
 
+	}
+
+	private void visitWhile(WhileNode node,
+							MethodVisitor mv, HashMap<String, Integer> varIndex){
+		Label loop = new Label(), end = new Label();
+
+		mv.visitLabel(loop);
+
+		boolEval(node.condition, mv, varIndex);
+
+		mv.visitJumpInsn(IFEQ, end);
+
+		visitStatements(node.block.getChildren(), mv, varIndex);
+
+		mv.visitJumpInsn(GOTO, loop);
+
+		mv.visitLabel(end);
 	}
 
 	private void visitStatements(LinkedList<Node> nodes,
@@ -304,7 +334,8 @@ public class AstVisitor {
 		for (var childNode: nodes) {
 			System.out.println("Statement Type: " + childNode.getClass().getName());
 			switch (childNode.getClass().getSimpleName()){
-				//case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
+				case "WhileNode" -> visitWhile((WhileNode) childNode, mv, varIndex);
+				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, varIndex);
 				case "LiteralNode" -> visitLiteral((LiteralNode) childNode, mv);
 				case "IfNode" -> visitIf((IfNode) childNode, mv, varIndex);
 				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, varIndex);
@@ -335,6 +366,10 @@ public class AstVisitor {
 
 		if(node instanceof FunctionCallNode){
 			visitFunctionCall((FunctionCallNode) node, mv, varIndex);
+		}
+
+		if(node instanceof AssignNode){
+			visitAssign((AssignNode) node, mv, varIndex);
 		}
 
 		// Estamos assumindo que todas as operações

@@ -14,6 +14,5 @@ public enum Operation {
     GreaterOrEqual,
     And,
     Or,
-    Print,
     Assignment
 }

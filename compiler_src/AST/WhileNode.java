@@ -3,8 +3,14 @@ package AST;
 import java.io.FileWriter;
 
 public class WhileNode extends Node {
-    public AbstractExpressionNode abstractExpressionNode;
-    public StatementsNode statementsNode;
+    public AbstractExpressionNode condition;
+    public StatementsNode block;
+
+    public WhileNode(AbstractExpressionNode condition,
+                     StatementsNode block){
+        this.condition = condition;
+        this.block = block;
+    }
 
     protected int printNode(FileWriter writer) throws Exception {
         Integer my_nr = nr++;
@@ -15,10 +21,10 @@ public class WhileNode extends Node {
 
         writer.write("\"];\n");
 
-        Integer child_left = abstractExpressionNode.printNode(writer);
+        Integer child_left = condition.printNode(writer);
         writer.write(String.format("node%d -> node%d;\n", my_nr, child_left));
 
-        Integer child_right = statementsNode.printNode(writer);
+        Integer child_right = block.printNode(writer);
         writer.write(String.format("node%d -> node%d;\n", my_nr, child_right));
 
         return my_nr;

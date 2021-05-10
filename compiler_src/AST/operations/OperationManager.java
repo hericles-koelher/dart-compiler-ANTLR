@@ -11,8 +11,6 @@ public abstract class OperationManager {
                 return Operation.Multiplication;
             case "/":
                 return Operation.Division;
-            case "print":
-                return Operation.Print;
             default:
                 throw new OperationNotSupportedException();
         }

@@ -921,7 +921,7 @@ localFunctionDeclaration:
 // Chapter 17.5 - If
 // Aceitando somente if com chaves {}
 ifStatement:
-		IF '(' expression ')' LBRACE ifPart=statements RBRACE (ELSE LBRACE elsePart=statements RBRACE)?
+		IF '(' expression ')' ifPart=block (ELSE elsePart=block)?
 	;
 
 // Chapter 17.6 - For
@@ -946,7 +946,7 @@ forInitializerStatement:
 // Chapter 17.7 - While
 
 whileStatement:
-		WHILE '(' expression ')' statement
+		WHILE '(' expression ')' block
 	;
 
 // Chapter 17.8 - Do
