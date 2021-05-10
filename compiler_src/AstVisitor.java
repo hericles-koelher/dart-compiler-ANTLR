@@ -3,13 +3,14 @@ import DartTypes.*;
 import SymbolTable.FunctionSymbolTable;
 import SymbolTable.VarSymbolTable;
 import Types.Type;
-import Types.TypeUnify;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -78,7 +79,6 @@ public class AstVisitor {
 
 	private void visitAssign(AssignNode node,
 							 MethodVisitor mv, HashMap<String, Integer> varIndex){
-		System.out.println("Assign");
 	}
 
 	private void getNull(MethodVisitor mv){
@@ -152,7 +152,6 @@ public class AstVisitor {
 
 	private void visitFunctionCall(FunctionCallNode node,
 								   MethodVisitor mv, HashMap<String, Integer> varIndex){
-		System.out.println("Function Call");
 
 		// Poderia ser menos "hardcoded" ehuehuehuehuh
 		if(node.name.equals("print")){
@@ -182,8 +181,6 @@ public class AstVisitor {
 	// Responsavel por gerar o codigo de cada função
 	// Não sei o motivo, mas se o corpo da função main for vazio da erro de execução
 	private void visitFunctionDefinition(FunctionDefinitionNode node){
-		//TODO: aprender como definir "descriptor list"
-		// Link: https://asm.ow2.io/faq.html#Q7
 
 		HashMap<String, Integer> localVarIndex = new HashMap<>();
 		this.newLocalVariableIndex = 0;
@@ -213,16 +210,12 @@ public class AstVisitor {
 
 		mv.visitCode();
 
-		for (var childNode: node.getChildren()) {
-			switch (childNode.getClass().getSimpleName()){
-				//case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
-				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, localVarIndex);
-				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, localVarIndex);
-				default -> visit(childNode);
-			}
-		}
+		visitStatements(node.getChildren(), mv, localVarIndex);
 
 		// Gambiarra temporaria
+		// um retorno void no dart equivale a função retornar null
+//		getNull(mv);
+//		mv.visitInsn(ARETURN);
 		mv.visitInsn(RETURN);
 
 		// Chamando só por obrigação, pq o tamanho necessário para
@@ -234,7 +227,6 @@ public class AstVisitor {
 
 	private void visitVariableDefinition(VariableDefinitionNode node,
 										 MethodVisitor mv, HashMap<String, Integer> varIndex){
-		System.out.println("Variable Definition");
 
 		int index = newLocalVariableIndex++;
 
@@ -257,6 +249,70 @@ public class AstVisitor {
 
 			mv.visitVarInsn(ASTORE, index);
 		}
+	}
+
+	private void visitIf(IfNode node,
+						 MethodVisitor mv,
+						 HashMap<String, Integer> varIndex){
+		Label _if = new Label(), _else = new Label();
+
+		expressionSolver(node.condition, mv, varIndex);
+
+		// Empilhando o java Object
+		mv.visitFieldInsn(
+				GETFIELD,
+				"DartTypes/DartType",
+				"value",
+				"Ljava/lang/Object;"
+				);
+
+		// Fazendo cast pra Boolean
+		mv.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
+
+		// Empilhando o valor boolean do Boolean
+		mv.visitMethodInsn(
+				INVOKEVIRTUAL,
+				"java/lang/Boolean",
+				"booleanValue",
+				"()Z",
+				false
+				);
+
+		// Pula para o label _else caso o valor empilhado por
+		// expressionSolver seja equivalente a 0 (falso)
+		mv.visitJumpInsn(IFEQ, _else);
+		// Faça coisas do if
+		visitStatements(node.ifStatementsNode.getChildren(), mv, varIndex);
+
+		// Pula para o final do else, ignorando todo o codigo dele completamente
+		mv.visitJumpInsn(GOTO, _if);
+
+		// Marca o local no bytecode correspondente ao label _else
+		mv.visitLabel(_else);
+		// Faça coisas do else
+		visitStatements(node.elseStatementsNode.getChildren(), mv, varIndex);
+
+		// Marca o local no bytecode correspondente ao label _if
+		mv.visitLabel(_if);
+
+	}
+
+	private void visitStatements(LinkedList<Node> nodes,
+								 MethodVisitor mv,
+								 HashMap<String, Integer> varIndex){
+
+		for (var childNode: nodes) {
+			System.out.println("Statement Type: " + childNode.getClass().getName());
+			switch (childNode.getClass().getSimpleName()){
+				//case "AssignNode" -> visitAssign((AssignNode) childNode, mv, localVarIndex);
+				case "LiteralNode" -> visitLiteral((LiteralNode) childNode, mv);
+				case "IfNode" -> visitIf((IfNode) childNode, mv, varIndex);
+				case "FunctionCallNode" -> visitFunctionCall((FunctionCallNode) childNode, mv, varIndex);
+				case "VariableDefinitionNode" -> visitVariableDefinition((VariableDefinitionNode) childNode, mv, varIndex);
+				default -> visit(childNode);
+			}
+		}
+
 	}
 
 	private void expressionSolver(AbstractExpressionNode node,
@@ -309,8 +365,6 @@ public class AstVisitor {
 			String descriptor = typeDescriptorMap.get(opn.left.type.name);
 			String descriptorRight = typeDescriptorMap.get(opn.left.type.name);
 			dartDescriptorType = "(" + descriptor + ")" + descriptorRight;
-
-			System.out.println(methodName + " " + dartType + " " + dartDescriptorType);
 
 			mv.visitMethodInsn(INVOKEVIRTUAL,
 					dartType,

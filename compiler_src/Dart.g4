@@ -919,9 +919,9 @@ localFunctionDeclaration:
 	;
 
 // Chapter 17.5 - If
-
+// Aceitando somente if com chaves {}
 ifStatement:
-		IF '(' expression ')' statement (ELSE statement)?
+		IF '(' expression ')' LBRACE ifPart=statements RBRACE (ELSE LBRACE elsePart=statements RBRACE)?
 	;
 
 // Chapter 17.6 - For

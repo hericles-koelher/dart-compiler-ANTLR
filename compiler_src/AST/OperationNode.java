@@ -24,8 +24,6 @@ public class OperationNode extends AbstractTwoChildNode{
 			}
 		}
 
-		System.out.printf("Esquerda: %s, Direita: %s, Resultado: %s", left.type, right.type, resultingType.type);
-
 		this.type = resultingType.type;
 		this.operation = operation;
 	}

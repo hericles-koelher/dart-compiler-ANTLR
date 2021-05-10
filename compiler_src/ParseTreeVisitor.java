@@ -440,6 +440,9 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 		if (ctx.stringLiteral() != null) {
 			return ctx.stringLiteral().accept(this);
 		}
+		if (ctx.booleanLiteral() != null) {
+			return ctx.booleanLiteral().accept(this);
+		}
 
 		throw new NodeNotImplmentedException();
 	}
@@ -471,7 +474,10 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
 	@Override
 	public Node visitBooleanLiteral(DartParser.BooleanLiteralContext ctx) {
-		throw new NodeNotImplmentedException();
+
+		Boolean bool = ctx.TRUE() != null;
+
+		return new LiteralNode(TypeManager.getType(Type.BOOL_NAME), bool);
 	}
 
 	@Override
@@ -1038,6 +1044,10 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 			return ctx.expressionStatement().accept(this);
 		}
 
+		if (ctx.ifStatement() != null) {
+			return ctx.ifStatement().accept(this);
+		}
+
 		throw new NodeNotImplmentedException();
 	}
 
@@ -1097,7 +1107,14 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
 	@Override
 	public Node visitIfStatement(DartParser.IfStatementContext ctx) {
-		return super.visitIfStatement(ctx);
+
+		var condition = (AbstractExpressionNode) ctx.expression().accept(this);
+
+		var _if = (StatementsNode) ctx.ifPart.accept(this);
+
+		var _else = (StatementsNode) ctx.elsePart.accept(this);
+
+		return new IfNode(condition, _if, _else);
 	}
 
 	@Override

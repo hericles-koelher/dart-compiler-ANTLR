@@ -3,9 +3,18 @@ package AST;
 import java.io.FileWriter;
 
 public class IfNode extends Node{
-    public AbstractExpressionNode abstractExpressionNode;
+    public AbstractExpressionNode condition;
     public StatementsNode ifStatementsNode;
     public StatementsNode elseStatementsNode;
+
+    public IfNode(AbstractExpressionNode condition,
+                  StatementsNode ifStatementsNode,
+                  StatementsNode elseStatementsNode){
+
+        this.condition = condition;
+        this.ifStatementsNode = ifStatementsNode;
+        this.elseStatementsNode = elseStatementsNode;
+    }
 
     protected int printNode(FileWriter writer) throws Exception {
         Integer my_nr = nr++;
@@ -16,7 +25,7 @@ public class IfNode extends Node{
 
         writer.write("\"];\n");
 
-        Integer child_left = abstractExpressionNode.printNode(writer);
+        Integer child_left = condition.printNode(writer);
         writer.write(String.format("node%d -> node%d;\n", my_nr, child_left));
 
         if(this.ifStatementsNode != null) {
