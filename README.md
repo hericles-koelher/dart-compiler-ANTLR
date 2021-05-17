@@ -41,6 +41,14 @@ Para testar o código gerado execute:
 $ make run_java
 ```
 
+####Limpeza
+
+Para apagar os arquivos gerados durante a execução utilize
+o comando a seguir:
+```bash
+$ make clean
+```
+
 
 
 

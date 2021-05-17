@@ -27,7 +27,7 @@ Runtime:
 # Caraca vei esse ponto faz total diferença, MDS.
 
 clean:
-	rm -rf $(COMPILER_CLASS_DIR)
+	rm -rf $(COMPILER_CLASS_DIR) $(RUNTIME_CLASS_DIR) output $(COMPILER_SRC)/Dart
 #Testes
 
 run:
@@ -36,19 +36,3 @@ run:
 
 run_java:
 	 java -cp tools/runtime.jar:output/ Main
-
-# test_c:
-# 	@echo "Testing correct sample:\n"
-# 	@for file in dart_sample_code/correct/*; do\
-# 		echo $$file;\
-# 		java -cp $(CLASS_DIR):$(ANTLR4) Main $$file;\
-# 		echo "\n";\
-# 	done
-#
-# test_err:
-# 	@echo "Testing incorrect sample:\n"
-# 	@for file in dart_sample_code/incorrect/*; do\
-# 		echo $$file;\
-# 		java -cp $(CLASS_DIR):$(ANTLR4) Main $$file;\
-# 		echo "\n";\
-# 	done
