@@ -329,7 +329,7 @@ public class AstVisitor {
 								 HashMap<String, Integer> varIndex){
 
 		for (var childNode: nodes) {
-			System.out.println("Statement Type: " + childNode.getClass().getName());
+			// System.out.println("Statement Type: " + childNode.getClass().getName());
 			switch (childNode.getClass().getSimpleName()){
 				case "WhileNode" -> visitWhile((WhileNode) childNode, mv, varIndex);
 				case "AssignNode" -> visitAssign((AssignNode) childNode, mv, varIndex);
