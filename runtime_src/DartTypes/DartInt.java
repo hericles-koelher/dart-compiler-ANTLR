@@ -35,19 +35,19 @@ public class DartInt extends DartType{
 	}
 
 	public DartBool lt(DartInt i){
-		return new DartBool((Integer) i.value < (Integer) this.value);
+		return new DartBool((Integer) this.value < (Integer) i.value);
 	}
 
 	public DartBool gt(DartInt i){
-		return new DartBool((Integer) i.value > (Integer) this.value);
+		return new DartBool((Integer) this.value > (Integer) i.value);
 	}
 
 	public DartBool lte(DartInt i){
-		return new DartBool((Integer) i.value <= (Integer) this.value);
+		return new DartBool((Integer) this.value <= (Integer) i.value);
 	}
 
 	public DartBool gte(DartInt i){
-		return new DartBool((Integer) i.value >= (Integer) this.value);
+		return new DartBool((Integer) this.value >= (Integer) i.value);
 	}
 
 	@Override

@@ -11,15 +11,14 @@ public abstract class DartType {
 		return value.toString();
 	}
 
-	@Override
-	public boolean equals(Object o) {
+	public DartBool eq(Object o) {
 		if(o instanceof DartType)
-			return value.equals(((DartType) o).value);
-		return false;
+			return new DartBool(value.equals(((DartType) o).value));
+		return new DartBool(false);
 	}
 
-	public boolean not_equals(Object o){
-		return ! equals(o);
+	public DartBool neq(Object o){
+		return new DartBool(!((Boolean)eq(o).value));
 	}
 
 	public abstract String getTypeName();

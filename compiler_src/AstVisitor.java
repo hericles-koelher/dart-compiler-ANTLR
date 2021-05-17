@@ -353,58 +353,48 @@ public class AstVisitor {
 		String methodName;
 		String paramDescriptor = typeDescriptorMap.get(node.left.type.name);
 		String functionDescriptor = null;
-		String dartType = null;
+		String methodOwner = internalNameMap.get(node.left.type.name);
 
 		switch (node.operation) {
 			case Addition -> {
 				methodName = "add";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
-				dartType = internalNameMap.get(node.left.type.name);
 			}
 			case Subtraction -> {
 				methodName = "sub";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
-				dartType = internalNameMap.get(node.left.type.name);
 			}
 			case Multiplication -> {
 				methodName = "mul";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
-				dartType = internalNameMap.get(node.left.type.name);
 			}
 			case Division -> {
 				methodName = "div";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
-				dartType = internalNameMap.get(node.left.type.name);
 			}
 			case Less -> {
 				methodName = "lt";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
-				dartType = internalNameMap.get("DartType");
 			}
 			case Greater -> {
 				methodName = "gt";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
-				dartType = internalNameMap.get("DartType");
 			}
 			case LessOrEqual -> {
 				methodName = "lte";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
-				dartType = internalNameMap.get("DartType");
 			}
 			case GreaterOrEqual -> {
 				methodName = "gte";
 				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
-				dartType = internalNameMap.get("DartType");
 			}
 			case Equals -> {
-				methodName = "equals";
+				methodName = "eq";
 				functionDescriptor = "(Ljava/lang/Object;)" + typeDescriptorMap.get(Type.BOOL_NAME);
-				dartType = internalNameMap.get("DartType");
 			}
 			case NotEquals -> {
-				methodName = "not_equals";
-				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
-				dartType = internalNameMap.get("DartType");
+				methodName = "neq";
+				functionDescriptor = "(Ljava/lang/Object;)" + typeDescriptorMap.get(Type.BOOL_NAME);
 			}
 			default -> {
 				System.out.println("Mehhh deu ruim!");
@@ -413,7 +403,7 @@ public class AstVisitor {
 		}
 
 		mv.visitMethodInsn(INVOKEVIRTUAL,
-				dartType,
+				methodOwner,
 				methodName,
 				functionDescriptor,
 				false);

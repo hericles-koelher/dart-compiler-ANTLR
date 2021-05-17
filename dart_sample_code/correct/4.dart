@@ -42,11 +42,17 @@ main() {
 
   i = 10;
 
-  while(j){
+  if(i < 5){
+    	print("If i > 5 funcionando também!");
+  }
+
+  print("Teste While");
+  while(i > 5){
   	i = i - 1;
 
-  	if(i == 0){
+  	if(i == 5){
   		j = false;
+  		print(j);
   	}
 
   	print(i);
