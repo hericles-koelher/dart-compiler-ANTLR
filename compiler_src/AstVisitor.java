@@ -352,25 +352,21 @@ public class AstVisitor {
 
 		String methodName;
 		String paramDescriptor = typeDescriptorMap.get(node.left.type.name);
-		String functionDescriptor = null;
+		String functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(node.type.name);
 		String methodOwner = internalNameMap.get(node.left.type.name);
 
 		switch (node.operation) {
 			case Addition -> {
 				methodName = "add";
-				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
 			}
 			case Subtraction -> {
 				methodName = "sub";
-				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
 			}
 			case Multiplication -> {
 				methodName = "mul";
-				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
 			}
 			case Division -> {
 				methodName = "div";
-				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
 			}
 			case Less -> {
 				methodName = "lt";

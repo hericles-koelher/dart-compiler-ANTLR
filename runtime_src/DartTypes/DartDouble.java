@@ -35,19 +35,19 @@ public class DartDouble extends DartType{
 	}
 
 	public DartBool lt(DartDouble i){
-		return new DartBool((Double) i.value < (Double) this.value);
+		return new DartBool((Double) this.value < (Double) i.value);
 	}
 
 	public DartBool gt(DartDouble i){
-		return new DartBool((Double) i.value > (Double) this.value);
+		return new DartBool((Double) this.value > (Double) i.value);
 	}
 
 	public DartBool lte(DartDouble i){
-		return new DartBool((Double) i.value <= (Double) this.value);
+		return new DartBool((Double) this.value <= (Double) i.value);
 	}
 
 	public DartBool gte(DartDouble i){
-		return new DartBool((Double) i.value >= (Double) this.value);
+		return new DartBool((Double) this.value >= (Double) i.value);
 	}
 
 	@Override
