@@ -676,20 +676,42 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
 	@Override
 	public Node visitLogicalOrExpression(DartParser.LogicalOrExpressionContext ctx) {
-		if (ctx.logicalAndExpression().size() > 1) {
-			throw new NodeNotImplmentedException();
+		var exprList = ctx.logicalAndExpression();
+
+		if (exprList.size() == 1)
+			return exprList.get(0).accept(this);
+
+		var left = (AbstractExpressionNode) exprList.get(0).accept(this);
+		var right = (AbstractExpressionNode) exprList.get(1).accept(this);
+		var opNode = new OperationNode(left, Operation.Or, right);
+
+
+		for (int i = 2; exprList.size() - i > 0; i++) {
+			var newRightNode = (AbstractExpressionNode) exprList.get(i).accept(this);
+			opNode = new OperationNode(opNode, Operation.Or, newRightNode);
 		}
 
-		return ctx.logicalAndExpression().get(0).accept(this);
+		return opNode;
 	}
 
 	@Override
 	public Node visitLogicalAndExpression(DartParser.LogicalAndExpressionContext ctx) {
-		if (ctx.equalityExpression().size() > 1) {
-			throw new NodeNotImplmentedException();
+		var exprList = ctx.equalityExpression();
+
+		if (exprList.size() == 1)
+			return exprList.get(0).accept(this);
+
+		var left = (AbstractExpressionNode) exprList.get(0).accept(this);
+		var right = (AbstractExpressionNode) exprList.get(1).accept(this);
+		var opNode = new OperationNode(left, Operation.And, right);
+
+
+		for (int i = 2; exprList.size() - i > 0; i++) {
+			var newRightNode = (AbstractExpressionNode) exprList.get(i).accept(this);
+			opNode = new OperationNode(opNode, Operation.And, newRightNode);
 		}
 
-		return ctx.equalityExpression().get(0).accept(this);
+		return opNode;
 	}
 
 	@Override
@@ -737,8 +759,15 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 		if (ctx.SUPER() != null) {
 			throw new NodeNotImplmentedException();
 		}
-		if ((ctx.typeTest() != null || ctx.typeCast() != null || ctx.relationalOperator() != null)) {
+		if (ctx.typeTest() != null || ctx.typeCast() != null) {
 			throw new NodeNotImplmentedException();
+		}
+
+		if(ctx.relationalOperator() != null) {
+			var left = (AbstractExpressionNode) ctx.bitwiseOrExpression(0).accept(this);
+			var right = (AbstractExpressionNode) ctx.bitwiseOrExpression(1).accept(this);
+			var token = ctx.relationalOperator().getText();
+			return new OperationNode(left, OperationManager.getOperation(token), right);
 		}
 
 		return ctx.bitwiseOrExpression(0).accept(this);
