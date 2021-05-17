@@ -34,11 +34,20 @@ public class DartInt extends DartType{
 		return "int";
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if(o instanceof DartDouble)
-			return value.equals(((DartDouble) o).value);
-		return false;
+	public DartBool lt(DartInt i){
+		return new DartBool((Integer) i.value < (Integer) this.value);
+	}
+
+	public DartBool gt(DartInt i){
+		return new DartBool((Integer) i.value > (Integer) this.value);
+	}
+
+	public DartBool lte(DartInt i){
+		return new DartBool((Integer) i.value <= (Integer) this.value);
+	}
+
+	public DartBool gte(DartInt i){
+		return new DartBool((Integer) i.value >= (Integer) this.value);
 	}
 
 	@Override

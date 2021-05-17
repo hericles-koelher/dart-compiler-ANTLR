@@ -34,6 +34,9 @@ run:
 	java -cp $(COMPILER_CLASS_DIR):$(ANTLR4):$(ASM):$(RUNTIME) Main dart_sample_code/correct/4.dart
 	dot -Tpdf ast1.dot -o ast1.pdf
 
+run_java:
+	 java -cp tools/runtime.jar:output/ Main
+
 # test_c:
 # 	@echo "Testing correct sample:\n"
 # 	@for file in dart_sample_code/correct/*; do\

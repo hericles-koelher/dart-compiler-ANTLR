@@ -45,7 +45,10 @@ main() {
   while(j){
   	i = i - 1;
 
-  	j = false;
+  	if(i == 0){
+  		j = false;
+  	}
+
   	print(i);
   }
 }

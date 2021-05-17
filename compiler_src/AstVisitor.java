@@ -14,10 +14,6 @@ import java.util.LinkedList;
 
 import static org.objectweb.asm.Opcodes.*;
 
-// O CODIGO TÁ CONFUSO PRA CARALHO, MAS É PQ AINDA TÕ PEGANDO O JEITO
-// COM A JVM E O ASM, LAMENTO MAS VOU GAMBIARRAR COM FORÇA.
-// ASS: Bruno
-
 public class AstVisitor {
 	private final ClassWriter _cw;
 	private final Node _ast;
@@ -50,6 +46,7 @@ public class AstVisitor {
 		internalNameMap.put(Type.BOOL_NAME, org.objectweb.asm.Type.getInternalName(DartBool.class));
 		internalNameMap.put(Type.STRING_NAME, org.objectweb.asm.Type.getInternalName(DartString.class));
 		internalNameMap.put(Type.NULL_NAME, org.objectweb.asm.Type.getInternalName(DartNull.class));
+		internalNameMap.put("DartType", org.objectweb.asm.Type.getInternalName(DartType.class));
 		internalNameMap.put("DartFunctions", org.objectweb.asm.Type.getInternalName(DartFunctions.class));
 	}
 
@@ -346,6 +343,82 @@ public class AstVisitor {
 
 	}
 
+	private void visitOperation(OperationNode node,
+								MethodVisitor mv,
+								HashMap<String, Integer> varIndex){
+
+		expressionSolver(node.left, mv, varIndex);
+		expressionSolver(node.right, mv, varIndex);
+
+		String methodName;
+		String paramDescriptor = typeDescriptorMap.get(node.left.type.name);
+		String functionDescriptor = null;
+		String dartType = null;
+
+		switch (node.operation) {
+			case Addition -> {
+				methodName = "add";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
+				dartType = internalNameMap.get(node.left.type.name);
+			}
+			case Subtraction -> {
+				methodName = "sub";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
+				dartType = internalNameMap.get(node.left.type.name);
+			}
+			case Multiplication -> {
+				methodName = "mul";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
+				dartType = internalNameMap.get(node.left.type.name);
+			}
+			case Division -> {
+				methodName = "div";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.INT_NAME);
+				dartType = internalNameMap.get(node.left.type.name);
+			}
+			case Less -> {
+				methodName = "lt";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
+				dartType = internalNameMap.get("DartType");
+			}
+			case Greater -> {
+				methodName = "gt";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
+				dartType = internalNameMap.get("DartType");
+			}
+			case LessOrEqual -> {
+				methodName = "lte";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
+				dartType = internalNameMap.get("DartType");
+			}
+			case GreaterOrEqual -> {
+				methodName = "gte";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
+				dartType = internalNameMap.get("DartType");
+			}
+			case Equals -> {
+				methodName = "equals";
+				functionDescriptor = "(Ljava/lang/Object;)" + typeDescriptorMap.get(Type.BOOL_NAME);
+				dartType = internalNameMap.get("DartType");
+			}
+			case NotEquals -> {
+				methodName = "not_equals";
+				functionDescriptor = "(" + paramDescriptor + ")" + typeDescriptorMap.get(Type.BOOL_NAME);
+				dartType = internalNameMap.get("DartType");
+			}
+			default -> {
+				System.out.println("Mehhh deu ruim!");
+				return;
+			}
+		}
+
+		mv.visitMethodInsn(INVOKEVIRTUAL,
+				dartType,
+				methodName,
+				functionDescriptor,
+				false);
+	}
+
 	private void expressionSolver(AbstractExpressionNode node,
 								  MethodVisitor mv,
 								  HashMap<String, Integer> varIndex){
@@ -375,38 +448,7 @@ public class AstVisitor {
 		// Estamos assumindo que todas as operações
 		// são feitas entre variaveis de  tipos iguais :(
 		if(node instanceof OperationNode){
-			OperationNode opn = (OperationNode) node;
-
-			expressionSolver(opn.left, mv, varIndex);
-			expressionSolver(opn.right, mv, varIndex);
-
-			/// Abaixo foi o matheus que fez, cuidado
-			String methodName;
-			String dartType;
-			String dartDescriptorType;
-
-			switch (opn.operation) {
-				case Addition -> methodName = "add";
-				case Subtraction -> methodName = "sub";
-				case Multiplication -> methodName = "mul";
-				case Division -> methodName = "div";
-				default -> {
-					System.out.println("Mehhh deu ruim!");
-					return;
-				}
-			}
-
-			dartType = internalNameMap.get(opn.left.type.name);
-			String descriptor = typeDescriptorMap.get(opn.left.type.name);
-			String descriptorRight = typeDescriptorMap.get(opn.left.type.name);
-			dartDescriptorType = "(" + descriptor + ")" + descriptorRight;
-
-			mv.visitMethodInsn(INVOKEVIRTUAL,
-					dartType,
-					methodName,
-					dartDescriptorType,
-					false);
-			/// Acima é coisa do matheus, deve ta tudo errado
+			visitOperation((OperationNode) node, mv, varIndex);
 		}
 	}
 

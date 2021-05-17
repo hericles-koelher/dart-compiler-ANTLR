@@ -11,7 +11,17 @@ public abstract class DartType {
 		return value.toString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof DartType)
+			return value.equals(((DartType) o).value);
+		return false;
+	}
+
+	public boolean not_equals(Object o){
+		return ! equals(o);
+	}
+
 	public abstract String getTypeName();
-	public abstract boolean equals(Object o);
 	public abstract int hashCode();
 }

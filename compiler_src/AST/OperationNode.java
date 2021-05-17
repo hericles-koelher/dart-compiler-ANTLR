@@ -1,7 +1,6 @@
 package AST;
 
 import AST.operations.Operation;
-import Types.TypeUnify;
 
 import java.io.FileWriter;
 
@@ -11,20 +10,9 @@ public class OperationNode extends AbstractTwoChildNode{
 	public OperationNode(AbstractExpressionNode left, Operation operation, AbstractExpressionNode right) {
 		super(left, right);
 		// Não fizemos a unificação de tipos, só pegamos o da esquerda.
-		TypeUnify resultingType;
-		switch(operation) {
-			case Addition -> {
-				resultingType = TypeUnify.UnifyPlus(left.type, right.type);
-			}
-			case Equals, NotEquals, Greater, GreaterOrEqual, Less, LessOrEqual  -> {
-				resultingType = TypeUnify.UnifyComparison(left.type, right.type);
-			}
-			default -> {
-				resultingType = TypeUnify.UnifyOther(left.type, right.type);
-			}
-		}
+		// Estamos considerando operações envolvendo um unico tipo...
 
-		this.type = resultingType.type;
+		this.type = left.type;
 		this.operation = operation;
 	}
 

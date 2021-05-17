@@ -1,5 +1,7 @@
 package Types;
 
+// Infelizmente acabou não saindo Lista e Mapa na geração de codigo :(
+
 final public class List<T extends Type> extends Type {
     //vai ser util quando tiver de comparar com o tipo dos elementos da lista
     public final Type subType;

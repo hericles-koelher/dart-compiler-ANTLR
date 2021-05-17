@@ -698,7 +698,27 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 			throw new NodeNotImplmentedException();
 		}
 		if (ctx.equalityOperator() != null) {
-			throw new NodeNotImplmentedException();
+			// TODO: arrumar aqui
+			// OTAVIO CONFERE AQUI
+
+			var exprList = ctx.relationalExpression();
+
+			if (exprList.size() == 1)
+				return exprList.get(0).accept(this);
+
+			var left = (AbstractExpressionNode) exprList.get(0).accept(this);
+			var right = (AbstractExpressionNode) exprList.get(1).accept(this);
+			var token = ((TokenNode) ctx.equalityOperator().accept(this)).token;
+			var opNode = new OperationNode(left, OperationManager.getOperation(token), right);
+
+
+			for (int i = 2; exprList.size() - i > 0; i++) {
+				var newRightNode = (AbstractExpressionNode) exprList.get(i).accept(this);
+				var newToken = ((TokenNode) ctx.equalityOperator().accept(this)).token;
+				opNode = new OperationNode(opNode, OperationManager.getOperation(newToken), newRightNode);
+			}
+
+			return opNode;
 		}
 
 		return ctx.relationalExpression(0).accept(this);
@@ -706,7 +726,10 @@ public class ParseTreeVisitor extends DartBaseVisitor<Node> {
 
 	@Override
 	public Node visitEqualityOperator(DartParser.EqualityOperatorContext ctx) {
-		return super.visitEqualityOperator(ctx);
+
+		TerminalNode terminal = (TerminalNode) ctx.children.get(0);
+
+		return new TokenNode(terminal.getText(), terminal.getSymbol().getLine());
 	}
 
 	@Override
